@@ -10,33 +10,388 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AgricultureRouteImport } from './routes/agriculture'
+import { Route as AgroecologyRouteImport } from './routes/agroecology'
+import { Route as CanadaRouteImport } from './routes/canada'
+import { Route as CollaborationRouteImport } from './routes/collaboration'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CubaRouteImport } from './routes/cuba'
+import { Route as EnergyRouteImport } from './routes/energy'
+import { Route as FarmersRouteImport } from './routes/farmers'
+import { Route as FoodForFamiliesRouteImport } from './routes/food-for-families'
+import { Route as LandRouteImport } from './routes/land'
+import { Route as MissionRouteImport } from './routes/mission'
+import { Route as NeedsRouteImport } from './routes/needs'
+import { Route as ParticipateRouteImport } from './routes/participate'
+import { Route as PartnersRouteImport } from './routes/partners'
+import { Route as PeopleRouteImport } from './routes/people'
+import { Route as ProjectRouteImport } from './routes/project'
+import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as TimelineRouteImport } from './routes/timeline'
+import { Route as TrainingRouteImport } from './routes/training'
+import { Route as TransparencyRouteImport } from './routes/transparency'
+import { Route as VideosRouteImport } from './routes/videos'
+import { Route as VolunteerRouteImport } from './routes/volunteer'
+import { Route as JournalIndexRouteImport } from './routes/journal.index'
+import { Route as JournalSlugRouteImport } from './routes/journal.$slug'
+import { Route as LocationsIndexRouteImport } from './routes/locations.index'
+import { Route as LocationsJagueyGrandeRouteImport } from './routes/locations.jaguey-grande'
+import { Route as LocationsMatanzasRouteImport } from './routes/locations.matanzas'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgricultureRoute = AgricultureRouteImport.update({
+  id: '/agriculture',
+  path: '/agriculture',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgroecologyRoute = AgroecologyRouteImport.update({
+  id: '/agroecology',
+  path: '/agroecology',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CanadaRoute = CanadaRouteImport.update({
+  id: '/canada',
+  path: '/canada',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CollaborationRoute = CollaborationRouteImport.update({
+  id: '/collaboration',
+  path: '/collaboration',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CubaRoute = CubaRouteImport.update({
+  id: '/cuba',
+  path: '/cuba',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EnergyRoute = EnergyRouteImport.update({
+  id: '/energy',
+  path: '/energy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FarmersRoute = FarmersRouteImport.update({
+  id: '/farmers',
+  path: '/farmers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FoodForFamiliesRoute = FoodForFamiliesRouteImport.update({
+  id: '/food-for-families',
+  path: '/food-for-families',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LandRoute = LandRouteImport.update({
+  id: '/land',
+  path: '/land',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MissionRoute = MissionRouteImport.update({
+  id: '/mission',
+  path: '/mission',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NeedsRoute = NeedsRouteImport.update({
+  id: '/needs',
+  path: '/needs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ParticipateRoute = ParticipateRouteImport.update({
+  id: '/participate',
+  path: '/participate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartnersRoute = PartnersRouteImport.update({
+  id: '/partners',
+  path: '/partners',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PeopleRoute = PeopleRouteImport.update({
+  id: '/people',
+  path: '/people',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectRoute = ProjectRouteImport.update({
+  id: '/project',
+  path: '/project',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsRoute = ReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TimelineRoute = TimelineRouteImport.update({
+  id: '/timeline',
+  path: '/timeline',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrainingRoute = TrainingRouteImport.update({
+  id: '/training',
+  path: '/training',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TransparencyRoute = TransparencyRouteImport.update({
+  id: '/transparency',
+  path: '/transparency',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VideosRoute = VideosRouteImport.update({
+  id: '/videos',
+  path: '/videos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VolunteerRoute = VolunteerRouteImport.update({
+  id: '/volunteer',
+  path: '/volunteer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JournalIndexRoute = JournalIndexRouteImport.update({
+  id: '/journal/',
+  path: '/journal/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JournalSlugRoute = JournalSlugRouteImport.update({
+  id: '/journal/$slug',
+  path: '/journal/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LocationsIndexRoute = LocationsIndexRouteImport.update({
+  id: '/locations/',
+  path: '/locations/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LocationsJagueyGrandeRoute = LocationsJagueyGrandeRouteImport.update({
+  id: '/locations/jaguey-grande',
+  path: '/locations/jaguey-grande',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LocationsMatanzasRoute = LocationsMatanzasRouteImport.update({
+  id: '/locations/matanzas',
+  path: '/locations/matanzas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/agriculture': typeof AgricultureRoute
+  '/agroecology': typeof AgroecologyRoute
+  '/canada': typeof CanadaRoute
+  '/collaboration': typeof CollaborationRoute
+  '/contact': typeof ContactRoute
+  '/cuba': typeof CubaRoute
+  '/energy': typeof EnergyRoute
+  '/farmers': typeof FarmersRoute
+  '/food-for-families': typeof FoodForFamiliesRoute
+  '/land': typeof LandRoute
+  '/mission': typeof MissionRoute
+  '/needs': typeof NeedsRoute
+  '/participate': typeof ParticipateRoute
+  '/partners': typeof PartnersRoute
+  '/people': typeof PeopleRoute
+  '/project': typeof ProjectRoute
+  '/reports': typeof ReportsRoute
+  '/timeline': typeof TimelineRoute
+  '/training': typeof TrainingRoute
+  '/transparency': typeof TransparencyRoute
+  '/videos': typeof VideosRoute
+  '/volunteer': typeof VolunteerRoute
+  '/journal/$slug': typeof JournalSlugRoute
+  '/locations/jaguey-grande': typeof LocationsJagueyGrandeRoute
+  '/locations/matanzas': typeof LocationsMatanzasRoute
+  '/journal/': typeof JournalIndexRoute
+  '/locations/': typeof LocationsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/agriculture': typeof AgricultureRoute
+  '/agroecology': typeof AgroecologyRoute
+  '/canada': typeof CanadaRoute
+  '/collaboration': typeof CollaborationRoute
+  '/contact': typeof ContactRoute
+  '/cuba': typeof CubaRoute
+  '/energy': typeof EnergyRoute
+  '/farmers': typeof FarmersRoute
+  '/food-for-families': typeof FoodForFamiliesRoute
+  '/land': typeof LandRoute
+  '/mission': typeof MissionRoute
+  '/needs': typeof NeedsRoute
+  '/participate': typeof ParticipateRoute
+  '/partners': typeof PartnersRoute
+  '/people': typeof PeopleRoute
+  '/project': typeof ProjectRoute
+  '/reports': typeof ReportsRoute
+  '/timeline': typeof TimelineRoute
+  '/training': typeof TrainingRoute
+  '/transparency': typeof TransparencyRoute
+  '/videos': typeof VideosRoute
+  '/volunteer': typeof VolunteerRoute
+  '/journal/$slug': typeof JournalSlugRoute
+  '/locations/jaguey-grande': typeof LocationsJagueyGrandeRoute
+  '/locations/matanzas': typeof LocationsMatanzasRoute
+  '/journal': typeof JournalIndexRoute
+  '/locations': typeof LocationsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/agriculture': typeof AgricultureRoute
+  '/agroecology': typeof AgroecologyRoute
+  '/canada': typeof CanadaRoute
+  '/collaboration': typeof CollaborationRoute
+  '/contact': typeof ContactRoute
+  '/cuba': typeof CubaRoute
+  '/energy': typeof EnergyRoute
+  '/farmers': typeof FarmersRoute
+  '/food-for-families': typeof FoodForFamiliesRoute
+  '/land': typeof LandRoute
+  '/mission': typeof MissionRoute
+  '/needs': typeof NeedsRoute
+  '/participate': typeof ParticipateRoute
+  '/partners': typeof PartnersRoute
+  '/people': typeof PeopleRoute
+  '/project': typeof ProjectRoute
+  '/reports': typeof ReportsRoute
+  '/timeline': typeof TimelineRoute
+  '/training': typeof TrainingRoute
+  '/transparency': typeof TransparencyRoute
+  '/videos': typeof VideosRoute
+  '/volunteer': typeof VolunteerRoute
+  '/journal/$slug': typeof JournalSlugRoute
+  '/locations/jaguey-grande': typeof LocationsJagueyGrandeRoute
+  '/locations/matanzas': typeof LocationsMatanzasRoute
+  '/journal/': typeof JournalIndexRoute
+  '/locations/': typeof LocationsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/agriculture'
+    | '/agroecology'
+    | '/canada'
+    | '/collaboration'
+    | '/contact'
+    | '/cuba'
+    | '/energy'
+    | '/farmers'
+    | '/food-for-families'
+    | '/land'
+    | '/mission'
+    | '/needs'
+    | '/participate'
+    | '/partners'
+    | '/people'
+    | '/project'
+    | '/reports'
+    | '/timeline'
+    | '/training'
+    | '/transparency'
+    | '/videos'
+    | '/volunteer'
+    | '/journal/$slug'
+    | '/locations/jaguey-grande'
+    | '/locations/matanzas'
+    | '/journal/'
+    | '/locations/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/agriculture'
+    | '/agroecology'
+    | '/canada'
+    | '/collaboration'
+    | '/contact'
+    | '/cuba'
+    | '/energy'
+    | '/farmers'
+    | '/food-for-families'
+    | '/land'
+    | '/mission'
+    | '/needs'
+    | '/participate'
+    | '/partners'
+    | '/people'
+    | '/project'
+    | '/reports'
+    | '/timeline'
+    | '/training'
+    | '/transparency'
+    | '/videos'
+    | '/volunteer'
+    | '/journal/$slug'
+    | '/locations/jaguey-grande'
+    | '/locations/matanzas'
+    | '/journal'
+    | '/locations'
+  id:
+    | '__root__'
+    | '/'
+    | '/agriculture'
+    | '/agroecology'
+    | '/canada'
+    | '/collaboration'
+    | '/contact'
+    | '/cuba'
+    | '/energy'
+    | '/farmers'
+    | '/food-for-families'
+    | '/land'
+    | '/mission'
+    | '/needs'
+    | '/participate'
+    | '/partners'
+    | '/people'
+    | '/project'
+    | '/reports'
+    | '/timeline'
+    | '/training'
+    | '/transparency'
+    | '/videos'
+    | '/volunteer'
+    | '/journal/$slug'
+    | '/locations/jaguey-grande'
+    | '/locations/matanzas'
+    | '/journal/'
+    | '/locations/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AgricultureRoute: typeof AgricultureRoute
+  AgroecologyRoute: typeof AgroecologyRoute
+  CanadaRoute: typeof CanadaRoute
+  CollaborationRoute: typeof CollaborationRoute
+  ContactRoute: typeof ContactRoute
+  CubaRoute: typeof CubaRoute
+  EnergyRoute: typeof EnergyRoute
+  FarmersRoute: typeof FarmersRoute
+  FoodForFamiliesRoute: typeof FoodForFamiliesRoute
+  LandRoute: typeof LandRoute
+  MissionRoute: typeof MissionRoute
+  NeedsRoute: typeof NeedsRoute
+  ParticipateRoute: typeof ParticipateRoute
+  PartnersRoute: typeof PartnersRoute
+  PeopleRoute: typeof PeopleRoute
+  ProjectRoute: typeof ProjectRoute
+  ReportsRoute: typeof ReportsRoute
+  TimelineRoute: typeof TimelineRoute
+  TrainingRoute: typeof TrainingRoute
+  TransparencyRoute: typeof TransparencyRoute
+  VideosRoute: typeof VideosRoute
+  VolunteerRoute: typeof VolunteerRoute
+  JournalSlugRoute: typeof JournalSlugRoute
+  LocationsJagueyGrandeRoute: typeof LocationsJagueyGrandeRoute
+  LocationsMatanzasRoute: typeof LocationsMatanzasRoute
+  JournalIndexRoute: typeof JournalIndexRoute
+  LocationsIndexRoute: typeof LocationsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +403,227 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agriculture': {
+      id: '/agriculture'
+      path: '/agriculture'
+      fullPath: '/agriculture'
+      preLoaderRoute: typeof AgricultureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agroecology': {
+      id: '/agroecology'
+      path: '/agroecology'
+      fullPath: '/agroecology'
+      preLoaderRoute: typeof AgroecologyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/canada': {
+      id: '/canada'
+      path: '/canada'
+      fullPath: '/canada'
+      preLoaderRoute: typeof CanadaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/collaboration': {
+      id: '/collaboration'
+      path: '/collaboration'
+      fullPath: '/collaboration'
+      preLoaderRoute: typeof CollaborationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cuba': {
+      id: '/cuba'
+      path: '/cuba'
+      fullPath: '/cuba'
+      preLoaderRoute: typeof CubaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/energy': {
+      id: '/energy'
+      path: '/energy'
+      fullPath: '/energy'
+      preLoaderRoute: typeof EnergyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/farmers': {
+      id: '/farmers'
+      path: '/farmers'
+      fullPath: '/farmers'
+      preLoaderRoute: typeof FarmersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/food-for-families': {
+      id: '/food-for-families'
+      path: '/food-for-families'
+      fullPath: '/food-for-families'
+      preLoaderRoute: typeof FoodForFamiliesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/land': {
+      id: '/land'
+      path: '/land'
+      fullPath: '/land'
+      preLoaderRoute: typeof LandRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mission': {
+      id: '/mission'
+      path: '/mission'
+      fullPath: '/mission'
+      preLoaderRoute: typeof MissionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/needs': {
+      id: '/needs'
+      path: '/needs'
+      fullPath: '/needs'
+      preLoaderRoute: typeof NeedsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/participate': {
+      id: '/participate'
+      path: '/participate'
+      fullPath: '/participate'
+      preLoaderRoute: typeof ParticipateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/partners': {
+      id: '/partners'
+      path: '/partners'
+      fullPath: '/partners'
+      preLoaderRoute: typeof PartnersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/people': {
+      id: '/people'
+      path: '/people'
+      fullPath: '/people'
+      preLoaderRoute: typeof PeopleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/project': {
+      id: '/project'
+      path: '/project'
+      fullPath: '/project'
+      preLoaderRoute: typeof ProjectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports': {
+      id: '/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof ReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/timeline': {
+      id: '/timeline'
+      path: '/timeline'
+      fullPath: '/timeline'
+      preLoaderRoute: typeof TimelineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/training': {
+      id: '/training'
+      path: '/training'
+      fullPath: '/training'
+      preLoaderRoute: typeof TrainingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/transparency': {
+      id: '/transparency'
+      path: '/transparency'
+      fullPath: '/transparency'
+      preLoaderRoute: typeof TransparencyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/videos': {
+      id: '/videos'
+      path: '/videos'
+      fullPath: '/videos'
+      preLoaderRoute: typeof VideosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/volunteer': {
+      id: '/volunteer'
+      path: '/volunteer'
+      fullPath: '/volunteer'
+      preLoaderRoute: typeof VolunteerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/journal/': {
+      id: '/journal/'
+      path: '/journal'
+      fullPath: '/journal/'
+      preLoaderRoute: typeof JournalIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/journal/$slug': {
+      id: '/journal/$slug'
+      path: '/journal/$slug'
+      fullPath: '/journal/$slug'
+      preLoaderRoute: typeof JournalSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/locations/': {
+      id: '/locations/'
+      path: '/locations'
+      fullPath: '/locations/'
+      preLoaderRoute: typeof LocationsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/locations/jaguey-grande': {
+      id: '/locations/jaguey-grande'
+      path: '/locations/jaguey-grande'
+      fullPath: '/locations/jaguey-grande'
+      preLoaderRoute: typeof LocationsJagueyGrandeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/locations/matanzas': {
+      id: '/locations/matanzas'
+      path: '/locations/matanzas'
+      fullPath: '/locations/matanzas'
+      preLoaderRoute: typeof LocationsMatanzasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AgricultureRoute: AgricultureRoute,
+  AgroecologyRoute: AgroecologyRoute,
+  CanadaRoute: CanadaRoute,
+  CollaborationRoute: CollaborationRoute,
+  ContactRoute: ContactRoute,
+  CubaRoute: CubaRoute,
+  EnergyRoute: EnergyRoute,
+  FarmersRoute: FarmersRoute,
+  FoodForFamiliesRoute: FoodForFamiliesRoute,
+  LandRoute: LandRoute,
+  MissionRoute: MissionRoute,
+  NeedsRoute: NeedsRoute,
+  ParticipateRoute: ParticipateRoute,
+  PartnersRoute: PartnersRoute,
+  PeopleRoute: PeopleRoute,
+  ProjectRoute: ProjectRoute,
+  ReportsRoute: ReportsRoute,
+  TimelineRoute: TimelineRoute,
+  TrainingRoute: TrainingRoute,
+  TransparencyRoute: TransparencyRoute,
+  VideosRoute: VideosRoute,
+  VolunteerRoute: VolunteerRoute,
+  JournalSlugRoute: JournalSlugRoute,
+  LocationsJagueyGrandeRoute: LocationsJagueyGrandeRoute,
+  LocationsMatanzasRoute: LocationsMatanzasRoute,
+  JournalIndexRoute: JournalIndexRoute,
+  LocationsIndexRoute: LocationsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
