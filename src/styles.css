@@ -207,13 +207,12 @@
   margin-inline: auto;
   max-width: 88rem;
   padding-inline: 1.25rem;
-}
 
-@media (min-width: 768px) {
-  @utility shell {
+  @media (min-width: 768px) {
     padding-inline: 2.5rem;
   }
 }
+
 
 @utility grain {
   position: relative;
