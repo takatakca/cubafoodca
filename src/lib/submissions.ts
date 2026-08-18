@@ -7,98 +7,100 @@ import { supabase } from "@/integrations/supabase/client";
 
 export type ParticipantSubmission = {
   first_name: string;
-  last_name?: string;
-  country?: string;
-  province?: string;
-  municipality?: string;
-  city?: string;
-  phone?: string;
-  whatsapp?: string;
-  email?: string;
-  preferred_language?: string;
-  participant_type?: string;
-  profession?: string;
-  skills?: string;
-  agricultural_experience?: string;
-  machinery_experience?: string;
-  driver_license?: string;
-  organization?: string;
-  availability?: string;
-  equipment_offered?: string;
-  support_requested?: string;
-  contribution_types?: string[];
-  message?: string;
+  last_name?: string | undefined;
+  country?: string | undefined;
+  province?: string | undefined;
+  municipality?: string | undefined;
+  city?: string | undefined;
+  phone?: string | undefined;
+  whatsapp?: string | undefined;
+  email?: string | undefined;
+  preferred_language?: string | undefined;
+  participant_type?: string | undefined;
+  profession?: string | undefined;
+  skills?: string | undefined;
+  agricultural_experience?: string | undefined;
+  machinery_experience?: string | undefined;
+  driver_license?: string | undefined;
+  organization?: string | undefined;
+  availability?: string | undefined;
+  equipment_offered?: string | undefined;
+  support_requested?: string | undefined;
+  contribution_types?: string[] | undefined;
+  message?: string | undefined;
   source_page: string;
 };
 
 export type PartnerSubmission = {
   company: string;
   contact_name: string;
-  country?: string;
-  province?: string;
-  city?: string;
-  website?: string;
-  email?: string;
-  phone?: string;
-  whatsapp?: string;
-  industry?: string;
-  contribution_types?: string[];
-  equipment_description?: string;
-  expertise_description?: string;
-  message?: string;
+  country?: string | undefined;
+  province?: string | undefined;
+  city?: string | undefined;
+  website?: string | undefined;
+  email?: string | undefined;
+  phone?: string | undefined;
+  whatsapp?: string | undefined;
+  industry?: string | undefined;
+  contribution_types?: string[] | undefined;
+  equipment_description?: string | undefined;
+  expertise_description?: string | undefined;
+  message?: string | undefined;
   source_page: string;
 };
 
 export type FarmerSubmission = {
   name: string;
-  phone?: string;
-  whatsapp?: string;
-  email?: string;
-  province?: string;
-  municipality?: string;
-  farm_type?: string;
-  cooperative_name?: string;
-  crops?: string;
-  current_needs?: string;
-  equipment?: string;
-  irrigation?: string;
-  transport?: string;
-  storage?: string;
-  collaboration_interest?: string;
-  message?: string;
+  phone?: string | undefined;
+  whatsapp?: string | undefined;
+  email?: string | undefined;
+  province?: string | undefined;
+  municipality?: string | undefined;
+  farm_type?: string | undefined;
+  cooperative_name?: string | undefined;
+  crops?: string | undefined;
+  current_needs?: string | undefined;
+  equipment?: string | undefined;
+  irrigation?: string | undefined;
+  transport?: string | undefined;
+  storage?: string | undefined;
+  collaboration_interest?: string | undefined;
+  message?: string | undefined;
 };
 
 export type VolunteerSubmission = {
   first_name: string;
-  last_name?: string;
-  country?: string;
-  location?: string;
-  phone?: string;
-  whatsapp?: string;
-  email?: string;
-  languages?: string;
-  professional_background?: string;
-  skills?: string;
-  volunteer_categories?: string[];
-  availability?: string;
-  message?: string;
+  last_name?: string | undefined;
+  country?: string | undefined;
+  location?: string | undefined;
+  phone?: string | undefined;
+  whatsapp?: string | undefined;
+  email?: string | undefined;
+  languages?: string | undefined;
+  professional_background?: string | undefined;
+  skills?: string | undefined;
+  volunteer_categories?: string[] | undefined;
+  availability?: string | undefined;
+  message?: string | undefined;
 };
 
 export type NewsletterSubmission = {
-  name?: string;
+  name?: string | undefined;
   email: string;
-  country?: string;
-  preferred_language?: string;
+  country?: string | undefined;
+  preferred_language?: string | undefined;
   source_page: string;
 };
 
-function clean<T extends Record<string, unknown>>(row: T): T {
+type Defined<T> = { [K in keyof T]: Exclude<T[K], undefined> };
+
+function clean<T extends Record<string, unknown>>(row: T): Defined<T> {
   const out: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(row)) {
     if (v === undefined || v === "") continue;
     out[k] = v;
   }
-  return out as T;
+  return out as Defined<T>;
 }
 
 export async function submitParticipant(row: ParticipantSubmission) {
