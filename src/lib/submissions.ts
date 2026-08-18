@@ -92,13 +92,15 @@ export type NewsletterSubmission = {
   source_page: string;
 };
 
-function clean<T extends Record<string, unknown>>(row: T): T {
+type Defined<T> = { [K in keyof T]: Exclude<T[K], undefined> };
+
+function clean<T extends Record<string, unknown>>(row: T): Defined<T> {
   const out: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(row)) {
     if (v === undefined || v === "") continue;
     out[k] = v;
   }
-  return out as T;
+  return out as Defined<T>;
 }
 
 export async function submitParticipant(row: ParticipantSubmission) {
