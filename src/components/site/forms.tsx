@@ -115,7 +115,7 @@ export function SuccessPanel({
       <p className="display text-2xl">{t(title)}</p>
       <p className="mt-3 max-w-prose text-sm leading-relaxed opacity-75">{t(body)}</p>
       <div className="mt-6">
-        <WhatsAppButton context={whatsappContext} label={whatsappLabel} />
+        <WhatsAppButton context={whatsappContext} {...(whatsappLabel ? { label: whatsappLabel } : {})} />
       </div>
     </div>
   );
