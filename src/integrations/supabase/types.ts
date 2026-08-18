@@ -14,6 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      donation_interest: {
+        Row: {
+          amount_interest: string | null
+          contribution_category: string
+          country: string | null
+          created_at: string
+          currency: string
+          email: string | null
+          id: string
+          message: string | null
+          name: string
+          organization: string | null
+          phone: string | null
+          recurring_interest: boolean
+          source_page: string
+          status: string
+          whatsapp: string | null
+        }
+        Insert: {
+          amount_interest?: string | null
+          contribution_category?: string
+          country?: string | null
+          created_at?: string
+          currency?: string
+          email?: string | null
+          id?: string
+          message?: string | null
+          name?: string
+          organization?: string | null
+          phone?: string | null
+          recurring_interest?: boolean
+          source_page?: string
+          status?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          amount_interest?: string | null
+          contribution_category?: string
+          country?: string | null
+          created_at?: string
+          currency?: string
+          email?: string | null
+          id?: string
+          message?: string | null
+          name?: string
+          organization?: string | null
+          phone?: string | null
+          recurring_interest?: boolean
+          source_page?: string
+          status?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
       farmer_registrations: {
         Row: {
           collaboration_interest: string | null
