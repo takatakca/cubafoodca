@@ -64,7 +64,7 @@ const MORE: { to: string; label: T }[] = [
 ];
 
 const pill =
-  "inline-flex h-10 items-center gap-2 rounded-full border border-current/25 px-3.5 text-sm font-medium transition-colors hover:bg-current/10 focus-visible:outline-2 focus-visible:outline-offset-2";
+  "inline-flex h-10 items-center gap-2 whitespace-nowrap rounded-full border border-current/25 px-3.5 text-sm font-medium transition-colors hover:bg-current/10 focus-visible:outline-2 focus-visible:outline-offset-2";
 
 function LanguageMenu() {
   const { lang, setLang, t } = useI18n();
@@ -238,13 +238,13 @@ export function Header() {
             CUBAFOOD<span className="text-secondary">.CA</span>
           </Link>
 
-          <nav className="hidden items-center gap-5 xl:flex" aria-label="Primary">
+          <nav className="hidden items-center gap-4 2xl:flex" aria-label="Primary">
             {PRIMARY_NAV.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
-                className="eyebrow relative py-2 opacity-70 transition-opacity hover:opacity-100"
-                activeProps={{ className: "eyebrow relative py-2 !opacity-100 text-secondary" }}
+                className="eyebrow relative whitespace-nowrap py-2 opacity-70 transition-opacity hover:opacity-100"
+                activeProps={{ className: "eyebrow relative whitespace-nowrap py-2 !opacity-100 text-secondary" }}
               >
                 {t(item.label)}
               </Link>
@@ -261,7 +261,7 @@ export function Header() {
             </div>
             <Link
               to="/participate"
-              className="eyebrow hidden h-10 items-center rounded-full bg-secondary px-5 text-secondary-foreground transition-colors hover:bg-secondary/90 md:inline-flex"
+              className="eyebrow hidden h-10 items-center whitespace-nowrap rounded-full bg-secondary px-5 text-secondary-foreground transition-colors hover:bg-secondary/90 md:inline-flex"
             >
               {t(UI.join)}
             </Link>
