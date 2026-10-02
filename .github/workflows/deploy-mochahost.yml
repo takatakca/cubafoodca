@@ -1,0 +1,252 @@
+name: Deploy CUBAFOOD to MochaHost
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cubafood-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 30
+
+    env:
+      RELEASE_SHA: ${{ github.sha }}
+      NITRO_PRESET: node-server
+      LOVABLE_ASSET_BASE_URL: ${{ vars.CUBAFOOD_LOVABLE_ASSET_BASE_URL || 'https://cubafoodca.lovable.app' }}
+
+      CUBAFOOD_HOST: ${{ secrets.CUBAFOOD_PRODUCTION_HOST }}
+      CUBAFOOD_PORT: ${{ secrets.CUBAFOOD_PRODUCTION_SSH_PORT }}
+      CUBAFOOD_USER: ${{ secrets.CUBAFOOD_PRODUCTION_USER }}
+      CUBAFOOD_APP_ROOT: ${{ secrets.CUBAFOOD_PRODUCTION_APP_ROOT }}
+      CUBAFOOD_PRODUCTION_URL: ${{ secrets.CUBAFOOD_PRODUCTION_URL }}
+
+      VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+      VITE_PROJECT_WHATSAPP: ${{ secrets.VITE_PROJECT_WHATSAPP }}
+      VITE_PROJECT_EMAIL: ${{ secrets.VITE_PROJECT_EMAIL }}
+
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+
+      - name: Validate deployment configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in CUBAFOOD_HOST CUBAFOOD_PORT CUBAFOOD_USER CUBAFOOD_APP_ROOT CUBAFOOD_PRODUCTION_URL VITE_SUPABASE_URL VITE_SUPABASE_PUBLISHABLE_KEY; do
+            test -n "${!name:-}" || { echo "Missing $name"; exit 1; }
+          done
+          [[ "$CUBAFOOD_PORT" =~ ^[0-9]+$ ]] || { echo "SSH port must be numeric"; exit 1; }
+          [[ "$CUBAFOOD_APP_ROOT" = /* ]] || { echo "Application root must be absolute"; exit 1; }
+          test "$CUBAFOOD_PRODUCTION_URL" = "https://cubafood.ca" || {
+            echo "Refusing unexpected production URL: $CUBAFOOD_PRODUCTION_URL"
+            exit 1
+          }
+
+      - name: Install locked dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Materialize Lovable-managed media into public files
+        run: node scripts/materialize-lovable-assets.mjs
+
+      - name: TypeScript check
+        run: bunx tsc --noEmit
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Build Node.js Nitro release
+        run: bun run build
+
+      - name: Verify release artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f .output/server/index.mjs
+          test -d .output/public
+          test -f .output/public/__l5e/assets-v1/85a0c69d-cdc5-4170-bb2b-46bd0043745d/field-1-poster.jpg
+          printf '%s\n' "$RELEASE_SHA" > .output/RELEASE_SHA
+
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.CUBAFOOD_PRODUCTION_SSH_PRIVATE_KEY }}
+          KNOWN_HOSTS: ${{ secrets.CUBAFOOD_PRODUCTION_KNOWN_HOSTS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$SSH_PRIVATE_KEY"
+          test -n "$KNOWN_HOSTS"
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Verify SSH access
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            if ssh -p "$CUBAFOOD_PORT" \
+              -o BatchMode=yes \
+              -o StrictHostKeyChecking=yes \
+              -o ConnectTimeout=20 \
+              -o ServerAliveInterval=15 \
+              -o ServerAliveCountMax=4 \
+              "$CUBAFOOD_USER@$CUBAFOOD_HOST" "echo CUBAFOOD_SSH_OK"; then
+              exit 0
+            fi
+            sleep $((attempt * 5))
+          done
+          exit 1
+
+      - name: Package immutable release
+        shell: bash
+        run: |
+          set -euo pipefail
+          RELEASE_ID="${RELEASE_SHA}-${GITHUB_RUN_ID}"
+          echo "RELEASE_ID=$RELEASE_ID" >> "$GITHUB_ENV"
+          tar -C .output -czf "cubafood-${RELEASE_ID}.tar.gz" .
+
+      - name: Upload release archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          ssh -p "$CUBAFOOD_PORT" "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
+            "mkdir -p '$CUBAFOOD_APP_ROOT/incoming' '$CUBAFOOD_APP_ROOT/releases' '$CUBAFOOD_APP_ROOT/tmp'"
+
+          for attempt in 1 2 3; do
+            if scp -P "$CUBAFOOD_PORT" \
+              -o BatchMode=yes \
+              -o StrictHostKeyChecking=yes \
+              -o ConnectTimeout=20 \
+              "cubafood-${RELEASE_ID}.tar.gz" \
+              "$CUBAFOOD_USER@$CUBAFOOD_HOST:$CUBAFOOD_APP_ROOT/incoming/cubafood-${RELEASE_ID}.tar.gz"; then
+              exit 0
+            fi
+            sleep $((attempt * 5))
+          done
+          exit 1
+
+      - name: Atomically activate release and restart Passenger
+        shell: bash
+        run: |
+          set -euo pipefail
+          ssh -p "$CUBAFOOD_PORT" "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
+            "APP_ROOT='$CUBAFOOD_APP_ROOT' RELEASE_ID='$RELEASE_ID' RELEASE_SHA='$RELEASE_SHA' bash -s" <<'REMOTE'
+          set -euo pipefail
+          RELEASE_DIR="$APP_ROOT/releases/$RELEASE_ID"
+          ARCHIVE="$APP_ROOT/incoming/cubafood-$RELEASE_ID.tar.gz"
+
+          test -f "$ARCHIVE"
+          rm -rf "$RELEASE_DIR"
+          mkdir -p "$RELEASE_DIR"
+          tar -xzf "$ARCHIVE" -C "$RELEASE_DIR"
+          rm -f "$ARCHIVE"
+
+          test -f "$RELEASE_DIR/server/index.mjs"
+          test -d "$RELEASE_DIR/public"
+          test "$(cat "$RELEASE_DIR/RELEASE_SHA")" = "$RELEASE_SHA"
+
+          if [ -L "$APP_ROOT/current" ]; then
+            OLD_RELEASE="$(readlink -f "$APP_ROOT/current")"
+            if [ -n "$OLD_RELEASE" ] && [ -d "$OLD_RELEASE" ]; then
+              ln -sfn "$OLD_RELEASE" "$APP_ROOT/previous"
+            fi
+          fi
+
+          rm -f "$APP_ROOT/current.new"
+          ln -s "$RELEASE_DIR" "$APP_ROOT/current.new"
+          mv -Tf "$APP_ROOT/current.new" "$APP_ROOT/current"
+
+          mkdir -p "$APP_ROOT/tmp"
+          touch "$APP_ROOT/tmp/restart.txt"
+          REMOTE
+
+      - name: Verify production health
+        shell: bash
+        run: |
+          set -euo pipefail
+          ok=0
+          for attempt in $(seq 1 10); do
+            if curl --fail --silent --show-error --location --max-time 20 \
+              "$CUBAFOOD_PRODUCTION_URL/healthz" | grep -q '"ok":true'; then
+              ok=1
+              break
+            fi
+            sleep 5
+          done
+          test "$ok" = "1"
+
+          curl --fail --silent --show-error --location --max-time 20 \
+            -o /dev/null "$CUBAFOOD_PRODUCTION_URL/"
+          curl --fail --silent --show-error --location --max-time 20 \
+            -o /dev/null "$CUBAFOOD_PRODUCTION_URL/project"
+          curl --fail --silent --show-error --location --max-time 20 \
+            -o /dev/null "$CUBAFOOD_PRODUCTION_URL/videos"
+          curl --fail --silent --show-error --location --max-time 20 \
+            -o /dev/null "$CUBAFOOD_PRODUCTION_URL/__l5e/assets-v1/85a0c69d-cdc5-4170-bb2b-46bd0043745d/field-1-poster.jpg"
+
+      - name: Roll back failed activation
+        if: failure()
+        shell: bash
+        run: |
+          set -euo pipefail
+          ssh -p "$CUBAFOOD_PORT" "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
+            "APP_ROOT='$CUBAFOOD_APP_ROOT' bash -s" <<'REMOTE'
+          set -euo pipefail
+          if [ -L "$APP_ROOT/previous" ]; then
+            PREVIOUS_RELEASE="$(readlink -f "$APP_ROOT/previous")"
+            test -d "$PREVIOUS_RELEASE"
+            rm -f "$APP_ROOT/current.new"
+            ln -s "$PREVIOUS_RELEASE" "$APP_ROOT/current.new"
+            mv -Tf "$APP_ROOT/current.new" "$APP_ROOT/current"
+            mkdir -p "$APP_ROOT/tmp"
+            touch "$APP_ROOT/tmp/restart.txt"
+            echo "Rolled back to $PREVIOUS_RELEASE"
+          else
+            echo "No previous release exists; automatic rollback is unavailable for the first deployment."
+          fi
+          REMOTE
+
+      - name: Keep five releases
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          ssh -p "$CUBAFOOD_PORT" "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
+            "APP_ROOT='$CUBAFOOD_APP_ROOT' bash -s" <<'REMOTE'
+          set -euo pipefail
+          cd "$APP_ROOT/releases"
+          CURRENT="$(basename "$(readlink -f "$APP_ROOT/current")")"
+          PREVIOUS=""
+          if [ -L "$APP_ROOT/previous" ]; then
+            PREVIOUS="$(basename "$(readlink -f "$APP_ROOT/previous")")"
+          fi
+
+          kept_other=0
+          for dir in $(ls -1dt */ 2>/dev/null | sed 's#/$##'); do
+            if [ "$dir" = "$CURRENT" ] || [ "$dir" = "$PREVIOUS" ]; then
+              continue
+            fi
+            kept_other=$((kept_other + 1))
+            if [ "$kept_other" -gt 3 ]; then
+              rm -rf -- "$dir"
+            fi
+          done
+          REMOTE

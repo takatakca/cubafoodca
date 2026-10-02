@@ -19,6 +19,7 @@ import { Route as CubaRouteImport } from './routes/cuba'
 import { Route as EnergyRouteImport } from './routes/energy'
 import { Route as FarmersRouteImport } from './routes/farmers'
 import { Route as FoodForFamiliesRouteImport } from './routes/food-for-families'
+import { Route as HealthzRouteImport } from './routes/healthz'
 import { Route as LandRouteImport } from './routes/land'
 import { Route as MissionRouteImport } from './routes/mission'
 import { Route as NeedsRouteImport } from './routes/needs'
@@ -86,6 +87,11 @@ const FarmersRoute = FarmersRouteImport.update({
 const FoodForFamiliesRoute = FoodForFamiliesRouteImport.update({
   id: '/food-for-families',
   path: '/food-for-families',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HealthzRoute = HealthzRouteImport.update({
+  id: '/healthz',
+  path: '/healthz',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LandRoute = LandRouteImport.update({
@@ -190,6 +196,7 @@ export interface FileRoutesByFullPath {
   '/energy': typeof EnergyRoute
   '/farmers': typeof FarmersRoute
   '/food-for-families': typeof FoodForFamiliesRoute
+  '/healthz': typeof HealthzRoute
   '/land': typeof LandRoute
   '/mission': typeof MissionRoute
   '/needs': typeof NeedsRoute
@@ -220,6 +227,7 @@ export interface FileRoutesByTo {
   '/energy': typeof EnergyRoute
   '/farmers': typeof FarmersRoute
   '/food-for-families': typeof FoodForFamiliesRoute
+  '/healthz': typeof HealthzRoute
   '/land': typeof LandRoute
   '/mission': typeof MissionRoute
   '/needs': typeof NeedsRoute
@@ -251,6 +259,7 @@ export interface FileRoutesById {
   '/energy': typeof EnergyRoute
   '/farmers': typeof FarmersRoute
   '/food-for-families': typeof FoodForFamiliesRoute
+  '/healthz': typeof HealthzRoute
   '/land': typeof LandRoute
   '/mission': typeof MissionRoute
   '/needs': typeof NeedsRoute
@@ -283,6 +292,7 @@ export interface FileRouteTypes {
     | '/energy'
     | '/farmers'
     | '/food-for-families'
+    | '/healthz'
     | '/land'
     | '/mission'
     | '/needs'
@@ -313,6 +323,7 @@ export interface FileRouteTypes {
     | '/energy'
     | '/farmers'
     | '/food-for-families'
+    | '/healthz'
     | '/land'
     | '/mission'
     | '/needs'
@@ -343,6 +354,7 @@ export interface FileRouteTypes {
     | '/energy'
     | '/farmers'
     | '/food-for-families'
+    | '/healthz'
     | '/land'
     | '/mission'
     | '/needs'
@@ -374,6 +386,7 @@ export interface RootRouteChildren {
   EnergyRoute: typeof EnergyRoute
   FarmersRoute: typeof FarmersRoute
   FoodForFamiliesRoute: typeof FoodForFamiliesRoute
+  HealthzRoute: typeof HealthzRoute
   LandRoute: typeof LandRoute
   MissionRoute: typeof MissionRoute
   NeedsRoute: typeof NeedsRoute
@@ -464,6 +477,13 @@ declare module '@tanstack/react-router' {
       path: '/food-for-families'
       fullPath: '/food-for-families'
       preLoaderRoute: typeof FoodForFamiliesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/healthz': {
+      id: '/healthz'
+      path: '/healthz'
+      fullPath: '/healthz'
+      preLoaderRoute: typeof HealthzRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/land': {
@@ -606,6 +626,7 @@ const rootRouteChildren: RootRouteChildren = {
   EnergyRoute: EnergyRoute,
   FarmersRoute: FarmersRoute,
   FoodForFamiliesRoute: FoodForFamiliesRoute,
+  HealthzRoute: HealthzRoute,
   LandRoute: LandRoute,
   MissionRoute: MissionRoute,
   NeedsRoute: NeedsRoute,
