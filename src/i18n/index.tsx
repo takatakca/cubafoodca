@@ -23,7 +23,7 @@ type Ctx = {
 const I18nContext = createContext<Ctx | null>(null);
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>("en");
+  const [lang, setLangState] = useState<Lang>("fr");
 
   useEffect(() => {
     const stored = window.localStorage.getItem(STORAGE_KEY) as Lang | null;
