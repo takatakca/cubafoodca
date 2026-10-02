@@ -16,7 +16,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: production
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     env:
       RELEASE_SHA: ${{ github.sha }}
@@ -48,15 +48,38 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for name in CUBAFOOD_HOST CUBAFOOD_PORT CUBAFOOD_USER CUBAFOOD_APP_ROOT CUBAFOOD_PRODUCTION_URL VITE_SUPABASE_URL VITE_SUPABASE_PUBLISHABLE_KEY; do
-            test -n "${!name:-}" || { echo "Missing $name"; exit 1; }
+
+          for name in \
+            CUBAFOOD_HOST \
+            CUBAFOOD_PORT \
+            CUBAFOOD_USER \
+            CUBAFOOD_APP_ROOT \
+            CUBAFOOD_PRODUCTION_URL \
+            VITE_SUPABASE_URL \
+            VITE_SUPABASE_PUBLISHABLE_KEY
+          do
+            test -n "${!name:-}" || {
+              echo "::error::Missing $name"
+              exit 1
+            }
           done
-          [[ "$CUBAFOOD_PORT" =~ ^[0-9]+$ ]] || { echo "SSH port must be numeric"; exit 1; }
-          [[ "$CUBAFOOD_APP_ROOT" = /* ]] || { echo "Application root must be absolute"; exit 1; }
-          test "$CUBAFOOD_PRODUCTION_URL" = "https://cubafood.ca" || {
-            echo "Refusing unexpected production URL: $CUBAFOOD_PRODUCTION_URL"
+
+          [[ "$CUBAFOOD_PORT" =~ ^[0-9]+$ ]] || {
+            echo "::error::SSH port must be numeric"
             exit 1
           }
+
+          [[ "$CUBAFOOD_APP_ROOT" = /* ]] || {
+            echo "::error::Application root must be absolute"
+            exit 1
+          }
+
+          test "$CUBAFOOD_PRODUCTION_URL" = "https://cubafood.ca" || {
+            echo "::error::Refusing unexpected production URL: $CUBAFOOD_PRODUCTION_URL"
+            exit 1
+          }
+
+          echo "Deployment configuration validated."
 
       - name: Install locked dependencies
         run: bun install --frozen-lockfile
@@ -77,95 +100,286 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+
           test -f .output/server/index.mjs
           test -d .output/public
-          test -f .output/public/__l5e/assets-v1/85a0c69d-cdc5-4170-bb2b-46bd0043745d/field-1-poster.jpg
+
+          test -f \
+            .output/public/__l5e/assets-v1/85a0c69d-cdc5-4170-bb2b-46bd0043745d/field-1-poster.jpg
+
           printf '%s\n' "$RELEASE_SHA" > .output/RELEASE_SHA
 
-      - name: Configure SSH
+          echo "Release artifact verified."
+          ls -lh .output/server/index.mjs
+          du -sh .output
+
+      - name: Configure resilient SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.CUBAFOOD_PRODUCTION_SSH_PRIVATE_KEY }}
           KNOWN_HOSTS: ${{ secrets.CUBAFOOD_PRODUCTION_KNOWN_HOSTS }}
         shell: bash
         run: |
           set -euo pipefail
-          test -n "$SSH_PRIVATE_KEY"
-          test -n "$KNOWN_HOSTS"
+
+          test -n "$SSH_PRIVATE_KEY" || {
+            echo "::error::Missing SSH private key"
+            exit 1
+          }
+
+          test -n "$KNOWN_HOSTS" || {
+            echo "::error::Missing SSH known_hosts"
+            exit 1
+          }
+
           install -m 700 -d ~/.ssh
+
           printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
+
           printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
+
+          cat > ~/.ssh/config <<'EOF'
+          Host *
+            BatchMode yes
+            StrictHostKeyChecking yes
+            UserKnownHostsFile ~/.ssh/known_hosts
+            IdentitiesOnly yes
+            IdentityFile ~/.ssh/id_ed25519
+            PreferredAuthentications publickey
+            PasswordAuthentication no
+            PubkeyAuthentication yes
+            ConnectTimeout 30
+            ConnectionAttempts 3
+            ServerAliveInterval 10
+            ServerAliveCountMax 12
+            TCPKeepAlive yes
+            Compression no
+          EOF
+
+          chmod 600 ~/.ssh/config
+
+          echo "SSH client configured."
 
       - name: Verify SSH access
         shell: bash
         run: |
           set -euo pipefail
-          for attempt in 1 2 3; do
-            if ssh -p "$CUBAFOOD_PORT" \
-              -o BatchMode=yes \
-              -o StrictHostKeyChecking=yes \
-              -o ConnectTimeout=20 \
-              -o ServerAliveInterval=15 \
-              -o ServerAliveCountMax=4 \
-              "$CUBAFOOD_USER@$CUBAFOOD_HOST" "echo CUBAFOOD_SSH_OK"; then
-              exit 0
+
+          connected=0
+
+          for attempt in 1 2 3 4 5; do
+            echo "SSH verification attempt $attempt of 5..."
+
+            if timeout 90 ssh \
+              -p "$CUBAFOOD_PORT" \
+              "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
+              "echo CUBAFOOD_SSH_OK && whoami && hostname"; then
+
+              connected=1
+              break
             fi
-            sleep $((attempt * 5))
+
+            echo "SSH verification attempt $attempt failed."
+
+            if [ "$attempt" -lt 5 ]; then
+              sleep $((attempt * 5))
+            fi
           done
-          exit 1
+
+          if [ "$connected" != "1" ]; then
+            echo "::error::Unable to establish a stable SSH connection with MochaHost after 5 attempts."
+            exit 1
+          fi
+
+          echo "SSH connection verified successfully."
 
       - name: Package immutable release
         shell: bash
         run: |
           set -euo pipefail
+
           RELEASE_ID="${RELEASE_SHA}-${GITHUB_RUN_ID}"
+
           echo "RELEASE_ID=$RELEASE_ID" >> "$GITHUB_ENV"
-          tar -C .output -czf "cubafood-${RELEASE_ID}.tar.gz" .
+
+          tar -C .output \
+            -czf "cubafood-${RELEASE_ID}.tar.gz" \
+            .
+
+          test -s "cubafood-${RELEASE_ID}.tar.gz"
+
+          echo "Release package created:"
+          ls -lh "cubafood-${RELEASE_ID}.tar.gz"
+
+      - name: Prepare remote deployment folders
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          prepared=0
+
+          for attempt in 1 2 3 4 5; do
+            echo "Remote folder preparation attempt $attempt of 5..."
+
+            if timeout 120 ssh \
+              -p "$CUBAFOOD_PORT" \
+              "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
+              "mkdir -p \
+                '$CUBAFOOD_APP_ROOT/incoming' \
+                '$CUBAFOOD_APP_ROOT/releases' \
+                '$CUBAFOOD_APP_ROOT/shared' \
+                '$CUBAFOOD_APP_ROOT/tmp'"; then
+
+              prepared=1
+              break
+            fi
+
+            echo "Remote folder preparation attempt $attempt failed."
+
+            if [ "$attempt" -lt 5 ]; then
+              sleep $((attempt * 5))
+            fi
+          done
+
+          if [ "$prepared" != "1" ]; then
+            echo "::error::Could not prepare MochaHost deployment directories."
+            exit 1
+          fi
 
       - name: Upload release archive
         shell: bash
         run: |
           set -euo pipefail
-          ssh -p "$CUBAFOOD_PORT" "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
-            "mkdir -p '$CUBAFOOD_APP_ROOT/incoming' '$CUBAFOOD_APP_ROOT/releases' '$CUBAFOOD_APP_ROOT/tmp'"
 
-          for attempt in 1 2 3; do
-            if scp -P "$CUBAFOOD_PORT" \
-              -o BatchMode=yes \
-              -o StrictHostKeyChecking=yes \
-              -o ConnectTimeout=20 \
-              "cubafood-${RELEASE_ID}.tar.gz" \
-              "$CUBAFOOD_USER@$CUBAFOOD_HOST:$CUBAFOOD_APP_ROOT/incoming/cubafood-${RELEASE_ID}.tar.gz"; then
-              exit 0
+          uploaded=0
+
+          LOCAL_ARCHIVE="cubafood-${RELEASE_ID}.tar.gz"
+          REMOTE_ARCHIVE="$CUBAFOOD_APP_ROOT/incoming/cubafood-${RELEASE_ID}.tar.gz"
+
+          test -s "$LOCAL_ARCHIVE"
+
+          for attempt in 1 2 3 4 5; do
+            echo "Release upload attempt $attempt of 5..."
+
+            if timeout 600 scp \
+              -P "$CUBAFOOD_PORT" \
+              "$LOCAL_ARCHIVE" \
+              "$CUBAFOOD_USER@$CUBAFOOD_HOST:$REMOTE_ARCHIVE"; then
+
+              uploaded=1
+              break
             fi
-            sleep $((attempt * 5))
-          done
-          exit 1
 
-      - name: Atomically activate release and restart Passenger
+            echo "Upload attempt $attempt failed."
+
+            if [ "$attempt" -lt 5 ]; then
+              sleep $((attempt * 8))
+            fi
+          done
+
+          if [ "$uploaded" != "1" ]; then
+            echo "::error::Release archive could not be uploaded after 5 attempts."
+            exit 1
+          fi
+
+          echo "Release archive uploaded successfully."
+
+      - name: Verify uploaded archive
         shell: bash
         run: |
           set -euo pipefail
-          ssh -p "$CUBAFOOD_PORT" "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
-            "APP_ROOT='$CUBAFOOD_APP_ROOT' RELEASE_ID='$RELEASE_ID' RELEASE_SHA='$RELEASE_SHA' bash -s" <<'REMOTE'
+
+          verified=0
+
+          for attempt in 1 2 3 4 5; do
+            echo "Remote archive verification attempt $attempt of 5..."
+
+            if timeout 120 ssh \
+              -p "$CUBAFOOD_PORT" \
+              "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
+              "test -s '$CUBAFOOD_APP_ROOT/incoming/cubafood-${RELEASE_ID}.tar.gz' &&
+               ls -lh '$CUBAFOOD_APP_ROOT/incoming/cubafood-${RELEASE_ID}.tar.gz'"; then
+
+              verified=1
+              break
+            fi
+
+            if [ "$attempt" -lt 5 ]; then
+              sleep $((attempt * 5))
+            fi
+          done
+
+          if [ "$verified" != "1" ]; then
+            echo "::error::Uploaded archive could not be verified on MochaHost."
+            exit 1
+          fi
+
+      - name: Mark activation phase
+        shell: bash
+        run: |
+          echo "ACTIVATION_ATTEMPTED=true" >> "$GITHUB_ENV"
+
+      - name: Atomically activate release and restart Passenger
+        id: activate
+        shell: bash
+        run: |
           set -euo pipefail
+
+          cat > /tmp/cubafood-activate.sh <<'REMOTE'
+          set -euo pipefail
+
           RELEASE_DIR="$APP_ROOT/releases/$RELEASE_ID"
+          STAGING_DIR="$APP_ROOT/releases/.staging-$RELEASE_ID"
           ARCHIVE="$APP_ROOT/incoming/cubafood-$RELEASE_ID.tar.gz"
 
-          test -f "$ARCHIVE"
-          rm -rf "$RELEASE_DIR"
-          mkdir -p "$RELEASE_DIR"
-          tar -xzf "$ARCHIVE" -C "$RELEASE_DIR"
-          rm -f "$ARCHIVE"
+          echo "APP_ROOT=$APP_ROOT"
+          echo "RELEASE_ID=$RELEASE_ID"
+          echo "RELEASE_DIR=$RELEASE_DIR"
 
-          test -f "$RELEASE_DIR/server/index.mjs"
-          test -d "$RELEASE_DIR/public"
-          test "$(cat "$RELEASE_DIR/RELEASE_SHA")" = "$RELEASE_SHA"
+          if [ -f "$ARCHIVE" ]; then
+            echo "Archive found. Extracting release..."
+
+            rm -rf "$STAGING_DIR"
+            mkdir -p "$STAGING_DIR"
+
+            tar -xzf "$ARCHIVE" -C "$STAGING_DIR"
+
+            test -f "$STAGING_DIR/server/index.mjs"
+            test -d "$STAGING_DIR/public"
+            test -f "$STAGING_DIR/RELEASE_SHA"
+
+            ACTIVE_SHA="$(cat "$STAGING_DIR/RELEASE_SHA")"
+            test "$ACTIVE_SHA" = "$RELEASE_SHA"
+
+            rm -rf "$RELEASE_DIR"
+            mv "$STAGING_DIR" "$RELEASE_DIR"
+
+            rm -f "$ARCHIVE"
+          else
+            echo "Archive no longer present."
+            echo "Checking whether this release was already extracted by an earlier SSH attempt..."
+
+            test -f "$RELEASE_DIR/server/index.mjs"
+            test -d "$RELEASE_DIR/public"
+            test -f "$RELEASE_DIR/RELEASE_SHA"
+
+            ACTIVE_SHA="$(cat "$RELEASE_DIR/RELEASE_SHA")"
+            test "$ACTIVE_SHA" = "$RELEASE_SHA"
+          fi
+
+          echo "Release files verified."
 
           if [ -L "$APP_ROOT/current" ]; then
-            OLD_RELEASE="$(readlink -f "$APP_ROOT/current")"
-            if [ -n "$OLD_RELEASE" ] && [ -d "$OLD_RELEASE" ]; then
+            OLD_RELEASE="$(readlink -f "$APP_ROOT/current" || true)"
+
+            if [ -n "$OLD_RELEASE" ] &&
+               [ -d "$OLD_RELEASE" ] &&
+               [ "$OLD_RELEASE" != "$RELEASE_DIR" ]; then
+
+              echo "Saving previous release:"
+              echo "$OLD_RELEASE"
+
               ln -sfn "$OLD_RELEASE" "$APP_ROOT/previous"
             fi
           fi
@@ -174,79 +388,374 @@ jobs:
           ln -s "$RELEASE_DIR" "$APP_ROOT/current.new"
           mv -Tf "$APP_ROOT/current.new" "$APP_ROOT/current"
 
+          CURRENT_TARGET="$(readlink -f "$APP_ROOT/current")"
+
+          echo "Current release:"
+          echo "$CURRENT_TARGET"
+
+          test "$CURRENT_TARGET" = "$RELEASE_DIR"
+
           mkdir -p "$APP_ROOT/tmp"
           touch "$APP_ROOT/tmp/restart.txt"
+
+          echo "Passenger restart requested."
+          echo "CUBAFOOD release $RELEASE_ID activated successfully."
           REMOTE
+
+          activated=0
+
+          for attempt in 1 2 3 4 5; do
+            echo "Activation attempt $attempt of 5..."
+
+            if timeout 300 ssh \
+              -p "$CUBAFOOD_PORT" \
+              "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
+              "APP_ROOT='$CUBAFOOD_APP_ROOT' \
+               RELEASE_ID='$RELEASE_ID' \
+               RELEASE_SHA='$RELEASE_SHA' \
+               bash -s" \
+              < /tmp/cubafood-activate.sh; then
+
+              activated=1
+              break
+            fi
+
+            echo "Activation SSH attempt $attempt failed."
+
+            if [ "$attempt" -lt 5 ]; then
+              echo "Retrying activation safely..."
+              sleep $((attempt * 8))
+            fi
+          done
+
+          if [ "$activated" != "1" ]; then
+            echo "::error::Could not confirm release activation after 5 SSH attempts."
+            exit 1
+          fi
+
+          echo "Activation completed successfully."
+
+      - name: Verify active release over SSH
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          verified=0
+
+          for attempt in 1 2 3 4 5; do
+            echo "Active release verification attempt $attempt of 5..."
+
+            if timeout 120 ssh \
+              -p "$CUBAFOOD_PORT" \
+              "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
+              "set -e;
+               CURRENT_RELEASE=\$(readlink -f '$CUBAFOOD_APP_ROOT/current');
+               test -n \"\$CURRENT_RELEASE\";
+               test -f \"\$CURRENT_RELEASE/server/index.mjs\";
+               test -f \"\$CURRENT_RELEASE/RELEASE_SHA\";
+               test \"\$(cat \"\$CURRENT_RELEASE/RELEASE_SHA\")\" = '$RELEASE_SHA';
+               echo CURRENT_RELEASE=\"\$CURRENT_RELEASE\";
+               echo RELEASE_SHA=\$(cat \"\$CURRENT_RELEASE/RELEASE_SHA\")"; then
+
+              verified=1
+              break
+            fi
+
+            if [ "$attempt" -lt 5 ]; then
+              sleep $((attempt * 5))
+            fi
+          done
+
+          if [ "$verified" != "1" ]; then
+            echo "::error::Could not verify the active release on MochaHost."
+            exit 1
+          fi
+
+      - name: Wait for Passenger restart
+        shell: bash
+        run: |
+          echo "Waiting 8 seconds for Passenger..."
+          sleep 8
 
       - name: Verify production health
         shell: bash
         run: |
           set -euo pipefail
-          ok=0
-          for attempt in $(seq 1 10); do
-            if curl --fail --silent --show-error --location --max-time 20 \
-              "$CUBAFOOD_PRODUCTION_URL/healthz" | grep -q '"ok":true'; then
-              ok=1
-              break
+
+          healthy=0
+
+          for attempt in $(seq 1 15); do
+            echo "Health check attempt $attempt of 15..."
+
+            RESPONSE_FILE="$(mktemp)"
+
+            if curl \
+              --fail \
+              --silent \
+              --show-error \
+              --location \
+              --connect-timeout 15 \
+              --max-time 30 \
+              "$CUBAFOOD_PRODUCTION_URL/healthz" \
+              -o "$RESPONSE_FILE"; then
+
+              cat "$RESPONSE_FILE"
+
+              if grep -q '"ok":true' "$RESPONSE_FILE"; then
+                healthy=1
+                rm -f "$RESPONSE_FILE"
+                break
+              fi
             fi
-            sleep 5
+
+            rm -f "$RESPONSE_FILE"
+
+            if [ "$attempt" -lt 15 ]; then
+              sleep 5
+            fi
           done
-          test "$ok" = "1"
 
-          curl --fail --silent --show-error --location --max-time 20 \
-            -o /dev/null "$CUBAFOOD_PRODUCTION_URL/"
-          curl --fail --silent --show-error --location --max-time 20 \
-            -o /dev/null "$CUBAFOOD_PRODUCTION_URL/project"
-          curl --fail --silent --show-error --location --max-time 20 \
-            -o /dev/null "$CUBAFOOD_PRODUCTION_URL/videos"
-          curl --fail --silent --show-error --location --max-time 20 \
-            -o /dev/null "$CUBAFOOD_PRODUCTION_URL/__l5e/assets-v1/85a0c69d-cdc5-4170-bb2b-46bd0043745d/field-1-poster.jpg"
+          if [ "$healthy" != "1" ]; then
+            echo "::error::CUBAFOOD /healthz did not become healthy."
+            exit 1
+          fi
 
-      - name: Roll back failed activation
-        if: failure()
+          echo "Health endpoint passed."
+
+      - name: Verify critical production routes
         shell: bash
         run: |
           set -euo pipefail
-          ssh -p "$CUBAFOOD_PORT" "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
-            "APP_ROOT='$CUBAFOOD_APP_ROOT' bash -s" <<'REMOTE'
+
+          for route in \
+            "/" \
+            "/project" \
+            "/videos"
+          do
+            echo "Checking $CUBAFOOD_PRODUCTION_URL$route"
+
+            curl \
+              --fail \
+              --silent \
+              --show-error \
+              --location \
+              --retry 5 \
+              --retry-delay 3 \
+              --connect-timeout 15 \
+              --max-time 30 \
+              -o /dev/null \
+              "$CUBAFOOD_PRODUCTION_URL$route"
+          done
+
+          echo "Critical routes passed."
+
+      - name: Verify production media
+        shell: bash
+        run: |
           set -euo pipefail
+
+          MEDIA_URL="$CUBAFOOD_PRODUCTION_URL/__l5e/assets-v1/85a0c69d-cdc5-4170-bb2b-46bd0043745d/field-1-poster.jpg"
+
+          echo "Checking production media..."
+
+          curl \
+            --fail \
+            --silent \
+            --show-error \
+            --location \
+            --retry 5 \
+            --retry-delay 3 \
+            --connect-timeout 15 \
+            --max-time 30 \
+            -o /dev/null \
+            "$MEDIA_URL"
+
+          echo "Production media passed."
+
+      - name: Roll back failed activation
+        if: ${{ failure() && env.ACTIVATION_ATTEMPTED == 'true' }}
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -uo pipefail
+
+          echo "A deployment failure occurred after activation began."
+          echo "Attempting automatic rollback."
+
+          cat > /tmp/cubafood-rollback.sh <<'REMOTE'
+          set -euo pipefail
+
           if [ -L "$APP_ROOT/previous" ]; then
             PREVIOUS_RELEASE="$(readlink -f "$APP_ROOT/previous")"
+
+            test -n "$PREVIOUS_RELEASE"
             test -d "$PREVIOUS_RELEASE"
+            test -f "$PREVIOUS_RELEASE/server/index.mjs"
+
+            echo "Previous release:"
+            echo "$PREVIOUS_RELEASE"
+
             rm -f "$APP_ROOT/current.new"
             ln -s "$PREVIOUS_RELEASE" "$APP_ROOT/current.new"
             mv -Tf "$APP_ROOT/current.new" "$APP_ROOT/current"
+
+            ROLLED_BACK_TARGET="$(readlink -f "$APP_ROOT/current")"
+            test "$ROLLED_BACK_TARGET" = "$PREVIOUS_RELEASE"
+
             mkdir -p "$APP_ROOT/tmp"
             touch "$APP_ROOT/tmp/restart.txt"
-            echo "Rolled back to $PREVIOUS_RELEASE"
+
+            echo "Rolled back to:"
+            echo "$PREVIOUS_RELEASE"
           else
-            echo "No previous release exists; automatic rollback is unavailable for the first deployment."
+            echo "No previous release exists."
+            echo "This may be the first CUBAFOOD deployment."
           fi
           REMOTE
 
-      - name: Keep five releases
-        if: success()
+          rolled_back=0
+
+          for attempt in 1 2 3 4 5; do
+            echo "Rollback SSH attempt $attempt of 5..."
+
+            if timeout 300 ssh \
+              -p "$CUBAFOOD_PORT" \
+              "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
+              "APP_ROOT='$CUBAFOOD_APP_ROOT' bash -s" \
+              < /tmp/cubafood-rollback.sh; then
+
+              rolled_back=1
+              break
+            fi
+
+            echo "Rollback connection attempt $attempt failed."
+
+            if [ "$attempt" -lt 5 ]; then
+              sleep $((attempt * 8))
+            fi
+          done
+
+          if [ "$rolled_back" != "1" ]; then
+            echo "::warning::Automatic rollback could not connect to MochaHost after 5 attempts."
+            echo "::warning::Check /home/bolonca/cubafood_node/current manually."
+          else
+            echo "Rollback command completed."
+          fi
+
+          exit 0
+
+      - name: Verify rollback health
+        if: ${{ failure() && env.ACTIVATION_ATTEMPTED == 'true' }}
+        continue-on-error: true
         shell: bash
         run: |
+          echo "Waiting briefly for Passenger after rollback..."
+          sleep 8
+
+          if curl \
+            --fail \
+            --silent \
+            --show-error \
+            --location \
+            --retry 5 \
+            --retry-delay 5 \
+            --connect-timeout 15 \
+            --max-time 30 \
+            "$CUBAFOOD_PRODUCTION_URL/healthz"; then
+
+            echo
+            echo "Previous production release is responding after rollback."
+          else
+            echo "::warning::Could not verify production health after rollback."
+          fi
+
+      - name: Keep five releases
+        if: success()
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -uo pipefail
+
+          cat > /tmp/cubafood-cleanup.sh <<'REMOTE'
           set -euo pipefail
-          ssh -p "$CUBAFOOD_PORT" "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
-            "APP_ROOT='$CUBAFOOD_APP_ROOT' bash -s" <<'REMOTE'
-          set -euo pipefail
+
           cd "$APP_ROOT/releases"
-          CURRENT="$(basename "$(readlink -f "$APP_ROOT/current")")"
+
+          CURRENT=""
           PREVIOUS=""
+
+          if [ -L "$APP_ROOT/current" ]; then
+            CURRENT="$(basename "$(readlink -f "$APP_ROOT/current")")"
+          fi
+
           if [ -L "$APP_ROOT/previous" ]; then
             PREVIOUS="$(basename "$(readlink -f "$APP_ROOT/previous")")"
           fi
 
+          echo "Current release: $CURRENT"
+          echo "Previous release: $PREVIOUS"
+
           kept_other=0
+
           for dir in $(ls -1dt */ 2>/dev/null | sed 's#/$##'); do
+            case "$dir" in
+              .staging-*)
+                rm -rf -- "$dir"
+                continue
+                ;;
+            esac
+
             if [ "$dir" = "$CURRENT" ] || [ "$dir" = "$PREVIOUS" ]; then
               continue
             fi
+
             kept_other=$((kept_other + 1))
+
             if [ "$kept_other" -gt 3 ]; then
+              echo "Removing old release: $dir"
               rm -rf -- "$dir"
             fi
           done
+
+          echo "Release cleanup complete."
           REMOTE
+
+          cleaned=0
+
+          for attempt in 1 2 3; do
+            echo "Cleanup SSH attempt $attempt of 3..."
+
+            if timeout 180 ssh \
+              -p "$CUBAFOOD_PORT" \
+              "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
+              "APP_ROOT='$CUBAFOOD_APP_ROOT' bash -s" \
+              < /tmp/cubafood-cleanup.sh; then
+
+              cleaned=1
+              break
+            fi
+
+            if [ "$attempt" -lt 3 ]; then
+              sleep $((attempt * 5))
+            fi
+          done
+
+          if [ "$cleaned" != "1" ]; then
+            echo "::warning::Deployment succeeded, but old release cleanup could not connect."
+            echo "::warning::This does not affect the live CUBAFOOD release."
+          fi
+
+          exit 0
+
+      - name: Deployment summary
+        if: success()
+        shell: bash
+        run: |
+          echo "=============================================="
+          echo "CUBAFOOD PRODUCTION DEPLOYMENT SUCCESSFUL"
+          echo "=============================================="
+          echo "Release SHA: $RELEASE_SHA"
+          echo "Release ID:  $RELEASE_ID"
+          echo "Production:  $CUBAFOOD_PRODUCTION_URL"
+          echo "App root:    $CUBAFOOD_APP_ROOT"
+          echo "=============================================="
