@@ -300,7 +300,7 @@ export function Header() {
             <div className="flex flex-col gap-10">
               <div>
                 <p className="eyebrow text-secondary">{t(A.explore)}</p>
-                <ul className="mt-4 grid grid-cols-2 gap-x-6 gap-y-1">
+                <ul className="mt-4 grid grid-cols-1 gap-x-6 gap-y-1 sm:grid-cols-2">
                   {MORE.map((item) => (
                     <li key={item.to}>
                       <Link to={item.to} className="eyebrow block py-2.5 opacity-75 transition-opacity hover:opacity-100">
