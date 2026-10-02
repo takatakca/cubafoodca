@@ -66,14 +66,14 @@ const MORE: { to: string; label: T }[] = [
 const pill =
   "inline-flex h-10 items-center gap-2 rounded-full border border-current/25 px-3.5 text-sm font-medium transition-colors hover:bg-current/10 focus-visible:outline-2 focus-visible:outline-offset-2";
 
-function LanguageMenu({ compact }: { compact?: boolean }) {
+function LanguageMenu() {
   const { lang, setLang, t } = useI18n();
   const [open, setOpen] = useState(false);
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger className={pill} aria-label={t(A.language)}>
         <Globe className="h-4 w-4" aria-hidden />
-        {!compact || true ? <span className="eyebrow">{lang.toUpperCase()}</span> : null}
+        <span className="eyebrow">{lang.toUpperCase()}</span>
       </PopoverTrigger>
       <PopoverContent align="end" sideOffset={10} className="w-56 rounded-2xl border-border bg-card p-2 text-card-foreground shadow-[var(--shadow-plate)]">
         <p className="eyebrow px-3 pb-2 pt-1.5 text-muted-foreground">{t(A.language)}</p>
