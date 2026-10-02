@@ -30,6 +30,7 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      # Build first so functional/build failures are visible even if existing style-only lint findings remain.
       - name: Production build
         run: bun run build
 
