@@ -79,8 +79,9 @@ export type NavItem = { to: string; label: T };
 export const PRIMARY_NAV: NavItem[] = [
   { to: "/project", label: { en: "Project", es: "Proyecto", fr: "Projet" } },
   { to: "/land", label: { en: "The land", es: "La tierra", fr: "La terre" } },
-  { to: "/participate", label: { en: "Participate", es: "Participar", fr: "Participer" } },
+  { to: "/agriculture", label: { en: "Agriculture", es: "Agricultura", fr: "Agriculture" } },
   { to: "/farmers", label: { en: "Farmers", es: "Agricultores", fr: "Agriculteurs" } },
+  { to: "/participate", label: { en: "Participate", es: "Participar", fr: "Participer" } },
   { to: "/journal", label: { en: "Field journal", es: "Diario del campo", fr: "Journal de terrain" } },
   { to: "/videos", label: { en: "Videos", es: "Videos", fr: "Vidéos" } },
   { to: "/transparency", label: { en: "Transparency", es: "Transparencia", fr: "Transparence" } },
