@@ -270,7 +270,7 @@ function Home() {
         </div>
       </Section>
 
-      {featured ? (
+      {featured?.src && featured.poster ? (
         <Section tone="dark">
           <div className="grid gap-10 lg:grid-cols-[1.45fr_0.55fr] lg:items-end">
             <div>
