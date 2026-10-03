@@ -1,531 +1,306 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useI18n } from "@/i18n";
-import { SITE, UI, CORE_CTA } from "@/content/site";
+import { ArrowDown, ArrowRight, MapPin, Play, Sprout } from "lucide-react";
+import { useI18n, type T } from "@/i18n";
+import { SITE, UI } from "@/content/site";
 import { FIELD_MEDIA, VIDEOS } from "@/content/media";
-import { JOURNAL_POSTS } from "@/content/journal";
-import { INSTITUTIONS } from "@/content/collaboration";
 import { EQUIPMENT_CATEGORIES } from "@/content/needs";
 import { CUBA_ROLES, CANADA_CATEGORIES } from "@/content/roles";
-import { TRANSPARENCY_MODULES } from "@/content/transparency";
-import { Section, Eyebrow, Headline, Lede, ActionLink, StatusTag, EmptyState } from "@/components/site/primitives";
+import { Section, Eyebrow, Headline, ActionLink, StatusTag } from "@/components/site/primitives";
 import { BackgroundVideo, VideoPlayer } from "@/components/site/media";
-import { LocationMap } from "@/components/site/map";
-import { AgriculturalNetwork } from "@/components/site/network";
-import { ProjectTimeline } from "@/components/site/timeline";
 import { Reveal } from "@/components/ui/reveal";
 import { WhatsAppButton, EmailButton } from "@/components/site/whatsapp";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "CUBAFOOD.CA — Helping Cuba grow more food" },
+      { title: "CUBAFOOD.CA — Cultivando Cuba. Juntos." },
       {
         name: "description",
         content:
-          "A Canada–Cuba agricultural initiative in Matanzas, Cuba. More than 24 km of project land, farmer partnerships, equipment, training and food sovereignty. Join the project.",
+          "CUBAFOOD.CA développe une initiative agricole Canada–Cuba à Matanzas pour renforcer la production locale, les agriculteurs et la souveraineté alimentaire.",
       },
       { property: "og:title", content: "CUBAFOOD.CA — Cultivando Cuba. Juntos." },
       {
         property: "og:description",
         content:
-          "We are not only trying to send food to Cuba. We are trying to help Cuba grow more food. Matanzas, Cuba — 24+ km of agricultural development.",
+          "Une initiative agricole Canada–Cuba à Matanzas. De l'aide alimentaire à la capacité de produire davantage.",
       },
-      { property: "og:url", content: "/" },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "/" }],
   }),
   component: Home,
 });
 
+const COPY = {
+  proof: {
+    en: "A Canada–Cuba agricultural development initiative",
+    es: "Una iniciativa de desarrollo agrícola Canadá–Cuba",
+    fr: "Une initiative de développement agricole Canada–Cuba",
+  },
+  thesis: {
+    en: "From food delivery to food capacity.",
+    es: "De entregar alimentos a crear capacidad alimentaria.",
+    fr: "De l'aide alimentaire à la capacité de produire.",
+  },
+  thesisBody: {
+    en: "The ambition is not a single harvest. It is durable agricultural capacity: land assessment, water, equipment, training, farmer collaboration, storage, transport and responsible distribution.",
+    es: "La ambición no es una sola cosecha. Es una capacidad agrícola duradera: evaluación de tierras, agua, equipos, formación, colaboración con agricultores, almacenamiento, transporte y distribución responsable.",
+    fr: "L'ambition ne se limite pas à une récolte. Elle vise une capacité agricole durable : évaluation des terres, eau, équipement, formation, collaboration avec les agriculteurs, stockage, transport et distribution responsable.",
+  },
+  documented: {
+    en: "Field documentation",
+    es: "Documentación de campo",
+    fr: "Documentation de terrain",
+  },
+  development: {
+    en: "In development",
+    es: "En desarrollo",
+    fr: "En développement",
+  },
+} satisfies Record<string, T>;
+
+const MODEL: { number: string; title: T; body: T; to: string }[] = [
+  {
+    number: "01",
+    title: { en: "Understand the land", es: "Comprender la tierra", fr: "Comprendre la terre" },
+    body: {
+      en: "Map, sample and evaluate soil, water and crop suitability before planting.",
+      es: "Cartografiar, muestrear y evaluar suelo, agua y cultivos antes de sembrar.",
+      fr: "Cartographier, échantillonner et évaluer les sols, l'eau et les cultures avant de semer.",
+    },
+    to: "/land",
+  },
+  {
+    number: "02",
+    title: { en: "Equip production", es: "Equipar la producción", fr: "Équiper la production" },
+    body: {
+      en: "Build the irrigation, energy, machinery, storage and transport systems agriculture requires.",
+      es: "Desarrollar los sistemas de riego, energía, maquinaria, almacenamiento y transporte necesarios.",
+      fr: "Développer les systèmes d'irrigation, d'énergie, de machinerie, de stockage et de transport nécessaires.",
+    },
+    to: "/needs",
+  },
+  {
+    number: "03",
+    title: { en: "Grow with farmers", es: "Cultivar con agricultores", fr: "Cultiver avec les agriculteurs" },
+    body: {
+      en: "Work with Cuban farmers and cooperatives as partners, never as competitors.",
+      es: "Trabajar con agricultores y cooperativas cubanas como socios, nunca como competidores.",
+      fr: "Travailler avec les agriculteurs et coopératives cubains comme partenaires, jamais comme concurrents.",
+    },
+    to: "/farmers",
+  },
+  {
+    number: "04",
+    title: { en: "Reach families", es: "Llegar a las familias", fr: "Rejoindre les familles" },
+    body: {
+      en: "Connect production to communities through responsible storage, logistics and distribution.",
+      es: "Conectar la producción con las comunidades mediante almacenamiento, logística y distribución responsables.",
+      fr: "Relier la production aux communautés par un stockage, une logistique et une distribution responsables.",
+    },
+    to: "/food-for-families",
+  },
+];
+
 function Home() {
   const { t } = useI18n();
-  const featured = VIDEOS[0]!;
-  const latest = JOURNAL_POSTS[0];
+  const featured = VIDEOS[0];
 
   return (
     <>
-      {/* CHAPTER 01 — HERO */}
-      <section className="relative min-h-[92svh] overflow-hidden bg-charcoal text-cream">
+      <section className="relative min-h-[94svh] overflow-hidden bg-charcoal text-cream">
         <div className="absolute inset-0">
           <BackgroundVideo
             src={FIELD_MEDIA.clip2.src}
             poster={FIELD_MEDIA.clip2.poster}
-            label="Field documentation from the Matanzas project area"
-            className="opacity-55"
+            label="CUBAFOOD field documentation in Matanzas"
+            className="opacity-65"
           />
+          <div className="absolute inset-0 bg-gradient-to-r from-charcoal/80 via-charcoal/35 to-transparent" />
           <div className="absolute inset-0 field-fade" />
         </div>
-        <div className="shell relative flex min-h-[92svh] flex-col justify-end pb-14 pt-32 md:pb-20">
-          <Eyebrow className="text-secondary opacity-100">Canada + Cuba · {SITE.established} —</Eyebrow>
-          <h1 className="poster mt-6 max-w-[16ch]">{t(SITE.tagline)}</h1>
-          <p className="mt-6 max-w-xl text-lg opacity-85 md:text-xl">
-            {t({
-              en: "We are not only trying to send food to Cuba. We are trying to help Cuba grow more food.",
-              es: "No solo intentamos enviar alimentos a Cuba. Intentamos ayudar a Cuba a producir más alimentos.",
-              fr: "Nous ne cherchons pas seulement à envoyer de la nourriture à Cuba. Nous voulons aider Cuba à en produire davantage.",
-            })}
-          </p>
-          <div className="mt-9 flex flex-wrap gap-3">
-            <ActionLink to="/project" variant="cream">
-              {t(UI.seeProject)}
-            </ActionLink>
-            <ActionLink to="/participate" variant="outline">
-              {t(UI.join)}
-            </ActionLink>
+
+        <div className="shell relative flex min-h-[94svh] flex-col justify-end pb-8 pt-32 md:pb-12">
+          <div className="mb-auto flex items-center gap-3 pt-5">
+            <span className="h-px w-10 bg-secondary" />
+            <Eyebrow className="text-cream opacity-80">{t(COPY.proof)}</Eyebrow>
           </div>
-          <p className="mt-10 text-xs uppercase tracking-[0.22em] opacity-55">
-            {t(SITE.location)}
-          </p>
+
+          <div className="max-w-6xl">
+            <p className="display text-2xl text-secondary md:text-4xl">CUBAFOOD.CA</p>
+            <h1 className="poster mt-4 max-w-[12ch]">{t(SITE.tagline)}</h1>
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-cream/85 md:text-2xl">
+              {t({
+                en: "Helping Cuba grow more food—and build the systems to keep growing.",
+                es: "Ayudando a Cuba a producir más alimentos y a construir los sistemas para seguir creciendo.",
+                fr: "Aider Cuba à produire davantage — et à bâtir les systèmes pour continuer.",
+              })}
+            </p>
+          </div>
+
+          <div className="mt-9 flex flex-wrap gap-3">
+            <ActionLink to="/project" variant="cream">{t(UI.seeProject)}</ActionLink>
+            <ActionLink to="/participate" variant="outline">{t(UI.join)}</ActionLink>
+          </div>
+
+          <div className="mt-12 grid border-y border-cream/20 sm:grid-cols-3">
+            <div className="py-4 sm:border-r sm:border-cream/20 sm:px-5 sm:first:pl-0">
+              <p className="eyebrow text-secondary">{t({ en: "Place", es: "Lugar", fr: "Lieu" })}</p>
+              <p className="mt-2 text-sm">Matanzas, Cuba</p>
+            </div>
+            <div className="border-t border-cream/20 py-4 sm:border-r sm:border-t-0 sm:px-5">
+              <p className="eyebrow text-secondary">{t({ en: "Scale", es: "Escala", fr: "Échelle" })}</p>
+              <p className="mt-2 text-sm">24+ km · {t({ en: "development area", es: "zona de desarrollo", fr: "zone de développement" })}</p>
+            </div>
+            <div className="border-t border-cream/20 py-4 sm:border-t-0 sm:pl-5">
+              <p className="eyebrow text-secondary">{t({ en: "Status", es: "Estado", fr: "Statut" })}</p>
+              <p className="mt-2 text-sm">{t(COPY.development)} · 2024—</p>
+            </div>
+          </div>
+
+          <a href="#mission" className="mt-6 inline-flex w-fit items-center gap-2 text-xs uppercase text-cream/65">
+            <ArrowDown className="h-4 w-4" aria-hidden />
+            {t({ en: "Discover the initiative", es: "Descubrir la iniciativa", fr: "Découvrir l'initiative" })}
+          </a>
         </div>
       </section>
 
-      {/* CHAPTER 02 — SCALE */}
-      <Section tone="soil">
-        <Reveal>
-          <Eyebrow>{t({ en: "Chapter 02 — Scale", es: "Capítulo 02 — Escala", fr: "Chapitre 02 — Échelle" })}</Eyebrow>
-          <p className="poster mt-6">
-            {t({ en: "More than 24 km of land.", es: "Más de 24 km de tierra.", fr: "Plus de 24 km de terrain." })}
-          </p>
-        </Reveal>
-        <div className="mt-12 grid gap-10 lg:grid-cols-2">
-          <Reveal className="overflow-hidden rounded-lg">
-            <img
-              src={FIELD_MEDIA.clip3.poster}
-              alt="Frame from project field documentation in the Matanzas development area"
-              loading="lazy"
-              className="aspect-16/10 w-full object-cover"
-            />
-            <p className="mt-3 text-xs opacity-55">
-              {t({
-                en: "Project documentation — Matanzas development area.",
-                es: "Documentación del proyecto — área de desarrollo de Matanzas.",
-                fr: "Documentation du projet — zone de développement de Matanzas.",
-              })}
-            </p>
+      <section id="mission" className="bg-background py-20 md:py-32">
+        <div className="shell grid gap-12 lg:grid-cols-[0.75fr_1.5fr] lg:gap-24">
+          <Reveal>
+            <Eyebrow className="text-primary">01 · {t({ en: "The purpose", es: "El propósito", fr: "La raison d'être" })}</Eyebrow>
+            <p className="mt-6 max-w-xs text-sm leading-relaxed text-muted-foreground">{t(SITE.mission)}</p>
           </Reveal>
           <Reveal delay={100}>
-            <p className="text-xl leading-relaxed md:text-2xl">
-              {t({
-                en: "A project of this size cannot be built by one person, one company or one country.",
-                es: "Un proyecto de este tamaño no puede construirlo una persona, una empresa ni un solo país.",
-                fr: "Un projet de cette taille ne peut être bâti par une seule personne, entreprise ou nation.",
-              })}
-            </p>
-            <p className="display mt-8 text-4xl text-secondary md:text-6xl">
-              {t({ en: "It needs people.", es: "Necesita gente.", fr: "Il faut des gens." })}
-            </p>
-            <p className="mt-8 max-w-prose text-sm opacity-70">{t(SITE.landScale)}</p>
-            <div className="mt-8">
-              <ActionLink to="/land" variant="outline">
-                {t({ en: "24 km of opportunity", es: "24 km de oportunidad", fr: "24 km d'opportunité" })}
-              </ActionLink>
-            </div>
+            <h2 className="headline max-w-[15ch]">{t(COPY.thesis)}</h2>
+            <p className="mt-8 max-w-3xl text-lg leading-relaxed text-muted-foreground md:text-2xl">{t(COPY.thesisBody)}</p>
+            <div className="mt-9"><ActionLink to="/project" variant="ghost">{t({ en: "Explore the complete project", es: "Explorar el proyecto completo", fr: "Explorer le projet complet" })}</ActionLink></div>
           </Reveal>
-        </div>
-      </Section>
-
-      {/* CHAPTER 03 — LOCATION */}
-      <Section tone="dark">
-        <Eyebrow>{t({ en: "Chapter 03 — Location", es: "Capítulo 03 — Ubicación", fr: "Chapitre 03 — Emplacement" })}</Eyebrow>
-        <Headline>
-          Matanzas
-          <span className="block text-secondary">Varadero airport area</span>
-        </Headline>
-        <div className="mt-12">
-          <LocationMap />
-        </div>
-      </Section>
-
-      {/* CHAPTER 04 — MISSION */}
-      <Section>
-        <Eyebrow>{t({ en: "Chapter 04 — The mission", es: "Capítulo 04 — La misión", fr: "Chapitre 04 — La mission" })}</Eyebrow>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { en: "Grow food.", es: "Producir alimentos.", fr: "Produire des aliments." },
-            { en: "Create work.", es: "Crear trabajo.", fr: "Créer du travail." },
-            { en: "Support farmers.", es: "Apoyar a los agricultores.", fr: "Soutenir les agriculteurs." },
-            { en: "Strengthen communities.", es: "Fortalecer comunidades.", fr: "Renforcer les communautés." },
-          ].map((line, i) => (
-            <Reveal key={i} delay={i * 80} className="rounded-lg bg-primary/8 p-8">
-              <span className="display text-sm text-primary/60">0{i + 1}</span>
-              <p className="display mt-4 text-2xl md:text-3xl">{t(line)}</p>
-            </Reveal>
-          ))}
-        </div>
-        <Reveal className="mt-12 border-l-2 border-primary pl-6 md:pl-10">
-          <p className="max-w-4xl text-lg leading-relaxed md:text-xl">«{t(SITE.mission)}»</p>
-        </Reveal>
-        <div className="mt-8">
-          <ActionLink to="/mission" variant="ghost">
-            {t({ en: "Read the full mission", es: "Leer la misión completa", fr: "Lire la mission complète" })}
-          </ActionLink>
-        </div>
-      </Section>
-
-      {/* CHAPTER 05 — STATUS */}
-      <Section tone="card">
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <Eyebrow>{t({ en: "Chapter 05 — Current status", es: "Capítulo 05 — Estado actual", fr: "Chapitre 05 — Statut actuel" })}</Eyebrow>
-            <Headline>
-              {t({ en: "Advanced development", es: "Desarrollo avanzado", fr: "Développement avancé" })}
-              <span className="block text-clay">
-                {t({ en: "Institutional coordination", es: "Coordinación institucional", fr: "Coordination institutionnelle" })}
-              </span>
-            </Headline>
-          </div>
-          <StatusTag>{t({ en: "Approval process — active", es: "Proceso de aprobación — activo", fr: "Processus d'approbation — actif" })}</StatusTag>
-        </div>
-        <Lede>{t(SITE.statusLine)}</Lede>
-        <div className="mt-14">
-          <ProjectTimeline compact />
-        </div>
-        <div className="mt-10">
-          <ActionLink to="/timeline" variant="ghost">
-            {t({ en: "Full project timeline", es: "Cronología completa", fr: "Chronologie complète" })}
-          </ActionLink>
-        </div>
-      </Section>
-
-      {/* CHAPTER 06 — PEOPLE NEEDED */}
-      <section className="bg-charcoal text-cream">
-        <div className="shell py-16 md:py-28">
-          <Eyebrow>{t({ en: "Chapter 06 — People needed", es: "Capítulo 06 — Se necesitan personas", fr: "Chapitre 06 — Besoin de gens" })}</Eyebrow>
-          <p className="poster mt-6">{t({ en: "We need hands.", es: "Necesitamos manos.", fr: "Il nous faut des bras." })}</p>
-        </div>
-        <div className="grid md:grid-cols-2">
-          <Link
-            to="/cuba"
-            className="group relative overflow-hidden border-t border-cream/15 p-8 transition-colors hover:bg-cream/5 md:p-14"
-          >
-            <p className="eyebrow text-secondary">Cuba</p>
-            <p className="display mt-5 text-3xl md:text-5xl">Cuba necesita manos para cultivar su futuro.</p>
-            <p className="mt-5 max-w-md text-sm opacity-70">
-              {CUBA_ROLES.slice(0, 8).map((r) => t(r.label)).join(" · ")} …
-            </p>
-            <span className="eyebrow mt-8 inline-block text-secondary group-hover:underline">Quiero participar →</span>
-          </Link>
-          <Link
-            to="/canada"
-            className="group relative overflow-hidden border-t border-cream/15 p-8 transition-colors hover:bg-cream/5 md:border-l md:p-14"
-          >
-            <p className="eyebrow text-secondary">Canada</p>
-            <p className="display mt-5 text-3xl md:text-5xl">Canada can help Cuba grow.</p>
-            <p className="mt-5 max-w-md text-sm opacity-70">
-              {CANADA_CATEGORIES.slice(0, 6).map((r) => t(r.label)).join(" · ")} …
-            </p>
-            <span className="eyebrow mt-8 inline-block text-secondary group-hover:underline">
-              {t({ en: "Help build the project", es: "Ayuda a construir el proyecto", fr: "Aidez à bâtir le projet" })} →
-            </span>
-          </Link>
         </div>
       </section>
 
-      {/* CHAPTER 07 — FARMERS */}
-      <Section tone="green">
-        <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-center">
-          <div>
-            <Eyebrow>{t({ en: "Chapter 07 — Farmers", es: "Capítulo 07 — Agricultores", fr: "Chapitre 07 — Agriculteurs" })}</Eyebrow>
-            <p className="poster mt-6">
-              {t({
-                en: "Farmers are partners, not competitors.",
-                es: "Los agricultores son socios, no competidores.",
-                fr: "Les agriculteurs sont des partenaires, pas des concurrents.",
-              })}
-            </p>
-            <Lede>
-              {t({
-                en: "The objective is not to replace Cuban farmers. It is to strengthen them — with seeds, tools, machinery access, irrigation, storage, transport, training and market connections.",
-                es: "El objetivo no es sustituir a los agricultores cubanos. Es fortalecerlos — con semillas, herramientas, acceso a maquinaria, riego, almacenamiento, transporte, capacitación y conexiones de mercado.",
-                fr: "L'objectif n'est pas de remplacer les agriculteurs cubains, mais de les renforcer — semences, outils, machinerie, irrigation, stockage, transport, formation et débouchés.",
-              })}
-            </Lede>
-            <div className="mt-9 flex flex-wrap gap-3">
-              <ActionLink to="/farmers" variant="cream">
-                {t({ en: "Register as a farmer", es: "Regístrate como agricultor", fr: "S'inscrire comme agriculteur" })}
-              </ActionLink>
+      <section className="bg-soil text-soil-foreground">
+        <div className="grid lg:grid-cols-2">
+          <div className="relative min-h-[58svh] overflow-hidden lg:min-h-[760px]">
+            <img src={FIELD_MEDIA.clip3.poster} alt="Matanzas agricultural development area" className="absolute inset-0 h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-soil/85 via-transparent to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 p-6 md:p-12">
+              <p className="eyebrow text-secondary">{t(COPY.documented)} · Matanzas</p>
+              <p className="mt-3 max-w-lg text-sm text-soil-foreground/70">{t({ en: "Images shown are project field documentation from the development area.", es: "Las imágenes son documentación de campo del área de desarrollo.", fr: "Les images présentées sont de la documentation de terrain de la zone de développement." })}</p>
             </div>
           </div>
-          <img
-            src={FIELD_MEDIA.clip5.poster}
-            alt="Frame from project field documentation showing the land near the development area"
-            loading="lazy"
-            className="aspect-4/3 w-full rounded-lg object-cover"
-          />
+          <div className="flex flex-col justify-center p-6 py-16 md:p-14 lg:p-20">
+            <Eyebrow className="text-secondary">02 · {t({ en: "The territory", es: "El territorio", fr: "Le territoire" })}</Eyebrow>
+            <p className="poster mt-7">24+ KM</p>
+            <h2 className="display mt-6 text-3xl md:text-5xl">{t({ en: "A serious scale demands a serious method.", es: "Una escala seria exige un método serio.", fr: "Une telle échelle exige une méthode rigoureuse." })}</h2>
+            <p className="mt-7 max-w-xl text-base leading-relaxed text-soil-foreground/75">{t(SITE.locationLine)}</p>
+            <div className="mt-10 flex flex-wrap gap-3">
+              <ActionLink to="/locations/matanzas" variant="cream"><MapPin className="h-4 w-4" aria-hidden /> Matanzas</ActionLink>
+              <ActionLink to="/land" variant="outline">{t({ en: "Study the land", es: "Estudiar la tierra", fr: "Étudier la terre" })}</ActionLink>
+            </div>
+          </div>
         </div>
-      </Section>
+      </section>
 
-      {/* CHAPTER 08 — NETWORK */}
       <Section>
-        <Eyebrow>{t({ en: "Chapter 08 — Agricultural network", es: "Capítulo 08 — Red agrícola", fr: "Chapitre 08 — Réseau agricole" })}</Eyebrow>
-        <Headline>{t({ en: "Building an agricultural network", es: "Construyendo una red agrícola", fr: "Bâtir un réseau agricole" })}</Headline>
-        <Lede>
-          {t({
-            en: "The goal is an ecosystem, not an isolated farm: farmers, cooperatives, institutions, universities, communities, Canadian partners, market and families.",
-            es: "El objetivo es un ecosistema, no una finca aislada: agricultores, cooperativas, instituciones, universidades, comunidades, socios canadienses, mercado y familias.",
-            fr: "L'objectif est un écosystème, pas une ferme isolée : agriculteurs, coopératives, institutions, universités, communautés, partenaires canadiens, marché et familles.",
-          })}
-        </Lede>
-        <div className="mt-10 text-primary">
-          <AgriculturalNetwork />
+        <div className="flex flex-wrap items-end justify-between gap-8">
+          <div>
+            <Eyebrow className="text-primary">03 · {t({ en: "The operating model", es: "El modelo operativo", fr: "Le modèle d'action" })}</Eyebrow>
+            <Headline>{t({ en: "Land to family.", es: "De la tierra a la familia.", fr: "De la terre à la famille." })}</Headline>
+          </div>
+          <StatusTag>{t(COPY.development)}</StatusTag>
         </div>
-      </Section>
-
-      {/* CHAPTER 09 — EDUCATION */}
-      <Section tone="card">
-        <Eyebrow>{t({ en: "Chapter 09 — Education", es: "Capítulo 09 — Educación", fr: "Chapitre 09 — Éducation" })}</Eyebrow>
-        <Headline>{t({ en: "Better agriculture is built together.", es: "La mejor agricultura se construye en conjunto.", fr: "Une meilleure agriculture se bâtit ensemble." })}</Headline>
-        <div className="mt-10 grid gap-px overflow-hidden rounded-lg bg-border sm:grid-cols-2 lg:grid-cols-5">
-          {INSTITUTIONS.slice(0, 5).map((org) => (
-            <Link
-              key={org.id}
-              to="/collaboration"
-              className="bg-card p-6 transition-colors hover:bg-muted"
-            >
-              <p className="display text-lg">{org.name}</p>
-              <p className="mt-2 text-xs opacity-60">{t(org.kind)}</p>
-              <p className="eyebrow mt-6 text-clay">
-                {t({ en: "Planned / proposed", es: "Planificada / propuesta", fr: "Planifiée / proposée" })}
-              </p>
+        <div className="mt-14 border-t border-border">
+          {MODEL.map((step) => (
+            <Link key={step.number} to={step.to} className="group grid gap-4 border-b border-border py-8 transition-colors hover:bg-muted/50 md:grid-cols-[80px_1fr_1.2fr_40px] md:items-center md:px-4">
+              <span className="display text-2xl text-primary/50">{step.number}</span>
+              <h3 className="display text-2xl md:text-3xl">{t(step.title)}</h3>
+              <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">{t(step.body)}</p>
+              <ArrowRight className="h-5 w-5 text-primary transition-transform group-hover:translate-x-1" aria-hidden />
             </Link>
           ))}
         </div>
-        <p className="mt-6 text-xs opacity-55">
-          {t({
-            en: "Organizations identified for project coordination. No formal endorsement is claimed.",
-            es: "Organizaciones identificadas para la coordinación del proyecto. No se declara ningún respaldo formal.",
-            fr: "Organisations identifiées pour la coordination. Aucun appui formel n'est revendiqué.",
-          })}
-        </p>
       </Section>
 
-      {/* CHAPTER 10 — TECHNOLOGY */}
+      <section className="bg-charcoal py-20 text-cream md:py-32">
+        <div className="shell">
+          <Reveal className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+            <div>
+              <Eyebrow className="text-secondary">04 · {t({ en: "People and cooperation", es: "Personas y cooperación", fr: "Personnes et coopération" })}</Eyebrow>
+              <h2 className="poster mt-7 max-w-[13ch]">{t({ en: "Built in Cuba. Connected to Canada.", es: "Construido en Cuba. Conectado con Canadá.", fr: "Bâti à Cuba. Relié au Canada." })}</h2>
+            </div>
+            <p className="max-w-xl text-lg leading-relaxed text-cream/70">{t({ en: "A project of this scale needs farmers, technicians, institutions, companies, educators, students, logisticians and communities working toward one practical goal.", es: "Un proyecto de esta escala necesita agricultores, técnicos, instituciones, empresas, educadores, estudiantes, especialistas en logística y comunidades unidos por un objetivo práctico.", fr: "Un projet de cette ampleur exige agriculteurs, techniciens, institutions, entreprises, éducateurs, étudiants, logisticiens et communautés autour d'un objectif concret." })}</p>
+          </Reveal>
+          <div className="mt-16 grid border border-cream/15 lg:grid-cols-2">
+            <Link to="/cuba" className="group p-7 transition-colors hover:bg-cream/5 md:p-12 lg:border-r lg:border-cream/15">
+              <p className="eyebrow text-secondary">Cuba</p>
+              <h3 className="display mt-5 text-4xl md:text-6xl">Cuba necesita manos.</h3>
+              <p className="mt-6 max-w-xl text-sm leading-relaxed text-cream/65">{CUBA_ROLES.slice(0, 7).map((role) => t(role.label)).join(" · ")}</p>
+              <span className="eyebrow mt-9 inline-flex items-center gap-2 text-secondary">Quiero participar <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></span>
+            </Link>
+            <Link to="/canada" className="group border-t border-cream/15 p-7 transition-colors hover:bg-cream/5 md:p-12 lg:border-t-0">
+              <p className="eyebrow text-secondary">Canada</p>
+              <h3 className="display mt-5 text-4xl md:text-6xl">Canada can help Cuba grow.</h3>
+              <p className="mt-6 max-w-xl text-sm leading-relaxed text-cream/65">{CANADA_CATEGORIES.slice(0, 6).map((category) => t(category.label)).join(" · ")}</p>
+              <span className="eyebrow mt-9 inline-flex items-center gap-2 text-secondary">{t({ en: "See contribution paths", es: "Ver formas de contribuir", fr: "Voir les façons de contribuer" })} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <Section tone="soil">
-        <Eyebrow>{t({ en: "Chapter 10 — Technology", es: "Capítulo 10 — Tecnología", fr: "Chapitre 10 — Technologie" })}</Eyebrow>
-        <Headline>
-          {t({
-            en: "24+ km of land needs more than good intentions.",
-            es: "Más de 24 km de tierra necesitan más que buenas intenciones.",
-            fr: "Plus de 24 km de terrain exigent plus que de bonnes intentions.",
-          })}
-        </Headline>
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {EQUIPMENT_CATEGORIES.slice(0, 4).map((c, i) => (
-            <Reveal key={c.id} delay={i * 70} className="rounded-lg border border-cream/15 p-6">
-              <p className="display text-xl">{t(c.title)}</p>
-              <p className="mt-3 text-sm opacity-70">{t(c.description)}</p>
-              <p className="eyebrow mt-6 text-clay">{t({ en: "Needed", es: "Necesario", fr: "Requis" })}</p>
-            </Reveal>
-          ))}
-        </div>
-        <div className="mt-10 flex flex-wrap gap-3">
-          <ActionLink to="/needs" variant="cream">
-            {t({ en: "I have equipment to offer", es: "Tengo equipos para ofrecer", fr: "J'ai de l'équipement à offrir" })}
-          </ActionLink>
-          <ActionLink to="/energy" variant="outline">
-            {t({ en: "Propose a technology", es: "Proponer una tecnología", fr: "Proposer une technologie" })}
-          </ActionLink>
-        </div>
-      </Section>
-
-      {/* CHAPTER 11 — FIELD JOURNAL */}
-      <Section>
-        <div className="flex flex-wrap items-end justify-between gap-6">
+        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
           <div>
-            <Eyebrow>{t({ en: "Chapter 11 — Field journal", es: "Capítulo 11 — Diario del campo", fr: "Chapitre 11 — Journal de terrain" })}</Eyebrow>
-            <Headline>Desde el campo</Headline>
+            <Eyebrow className="text-clay">05 · {t({ en: "What the land requires", es: "Lo que requiere la tierra", fr: "Ce qu'exige la terre" })}</Eyebrow>
+            <h2 className="headline mt-7">{t({ en: "Infrastructure before promises.", es: "Infraestructura antes que promesas.", fr: "Des infrastructures avant les promesses." })}</h2>
+            <p className="mt-7 max-w-lg text-soil-foreground/70">{t({ en: "The needs below are identified requirements—not purchased assets, confirmed donations or completed installations.", es: "Las necesidades son requisitos identificados, no activos comprados, donaciones confirmadas ni instalaciones terminadas.", fr: "Ces besoins sont des exigences identifiées, et non des actifs achetés, des dons confirmés ou des installations achevées." })}</p>
+            <div className="mt-9"><ActionLink to="/needs" variant="cream">{t({ en: "View all equipment needs", es: "Ver todas las necesidades", fr: "Voir tous les besoins" })}</ActionLink></div>
           </div>
-          <ActionLink to="/journal" variant="ghost">
-            {t({ en: "All field updates", es: "Todas las actualizaciones", fr: "Toutes les mises à jour" })}
-          </ActionLink>
-        </div>
-        <div className="mt-10">
-          {latest ? (
-            <Link
-              to="/journal/$slug"
-              params={{ slug: latest.slug }}
-              className="group grid gap-8 lg:grid-cols-2 lg:items-center"
-            >
-              <img
-                src={latest.poster}
-                alt={t(latest.title)}
-                loading="lazy"
-                className="aspect-16/10 w-full rounded-lg object-cover"
-              />
-              <div>
-                <p className="eyebrow opacity-55">
-                  {latest.date} · {t(latest.location)}
-                </p>
-                <h3 className="display mt-4 text-3xl group-hover:text-primary md:text-4xl">{t(latest.title)}</h3>
-                <p className="mt-4 max-w-prose opacity-75">{t(latest.subtitle)}</p>
-              </div>
-            </Link>
-          ) : (
-            <EmptyState title={{ en: "No entries yet", es: "Aún no hay entradas", fr: "Aucune entrée" }} />
-          )}
+          <div className="grid gap-px overflow-hidden border border-cream/15 bg-cream/15 sm:grid-cols-2">
+            {EQUIPMENT_CATEGORIES.slice(0, 6).map((category) => (
+              <Link key={category.id} to="/needs" className="group bg-soil p-6 transition-colors hover:bg-charcoal/25 md:p-8">
+                <div className="flex items-center justify-between gap-4"><Sprout className="h-5 w-5 text-clay" aria-hidden /><span className="eyebrow text-clay">{t({ en: "Needed", es: "Necesario", fr: "Requis" })}</span></div>
+                <h3 className="display mt-8 text-2xl">{t(category.title)}</h3>
+                <p className="mt-4 text-sm leading-relaxed text-soil-foreground/65">{t(category.description)}</p>
+              </Link>
+            ))}
+          </div>
         </div>
       </Section>
 
-      {/* CHAPTER 12 — VIDEO */}
-      <Section tone="dark">
-        <Eyebrow>{t({ en: "Chapter 12 — Video", es: "Capítulo 12 — Video", fr: "Chapitre 12 — Vidéo" })}</Eyebrow>
-        <Headline>
-          {t({ en: "Watch the project grow.", es: "Mira crecer el proyecto.", fr: "Regardez le projet grandir." })}
-        </Headline>
-        <div className="mt-10 grid gap-8 lg:grid-cols-[1.6fr_1fr] lg:items-center">
-          <VideoPlayer src={featured.src!} poster={featured.poster!} title={t(featured.title)} />
-          <div>
-            <p className="eyebrow text-secondary">{t({ en: "Featured documentation", es: "Documentación destacada", fr: "Documentation en vedette" })}</p>
-            <p className="display mt-4 text-2xl">{t(featured.title)}</p>
-            <p className="mt-4 text-sm opacity-75">{t(featured.description)}</p>
-            <div className="mt-8">
-              <ActionLink to="/videos" variant="outline">
-                {t({ en: "Video centre", es: "Centro de video", fr: "Centre vidéo" })}
-              </ActionLink>
+      {featured?.src && featured.poster ? (
+        <Section tone="dark">
+          <div className="grid gap-10 lg:grid-cols-[1.45fr_0.55fr] lg:items-end">
+            <div>
+              <div className="mb-7 flex items-center gap-3"><Play className="h-4 w-4 text-secondary" aria-hidden /><Eyebrow>{t(COPY.documented)}</Eyebrow></div>
+              <VideoPlayer src={featured.src} poster={featured.poster} title={t(featured.title)} />
+            </div>
+            <div>
+              <p className="eyebrow text-secondary">06 · {t({ en: "From the field", es: "Desde el campo", fr: "Depuis le terrain" })}</p>
+              <h2 className="display mt-6 text-4xl md:text-6xl">{t({ en: "See the place. Follow the work.", es: "Conoce el lugar. Sigue el trabajo.", fr: "Voir le lieu. Suivre le travail." })}</h2>
+              <p className="mt-6 text-sm leading-relaxed text-cream/65">{t(featured.description)}</p>
+              <div className="mt-9"><ActionLink to="/videos" variant="outline">{t({ en: "Open the field archive", es: "Abrir el archivo de campo", fr: "Ouvrir les archives terrain" })}</ActionLink></div>
             </div>
           </div>
-        </div>
-      </Section>
+        </Section>
+      ) : null}
 
-      {/* CHAPTER 13 — FOOD FOR FAMILIES */}
-      <Section tone="card">
-        <Eyebrow>{t({ en: "Chapter 13 — Food for families", es: "Capítulo 13 — Del campo a la familia", fr: "Chapitre 13 — Du champ à la famille" })}</Eyebrow>
-        <Headline>
-          {t({ en: "From the field to the family.", es: "Del campo a la familia.", fr: "Du champ à la famille." })}
-        </Headline>
-        <div className="mt-10 grid gap-8 md:grid-cols-2">
-          <div className="rounded-lg border border-border p-8">
-            <p className="eyebrow text-primary">01</p>
-            <p className="display mt-4 text-2xl">{t({ en: "Produce food", es: "Producir alimentos", fr: "Produire des aliments" })}</p>
-            <p className="mt-3 text-sm opacity-75">
-              {t({
-                en: "Build agricultural capacity so more food can be produced locally.",
-                es: "Construir capacidad agrícola para producir más alimentos localmente.",
-                fr: "Bâtir la capacité agricole pour produire plus localement.",
-              })}
-            </p>
-          </div>
-          <div className="rounded-lg border border-border p-8">
-            <p className="eyebrow text-primary">02</p>
-            <p className="display mt-4 text-2xl">
-              {t({ en: "Help when help is needed", es: "Ayudar cuando hace falta", fr: "Aider quand il le faut" })}
-            </p>
-            <p className="mt-3 text-sm opacity-75">
-              {t({
-                en: "Develop responsible food and agricultural assistance programs for participating communities, farmers and families.",
-                es: "Desarrollar programas responsables de asistencia alimentaria y agrícola para comunidades, agricultores y familias participantes.",
-                fr: "Développer des programmes responsables d'aide alimentaire et agricole pour les communautés participantes.",
-              })}
-            </p>
-          </div>
-        </div>
-        <div className="mt-8">
-          <ActionLink to="/food-for-families" variant="ghost">
-            {t({ en: "Food for families", es: "Del campo a la familia", fr: "Du champ à la famille" })}
-          </ActionLink>
-        </div>
-      </Section>
-
-      {/* CHAPTER 14 — TRANSPARENCY */}
-      <Section>
-        <Eyebrow>{t({ en: "Chapter 14 — Transparency", es: "Capítulo 14 — Transparencia", fr: "Chapitre 14 — Transparence" })}</Eyebrow>
-        <Headline>
-          {t({
-            en: "If people help us, they deserve to see the results.",
-            es: "Si la gente nos ayuda, merece ver los resultados.",
-            fr: "Si les gens nous aident, ils méritent d'en voir les résultats.",
-          })}
-        </Headline>
-        <div className="mt-10 grid gap-px overflow-hidden rounded-lg bg-border sm:grid-cols-2 lg:grid-cols-4">
-          {TRANSPARENCY_MODULES.slice(0, 8).map((m) => (
-            <div key={m.id} className="bg-background p-6">
-              <p className="eyebrow opacity-55">{t(m.label)}</p>
-              <p className="mt-4 text-sm opacity-70">{t(UI.noData)}</p>
-            </div>
-          ))}
-        </div>
-        <div className="mt-8">
-          <ActionLink to="/transparency" variant="ghost">
-            {t({ en: "Transparency centre", es: "Centro de transparencia", fr: "Centre de transparence" })}
-          </ActionLink>
-        </div>
-      </Section>
-
-      {/* CHAPTER 15 — JOIN */}
-      <Section tone="green">
-        <Eyebrow>{t({ en: "Chapter 15 — Join", es: "Capítulo 15 — Únete", fr: "Chapitre 15 — Rejoindre" })}</Eyebrow>
-        <p className="poster mt-6 max-w-5xl">
-          {t({
-            en: "Cuba has the land. Cuba has the people. Canada can help provide resources, knowledge and connections.",
-            es: "Cuba tiene la tierra. Cuba tiene la gente. Canadá puede aportar recursos, conocimiento y conexiones.",
-            fr: "Cuba a la terre. Cuba a les gens. Le Canada peut fournir ressources, savoir et réseaux.",
-          })}
-        </p>
-        <p className="display mt-10 text-5xl md:text-8xl">
-          {t({ en: "Let's grow.", es: "Vamos a cultivar.", fr: "Cultivons." })}
-        </p>
-        <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <ActionLink to="/cuba" variant="cream">{t(UI.inCuba)}</ActionLink>
-          <ActionLink to="/canada" variant="cream">{t(UI.inCanada)}</ActionLink>
-          <ActionLink to="/farmers" variant="cream">{t(UI.aFarmer)}</ActionLink>
-          <ActionLink to="/partners" variant="cream">{t(UI.aCompany)}</ActionLink>
-        </div>
-        <p className="mt-14 max-w-3xl text-2xl md:text-3xl">{t(CORE_CTA.headline)}</p>
-        <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm opacity-80">
-          {CORE_CTA.verbs.map((v, i) => (
-            <li key={i} className="eyebrow">
-              {t(v)}
-            </li>
-          ))}
-        </ul>
-      </Section>
-
-      {/* FINAL SCREEN */}
-      <section className="relative min-h-[86svh] overflow-hidden bg-charcoal text-cream">
+      <section className="relative min-h-[82svh] overflow-hidden bg-charcoal text-cream">
         <div className="absolute inset-0">
-          <BackgroundVideo
-            src={FIELD_MEDIA.clip1.src}
-            poster={FIELD_MEDIA.clip1.poster}
-            label="Project field documentation"
-            className="opacity-35"
-          />
+          <BackgroundVideo src={FIELD_MEDIA.clip1.src} poster={FIELD_MEDIA.clip1.poster} label="CUBAFOOD field documentation" className="opacity-40" />
           <div className="absolute inset-0 field-fade" />
         </div>
-        <div className="shell relative flex min-h-[86svh] flex-col justify-end pb-16 pt-28">
-          <p className="eyebrow text-secondary">CUBAFOOD.CA</p>
-          <p className="poster mt-6 max-w-[14ch]">
-            {t({
-              en: "The land is there. The people are there. The need is real.",
-              es: "La tierra está ahí. La gente está ahí. La necesidad es real.",
-              fr: "La terre est là. Les gens sont là. Le besoin est réel.",
-            })}
-          </p>
-          <p className="display mt-8 text-5xl text-secondary md:text-7xl">
-            {t({ en: "Now we build.", es: "Ahora construimos.", fr: "Maintenant, on bâtit." })}
-          </p>
-          <p className="mt-8 max-w-2xl text-sm opacity-75">
-            {t({
-              en: "Canada and Cuba working toward stronger agricultural production, greater food sustainability and communities capable of growing more of what they need.",
-              es: "Canadá y Cuba trabajando por una producción agrícola más fuerte, mayor sostenibilidad alimentaria y comunidades capaces de cultivar más de lo que necesitan.",
-              fr: "Le Canada et Cuba œuvrent pour une production agricole plus forte, une meilleure durabilité alimentaire et des communautés capables de cultiver davantage.",
-            })}
-          </p>
+        <div className="shell relative flex min-h-[82svh] flex-col justify-end py-16 md:py-24">
+          <Eyebrow className="text-secondary">07 · {t({ en: "Take part", es: "Participa", fr: "Prendre part" })}</Eyebrow>
+          <h2 className="poster mt-7 max-w-[12ch]">{t({ en: "The next chapter needs people.", es: "El próximo capítulo necesita personas.", fr: "Le prochain chapitre a besoin de vous." })}</h2>
+          <p className="mt-7 max-w-2xl text-lg leading-relaxed text-cream/75">{t({ en: "Work with us. Farm with us. Equip, teach, transport, research or build with us.", es: "Trabaja, cultiva, equipa, enseña, transporta, investiga o construye con nosotros.", fr: "Travaillez, cultivez, équipez, enseignez, transportez, recherchez ou bâtissez avec nous." })}</p>
           <div className="mt-10 flex flex-wrap gap-3">
-            <ActionLink to="/cuba" variant="cream">
-              {t({ en: "Join from Cuba", es: "Únete desde Cuba", fr: "Rejoindre depuis Cuba" })}
-            </ActionLink>
-            <ActionLink to="/canada" variant="outline">
-              {t({ en: "Help from Canada", es: "Ayuda desde Canadá", fr: "Aider depuis le Canada" })}
-            </ActionLink>
-            <ActionLink to="/partners" variant="outline">
-              {t({ en: "Become a partner", es: "Sé un socio", fr: "Devenir partenaire" })}
-            </ActionLink>
+            <ActionLink to="/participate" variant="cream">{t(UI.join)}</ActionLink>
+            <ActionLink to="/project" variant="outline">{t(UI.seeProject)}</ActionLink>
           </div>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <WhatsAppButton />
-            <EmailButton />
-          </div>
+          <div className="mt-8 flex flex-wrap gap-3"><WhatsAppButton /><EmailButton /></div>
         </div>
       </section>
     </>
