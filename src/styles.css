@@ -50,6 +50,7 @@
   --color-cuba-red: var(--cuba-red);
   --color-cuba-blue: var(--cuba-blue);
   --color-sun: var(--sun);
+  --color-field-highlight: var(--field-highlight);
 
   --font-display: "Anton", "Arial Narrow", sans-serif;
   --font-sans: "Public Sans", ui-sans-serif, system-ui, sans-serif;
@@ -106,6 +107,8 @@
   --cuba-red: oklch(0.505 0.196 27);
   --cuba-blue: oklch(0.44 0.106 250);
   --sun: oklch(0.79 0.135 78);
+  --field-highlight: oklch(0.78 0.12 135);
+  --gradient-documentary: linear-gradient(90deg, color-mix(in oklab, var(--charcoal) 78%, transparent), color-mix(in oklab, var(--charcoal) 12%, transparent)), linear-gradient(180deg, color-mix(in oklab, var(--charcoal) 40%, transparent), transparent 35%, color-mix(in oklab, var(--charcoal) 80%, transparent));
 
   --gradient-field: linear-gradient(
     180deg,
@@ -252,6 +255,47 @@
     opacity: 1;
     r: 6.5;
   }
+}
+
+.documentary-opening {
+  display: flex;
+  flex-direction: column;
+  min-height: 94svh;
+}
+
+.documentary-shade {
+  background-image: var(--gradient-documentary);
+}
+
+.documentary-title {
+  font-size: 48px;
+  font-weight: 400;
+  line-height: 0.94;
+  letter-spacing: 0;
+}
+
+.documentary-enter {
+  animation: reveal-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (min-width: 640px) {
+  .documentary-title { font-size: 80px; }
+}
+
+@media (min-width: 1024px) {
+  .documentary-title { font-size: 112px; }
+}
+
+@media (min-width: 1280px) {
+  .documentary-title { font-size: 144px; }
+}
+
+@media (min-width: 1536px) {
+  .documentary-title { font-size: 160px; }
+}
+
+@media (max-width: 359px) {
+  .documentary-title { font-size: 42px; }
 }
 
 .reveal {
