@@ -11,22 +11,18 @@ import {
 import { ActionLink } from "@/components/site/primitives";
 import { FIELD_MEDIA } from "@/content/media";
 import { CROPS, CROP_DISCLAIMER, AGROECOLOGY_TOPICS, SOURCES } from "@/content/research";
+import { seoHead } from "@/seo/head";
 
 export const Route = createFileRoute("/agriculture")({
-  head: () => ({
-    meta: [
-      { title: "Agriculture — What Should We Grow? | CUBAFOOD.CA" },
-      {
-        name: "description",
-        content:
-          "Crop families under evaluation for the CUBAFOOD.CA development area in Matanzas: viandas, legumes, vegetables and fruit — with water, soil, cycle and storage requirements.",
-      },
-      { property: "og:title", content: "Agriculture — What Should We Grow?" },
-      { property: "og:description", content: "Crop exploration for a diversified food strategy in Matanzas, Cuba." },
-      { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  // French title + description from this page's hero text.
+  head: () =>
+    seoHead({
+      title: "Production agricole — Que devons-nous cultiver ? | CUBAFOOD.CA",
+      description:
+        "De la nourriture pour les gens, décidée par la terre. Ce sont des catégories en évaluation, pas un plan de plantation.",
+      path: "/agriculture",
+      type: "article",
+    }),
   component: Page,
 });
 

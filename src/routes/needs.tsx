@@ -5,22 +5,18 @@ import { ActionLink } from "@/components/site/primitives";
 import { FIELD_MEDIA } from "@/content/media";
 import { EQUIPMENT_CATEGORIES, WATER_INFRASTRUCTURE } from "@/content/needs";
 import { SUPPLY_STATUS_LABEL } from "@/content/types";
+import { seoHead } from "@/seo/head";
 
 export const Route = createFileRoute("/needs")({
-  head: () => ({
-    meta: [
-      { title: "Project Needs — Real Infrastructure | CUBAFOOD.CA" },
-      {
-        name: "description",
-        content:
-          "What the CUBAFOOD.CA agricultural development actually needs: land preparation, irrigation, harvest, storage, cold chain, transport, energy and worker equipment.",
-      },
-      { property: "og:title", content: "This Project Needs Real Infrastructure" },
-      { property: "og:description", content: "An honest equipment list — every item marked NEEDED until verified otherwise." },
-      { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  // French title + description from this page's hero text.
+  head: () =>
+    seoHead({
+      title: "Ce projet a besoin d'une vraie infrastructure | CUBAFOOD.CA",
+      description:
+        "Pas de slogans. Machines, eau, énergie et chambres froides. Tout est listé comme REQUIS. Aucune quantité, prix, commanditaire ou livraison n'est publié.",
+      path: "/needs",
+      type: "article",
+    }),
   component: Page,
 });
 

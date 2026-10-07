@@ -11,22 +11,18 @@ import { ActionLink } from "@/components/site/primitives";
 import { FIELD_MEDIA } from "@/content/media";
 import { SOIL_PROTOCOL, SOURCES } from "@/content/research";
 import { SourceNotes } from "@/components/site/editorial";
+import { seoHead } from "@/seo/head";
 
 export const Route = createFileRoute("/land")({
-  head: () => ({
-    meta: [
-      { title: "The Land — Before the First Seed | CUBAFOOD.CA" },
-      {
-        name: "description",
-        content:
-          "Land assessment for the CUBAFOOD.CA development area in Matanzas: mapping, sampling, soil analysis, water evaluation and crop suitability — a 16-step field protocol.",
-      },
-      { property: "og:title", content: "The Land — Before the First Seed" },
-      { property: "og:description", content: "Mapping, soil science, water evaluation and crop suitability methodology." },
-      { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  // French title + description from this page's hero text.
+  head: () =>
+    seoHead({
+      title: "La terre — Avant la première graine | CUBAFOOD.CA",
+      description:
+        "L'agriculture commence par la mesure. N'importe qui peut promettre une récolte. Un projet sérieux mesure d'abord.",
+      path: "/land",
+      type: "article",
+    }),
   component: Page,
 });
 

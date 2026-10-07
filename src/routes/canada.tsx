@@ -5,22 +5,18 @@ import { ActionLink } from "@/components/site/primitives";
 import { PartnerForm } from "@/components/site/forms";
 import { FIELD_MEDIA } from "@/content/media";
 import { CANADA_CATEGORIES, COMPANY_CONTRIBUTIONS } from "@/content/roles";
+import { seoHead } from "@/seo/head";
 
 export const Route = createFileRoute("/canada")({
-  head: () => ({
-    meta: [
-      { title: "Canada Can Help Cuba Grow | CUBAFOOD.CA" },
-      {
-        name: "description",
-        content:
-          "Contribution pathways from Canada: farmers, equipment owners, agricultural companies, universities, energy, logistics, students, volunteers and the Cuban-Canadian community.",
-      },
-      { property: "og:title", content: "Canada Can Help Cuba Grow" },
-      { property: "og:description", content: "Equipment, expertise, logistics and knowledge — concrete ways to support the project." },
-      { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  // French title + description from this page's hero text.
+  head: () =>
+    seoHead({
+      title: "Le Canada peut aider Cuba à cultiver | CUBAFOOD.CA",
+      description:
+        "Équipement, expertise, logistique, énergie, formation. Ce n'est pas un appel aux dons, mais une demande précise de ce dont le développement agricole a besoin.",
+      path: "/canada",
+      type: "article",
+    }),
   component: Page,
 });
 

@@ -22,26 +22,18 @@ import {
   SOURCES,
   PEOPLE_GROUPS,
 } from "@/content/research";
+import { seoHead } from "@/seo/head";
 
 export const Route = createFileRoute("/locations/matanzas")({
-  head: () => ({
-    meta: [
-      { title: "Matanzas — Where the CUBAFOOD.CA Project Begins" },
-      {
-        name: "description",
-        content:
-          "Matanzas, Cuba: the region, its agricultural history, the land, soil study, potential crops, water and logistics behind the CUBAFOOD.CA development area.",
-      },
-      { property: "og:title", content: "Matanzas — Where the CUBAFOOD.CA Project Begins" },
-      {
-        property: "og:description",
-        content:
-          "The place, the history, the soil, the crops and the people behind a Canada–Cuba agricultural development in Matanzas.",
-      },
-      { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  // French title + description from this page's hero text.
+  head: () =>
+    seoHead({
+      title: "Matanzas — Là où commence le projet | CUBAFOOD.CA",
+      description:
+        "Un nouvel effort de développement agricole prend forme dans l'une des régions agricoles les plus importantes de Cuba — terre, personnes, production alimentaire, infrastructure et coopération Canada–Cuba.",
+      path: "/locations/matanzas",
+      type: "article",
+    }),
   component: Page,
 });
 

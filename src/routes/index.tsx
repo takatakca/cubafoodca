@@ -14,27 +14,11 @@ import { AgriculturalNetwork } from "@/components/site/network";
 import { ProjectTimeline } from "@/components/site/timeline";
 import { Reveal } from "@/components/ui/reveal";
 import { WhatsAppButton, EmailButton } from "@/components/site/whatsapp";
+import { seoHead } from "@/seo/head";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "CUBAFOOD.CA — Helping Cuba grow more food" },
-      {
-        name: "description",
-        content:
-          "A Canada–Cuba agricultural initiative in Matanzas, Cuba. More than 24 km of project land, farmer partnerships, equipment, training and food sovereignty. Join the project.",
-      },
-      { property: "og:title", content: "CUBAFOOD.CA — Cultivando Cuba. Juntos." },
-      {
-        property: "og:description",
-        content:
-          "We are not only trying to send food to Cuba. We are trying to help Cuba grow more food. Matanzas, Cuba — 24+ km of agricultural development.",
-      },
-      { property: "og:url", content: "/" },
-      { property: "og:type", content: "website" },
-    ],
-    links: [{ rel: "canonical", href: "/" }],
-  }),
+  // French texts from this page (hero title + intro) and the default description.
+  head: () => seoHead({ title: "CUBAFOOD.CA — Cultivando Cuba. Juntos.", path: "/" }),
   component: Home,
 });
 

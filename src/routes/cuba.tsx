@@ -5,22 +5,18 @@ import { ActionLink } from "@/components/site/primitives";
 import { Field, TextInput, TextArea, Select, ChipGroup, MultiStepForm, type StepDef } from "@/components/site/forms";
 import { FIELD_MEDIA } from "@/content/media";
 import { CUBA_ROLES, CUBAN_PROVINCES, EMPLOYMENT_ROLES } from "@/content/roles";
+import { seoHead } from "@/seo/head";
 
 export const Route = createFileRoute("/cuba")({
-  head: () => ({
-    meta: [
-      { title: "Cuba — Participa en el proyecto agrícola | CUBAFOOD.CA" },
-      {
-        name: "description",
-        content:
-          "Cuba necesita manos para cultivar su futuro. Registro de interés para agricultores, operadores, mecánicos, agrónomos, estudiantes y voluntarios en Matanzas y toda Cuba.",
-      },
-      { property: "og:title", content: "Cuba necesita manos para cultivar su futuro" },
-      { property: "og:description", content: "Registro de interés de participación en el proyecto agrícola CUBAFOOD.CA." },
-      { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  // French title + description from this page's hero text.
+  head: () =>
+    seoHead({
+      title: "Cuba necesita manos para cultivar su futuro | CUBAFOOD.CA",
+      description:
+        "Agriculteurs, opérateurs, mécaniciens, agronomes, chauffeurs, étudiants et bénévoles. Inscription d'intérêt ouverte partout à Cuba.",
+      path: "/cuba",
+      type: "article",
+    }),
   component: Page,
 });
 

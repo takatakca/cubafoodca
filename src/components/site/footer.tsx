@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { useI18n } from "@/i18n";
 import { PRIMARY_NAV, SECONDARY_NAV, SITE } from "@/content/site";
 import { WhatsAppButton, EmailButton } from "./whatsapp";
+import { POLICY_PAGES } from "@/content/research";
+import { ManageCookiesLink } from "@/consent/ManageCookiesLink";
 
 export function Footer() {
   const { t } = useI18n();
@@ -82,6 +84,12 @@ export function Footer() {
               fr: "État du projet : coordination institutionnelle et processus d'approbation. Aucune approbation n'est présentée comme finale.",
             })}
           </p>
+          <div className="flex flex-wrap gap-x-4 gap-y-1">
+            <Link to="/politique-de-confidentialite" className="underline-offset-2 hover:underline">
+              {t(POLICY_PAGES.privacy.title)}
+            </Link>
+            <ManageCookiesLink />
+          </div>
         </div>
       </div>
     </footer>

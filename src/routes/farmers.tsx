@@ -6,22 +6,18 @@ import { FarmerForm } from "@/components/site/forms";
 import { FIELD_MEDIA } from "@/content/media";
 import { CUBAN_PROVINCES, FARMER_REQUESTS } from "@/content/roles";
 import { TRAINING_MODULES } from "@/content/research";
+import { seoHead } from "@/seo/head";
 
 export const Route = createFileRoute("/farmers")({
-  head: () => ({
-    meta: [
-      { title: "Farmers — Support the People Who Already Know the Land | CUBAFOOD.CA" },
-      {
-        name: "description",
-        content:
-          "CUBAFOOD.CA does not want to replace Cuban farmers. Register your farm or cooperative for equipment sharing, irrigation, inputs, storage, transport and training collaboration.",
-      },
-      { property: "og:title", content: "Support the People Who Already Know the Land" },
-      { property: "og:description", content: "Farmer and cooperative collaboration with the CUBAFOOD.CA agricultural project in Matanzas." },
-      { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  // French title + description from this page's hero text.
+  head: () =>
+    seoHead({
+      title: "Nous ne voulons pas remplacer les agriculteurs cubains | CUBAFOOD.CA",
+      description:
+        "Nous voulons les aider à produire davantage. Ceux qui travaillent déjà cette terre sont le point de départ du projet.",
+      path: "/farmers",
+      type: "article",
+    }),
   component: Page,
 });
 

@@ -26,6 +26,7 @@ import { Route as NeedsRouteImport } from './routes/needs'
 import { Route as ParticipateRouteImport } from './routes/participate'
 import { Route as PartnersRouteImport } from './routes/partners'
 import { Route as PeopleRouteImport } from './routes/people'
+import { Route as PolitiqueDeConfidentialiteRouteImport } from './routes/politique-de-confidentialite'
 import { Route as ProjectRouteImport } from './routes/project'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as TimelineRouteImport } from './routes/timeline'
@@ -124,6 +125,12 @@ const PeopleRoute = PeopleRouteImport.update({
   path: '/people',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PolitiqueDeConfidentialiteRoute =
+  PolitiqueDeConfidentialiteRouteImport.update({
+    id: '/politique-de-confidentialite',
+    path: '/politique-de-confidentialite',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ProjectRoute = ProjectRouteImport.update({
   id: '/project',
   path: '/project',
@@ -203,6 +210,7 @@ export interface FileRoutesByFullPath {
   '/participate': typeof ParticipateRoute
   '/partners': typeof PartnersRoute
   '/people': typeof PeopleRoute
+  '/politique-de-confidentialite': typeof PolitiqueDeConfidentialiteRoute
   '/project': typeof ProjectRoute
   '/reports': typeof ReportsRoute
   '/timeline': typeof TimelineRoute
@@ -234,6 +242,7 @@ export interface FileRoutesByTo {
   '/participate': typeof ParticipateRoute
   '/partners': typeof PartnersRoute
   '/people': typeof PeopleRoute
+  '/politique-de-confidentialite': typeof PolitiqueDeConfidentialiteRoute
   '/project': typeof ProjectRoute
   '/reports': typeof ReportsRoute
   '/timeline': typeof TimelineRoute
@@ -266,6 +275,7 @@ export interface FileRoutesById {
   '/participate': typeof ParticipateRoute
   '/partners': typeof PartnersRoute
   '/people': typeof PeopleRoute
+  '/politique-de-confidentialite': typeof PolitiqueDeConfidentialiteRoute
   '/project': typeof ProjectRoute
   '/reports': typeof ReportsRoute
   '/timeline': typeof TimelineRoute
@@ -299,6 +309,7 @@ export interface FileRouteTypes {
     | '/participate'
     | '/partners'
     | '/people'
+    | '/politique-de-confidentialite'
     | '/project'
     | '/reports'
     | '/timeline'
@@ -330,6 +341,7 @@ export interface FileRouteTypes {
     | '/participate'
     | '/partners'
     | '/people'
+    | '/politique-de-confidentialite'
     | '/project'
     | '/reports'
     | '/timeline'
@@ -361,6 +373,7 @@ export interface FileRouteTypes {
     | '/participate'
     | '/partners'
     | '/people'
+    | '/politique-de-confidentialite'
     | '/project'
     | '/reports'
     | '/timeline'
@@ -393,6 +406,7 @@ export interface RootRouteChildren {
   ParticipateRoute: typeof ParticipateRoute
   PartnersRoute: typeof PartnersRoute
   PeopleRoute: typeof PeopleRoute
+  PolitiqueDeConfidentialiteRoute: typeof PolitiqueDeConfidentialiteRoute
   ProjectRoute: typeof ProjectRoute
   ReportsRoute: typeof ReportsRoute
   TimelineRoute: typeof TimelineRoute
@@ -528,6 +542,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PeopleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/politique-de-confidentialite': {
+      id: '/politique-de-confidentialite'
+      path: '/politique-de-confidentialite'
+      fullPath: '/politique-de-confidentialite'
+      preLoaderRoute: typeof PolitiqueDeConfidentialiteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/project': {
       id: '/project'
       path: '/project'
@@ -633,6 +654,7 @@ const rootRouteChildren: RootRouteChildren = {
   ParticipateRoute: ParticipateRoute,
   PartnersRoute: PartnersRoute,
   PeopleRoute: PeopleRoute,
+  PolitiqueDeConfidentialiteRoute: PolitiqueDeConfidentialiteRoute,
   ProjectRoute: ProjectRoute,
   ReportsRoute: ReportsRoute,
   TimelineRoute: TimelineRoute,

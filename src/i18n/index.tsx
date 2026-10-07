@@ -36,7 +36,8 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    document.documentElement.lang = lang;
+    // French is the Québec default: fr-CA (matches <html lang> in __root.tsx).
+    document.documentElement.lang = lang === "fr" ? "fr-CA" : lang;
   }, [lang]);
 
   const setLang = useCallback((l: Lang) => {

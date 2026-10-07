@@ -11,25 +11,18 @@ import {
 import { ActionLink } from "@/components/site/primitives";
 import { FIELD_MEDIA } from "@/content/media";
 import { MISSION_PILLARS, FOOD_CHAIN, SOURCES } from "@/content/research";
+import { seoHead } from "@/seo/head";
 
 export const Route = createFileRoute("/project")({
-  head: () => ({
-    meta: [
-      { title: "The Project — CUBAFOOD.CA | From Food Delivery to Food Capacity" },
-      {
-        name: "description",
-        content:
-          "CUBAFOOD.CA is a Canada–Cuba agricultural development project in Matanzas. Not only sending food — working to help Cuba grow more of it.",
-      },
-      { property: "og:title", content: "The Project — CUBAFOOD.CA" },
-      {
-        property: "og:description",
-        content: "A Canada–Cuba agricultural development project in Matanzas, currently in institutional coordination.",
-      },
-      { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  // French title + description from this page's hero text.
+  head: () =>
+    seoHead({
+      title: "Nous n'envoyons pas seulement de la nourriture | CUBAFOOD.CA",
+      description:
+        "Livrer de la nourriture règle une journée. Produire de la nourriture règle une décennie. CUBAFOOD.CA est un projet de développement agricole à Matanzas.",
+      path: "/project",
+      type: "article",
+    }),
   component: Page,
 });
 

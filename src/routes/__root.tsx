@@ -16,6 +16,9 @@ import { I18nProvider } from "@/i18n";
 import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
 import { WhatsAppFloat } from "@/components/site/whatsapp";
+import { CookieBanner } from "@/consent/CookieBanner";
+import { seoHead } from "@/seo/head";
+import { jsonLdScript, siteJsonLd, websiteJsonLd } from "@/seo/jsonld";
 
 function NotFoundComponent() {
   return (
@@ -80,16 +83,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "CUBAFOOD.CA — Canada–Cuba agricultural development" },
-      {
-        name: "description",
-        content:
-          "A Canada–Cuba agricultural development and food sovereignty initiative in Matanzas, Cuba. Helping Cuba grow more food.",
-      },
+      // Default French title, description, Open Graph and Twitter tags (src/site.config.ts).
+      ...seoHead().meta,
       { name: "author", content: "CUBAFOOD.CA" },
-      { property: "og:site_name", content: "CUBAFOOD.CA" },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
       { name: "theme-color", content: "#1f2b22" },
     ],
     links: [
@@ -103,18 +99,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
     scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "Organization",
-          name: "CUBAFOOD.CA",
-          description:
-            "Canada–Cuba agricultural development, food sustainability and food sovereignty initiative based in Matanzas, Cuba.",
-          foundingDate: "2024",
-          areaServed: ["CU", "CA"],
-        }),
-      },
+      jsonLdScript([siteJsonLd({ foundingDate: "2024", areaServed: ["CU", "CA"] }), websiteJsonLd()]),
     ],
   }),
   shellComponent: RootShell,
@@ -125,12 +110,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="fr">
+    <html lang="fr-CA">
       <head>
         <HeadContent />
       </head>
       <body>
         {children}
+        <CookieBanner />
         <Scripts />
       </body>
     </html>
