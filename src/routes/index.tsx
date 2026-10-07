@@ -110,28 +110,30 @@ function Home() {
 
   return (
     <>
-      <section className="relative min-h-[94svh] overflow-hidden bg-charcoal text-cream">
+      <section className="documentary-opening relative overflow-hidden bg-charcoal text-cream">
         <div className="absolute inset-0">
           <BackgroundVideo
             src={FIELD_MEDIA.clip2.src}
             poster={FIELD_MEDIA.clip2.poster}
             label="CUBAFOOD field documentation in Matanzas"
-            className="opacity-65"
+            className="opacity-80"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-charcoal/80 via-charcoal/35 to-transparent" />
-          <div className="absolute inset-0 field-fade" />
+          <div className="documentary-shade absolute inset-0" />
         </div>
 
-        <div className="shell relative flex min-h-[94svh] flex-col justify-end pb-8 pt-32 md:pb-12">
-          <div className="mb-auto flex items-center gap-3 pt-5">
-            <span className="h-px w-10 bg-secondary" />
-            <Eyebrow className="text-cream opacity-80">{t(COPY.proof)}</Eyebrow>
+        <div className="shell relative flex flex-1 flex-col justify-center pb-10 pt-28 md:pb-12 md:pt-32">
+          <div className="documentary-enter mb-7 flex flex-wrap items-center gap-x-5 gap-y-3 md:mb-9">
+            <p className="display text-3xl leading-none tracking-normal md:text-4xl">CUBAFOOD<span className="text-field-highlight">.CA</span></p>
+            <span className="hidden h-5 w-px bg-cream/30 sm:block" aria-hidden />
+            <p className="text-xs leading-relaxed text-cream/75 md:max-w-80">{t(COPY.proof)}</p>
           </div>
 
           <div className="max-w-6xl">
-            <p className="display text-2xl text-secondary md:text-4xl">CUBAFOOD.CA</p>
-            <h1 className="poster mt-4 max-w-[12ch]">{t(SITE.tagline)}</h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-cream/85 md:text-2xl">
+            <h1 className="documentary-title documentary-enter font-display uppercase">
+              <span className="block">Cultivando</span>
+              <span className="block">Cuba. Juntos.</span>
+            </h1>
+            <p className="documentary-enter mt-7 max-w-xl text-base font-light leading-relaxed text-cream/80 md:mt-8 md:text-xl">
               {t({
                 en: "Helping Cuba grow more food—and build the systems to keep growing.",
                 es: "Ayudando a Cuba a producir más alimentos y a construir los sistemas para seguir creciendo.",
@@ -140,30 +142,32 @@ function Home() {
             </p>
           </div>
 
-          <div className="mt-9 flex flex-wrap gap-3">
-            <ActionLink to="/project" variant="cream">{t(UI.seeProject)}</ActionLink>
-            <ActionLink to="/participate" variant="outline">{t(UI.join)}</ActionLink>
+          <div className="documentary-enter mt-8 flex flex-wrap gap-3 md:mt-9">
+            <ActionLink to="/project" variant="solid" className="min-h-14 rounded-sm px-8 tracking-normal">{t(UI.seeProject)}</ActionLink>
+            <ActionLink to="/participate" variant="outline" className="min-h-14 rounded-sm px-8 tracking-normal">{t(UI.join)}</ActionLink>
           </div>
+        </div>
 
-          <div className="mt-12 grid border-y border-cream/20 sm:grid-cols-3">
-            <div className="py-4 sm:border-r sm:border-cream/20 sm:px-5 sm:first:pl-0">
-              <p className="eyebrow text-secondary">{t({ en: "Place", es: "Lugar", fr: "Lieu" })}</p>
-              <p className="mt-2 text-sm">Matanzas, Cuba</p>
+        <div className="relative border-t border-cream/20 bg-charcoal/50">
+          <div className="shell grid grid-cols-2 sm:grid-cols-3">
+            <div className="border-r border-cream/15 py-5 pr-4 md:py-7 md:pr-8">
+              <p className="text-[10px] font-semibold uppercase text-field-highlight">{t({ en: "Place", es: "Lugar", fr: "Lieu" })}</p>
+              <p className="mt-2 text-sm font-light md:text-xl">Matanzas, Cuba</p>
             </div>
-            <div className="border-t border-cream/20 py-4 sm:border-r sm:border-t-0 sm:px-5">
-              <p className="eyebrow text-secondary">{t({ en: "Scale", es: "Escala", fr: "Échelle" })}</p>
-              <p className="mt-2 text-sm">24+ km · {t({ en: "development area", es: "zona de desarrollo", fr: "zone de développement" })}</p>
+            <div className="py-5 pl-4 sm:border-r sm:border-cream/15 md:px-8 md:py-7">
+              <p className="text-[10px] font-semibold uppercase text-field-highlight">{t({ en: "Scale", es: "Escala", fr: "Échelle" })}</p>
+              <p className="mt-2 text-sm font-light md:text-xl">24+ km <span className="mt-1 block text-xs text-cream/65 md:mt-0 md:text-sm">{t({ en: "development area", es: "zona de desarrollo", fr: "zone de développement" })}</span></p>
             </div>
-            <div className="border-t border-cream/20 py-4 sm:border-t-0 sm:pl-5">
-              <p className="eyebrow text-secondary">{t({ en: "Status", es: "Estado", fr: "Statut" })}</p>
-              <p className="mt-2 text-sm">{t(COPY.development)} · 2024—</p>
+            <div className="col-span-2 flex items-center justify-between gap-4 border-t border-cream/15 py-5 sm:col-span-1 sm:border-t-0 sm:pl-4 md:py-7 md:pl-8">
+              <div>
+                <p className="text-[10px] font-semibold uppercase text-field-highlight">{t({ en: "Status", es: "Estado", fr: "Statut" })}</p>
+                <p className="mt-2 text-sm font-light md:text-lg">{t(COPY.development)} <span className="text-cream/55">· 2024—</span></p>
+              </div>
+              <a href="#mission" className="group flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-cream/25 transition-colors hover:bg-cream/10" aria-label={t({ en: "Discover the initiative", es: "Descubrir la iniciativa", fr: "Découvrir l'initiative" })}>
+                <ArrowDown className="h-4 w-4 transition-transform group-hover:translate-y-1" aria-hidden />
+              </a>
             </div>
           </div>
-
-          <a href="#mission" className="mt-6 inline-flex w-fit items-center gap-2 text-xs uppercase text-cream/65">
-            <ArrowDown className="h-4 w-4" aria-hidden />
-            {t({ en: "Discover the initiative", es: "Descubrir la iniciativa", fr: "Découvrir l'initiative" })}
-          </a>
         </div>
       </section>
 
