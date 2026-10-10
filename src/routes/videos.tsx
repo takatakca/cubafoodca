@@ -42,7 +42,10 @@ function Page() {
         statuses={["PROJECT_FACT", "AWAITING_APPROVAL"]}
         media={{ video: FIELD_MEDIA.clip1.src, poster: FIELD_MEDIA.clip1.poster }}
       >
-        <ActionLink to="/locations/matanzas" variant="cream">
+        <ActionLink to="/watch" variant="cream">
+          {t({ en: "Enter the screening room", es: "Entrar en la sala de proyección", fr: "Entrer dans la salle de projection" })}
+        </ActionLink>
+        <ActionLink to="/locations/matanzas" variant="outline">
           {t({ en: "Discover Matanzas", es: "Descubrir Matanzas", fr: "Découvrir Matanzas" })}
         </ActionLink>
       </EditorialHero>
