@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useI18n, type T } from "@/i18n";
 import { cn } from "@/lib/utils";
 import type { ParticipantRecord } from "@/content/types";
@@ -203,7 +203,14 @@ export function MultiStepForm({
   const [step, setStep] = useState(0);
   const [selections, setSelections] = useState<string[]>([]);
   const [data, setData] = useState<Partial<ParticipantRecord>>({});
+  const formRef = useRef<HTMLFormElement>(null);
+  const stepHeadingRef = useRef<HTMLHeadingElement>(null);
   const { pending, error, done, run } = useSubmitter(submitParticipant);
+
+  // Announce and focus each new step to keyboard and screen-reader users.
+  useEffect(() => {
+    if (step > 0) stepHeadingRef.current?.focus();
+  }, [step]);
 
   const set = (patch: Partial<ParticipantRecord>) => setData((d) => ({ ...d, ...patch }));
   const toggle = (id: string) =>
@@ -211,7 +218,7 @@ export function MultiStepForm({
 
   const record = useMemo(
     () => ({
-      first_name: data.first_name ?? "",
+      first_name: data.first_name?.trim() ?? "",
       last_name: data.last_name ?? "",
       country,
       province: data.province,
@@ -261,13 +268,31 @@ export function MultiStepForm({
   const current = steps[step]!;
   const last = step === steps.length - 1;
 
+  const advance = () => {
+    // Continue is a button, not a submit control. Validate fields in the
+    // currently rendered step before unmounting them.
+    if (formRef.current?.reportValidity()) {
+      setStep((previous) => Math.min(previous + 1, steps.length - 1));
+    }
+  };
+
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
+    // Enter on an early step must never submit a partial record.
+    if (!last) {
+      advance();
+      return;
+    }
+    // Previous steps have been unmounted; recheck required identity data.
+    if (!record.first_name) {
+      setStep(0);
+      return;
+    }
     void run(record);
   };
 
   return (
-    <form onSubmit={onSubmit} className={FORM_CARD}>
+    <form ref={formRef} onSubmit={onSubmit} className={FORM_CARD}>
       <div className="flex items-center gap-2" aria-hidden>
         {steps.map((s, i) => (
           <span
@@ -279,7 +304,7 @@ export function MultiStepForm({
       <p className="eyebrow mt-4 opacity-55">
         {step + 1} / {steps.length}
       </p>
-      <h3 className="display mt-2 text-2xl">{t(current.title)}</h3>
+      <h3 ref={stepHeadingRef} tabIndex={-1} className="display mt-2 text-2xl outline-none">{t(current.title)}</h3>
 
       <div className="mt-6 space-y-5">{current.render({ ...data, selections }, set, toggle)}</div>
 
@@ -298,7 +323,7 @@ export function MultiStepForm({
         {!last ? (
           <button
             type="button"
-            onClick={() => setStep((s) => s + 1)}
+            onClick={advance}
             className="eyebrow min-h-11 rounded-full bg-primary px-6 py-3 text-primary-foreground"
           >
             {t({ en: "Continue", es: "Continuar", fr: "Continuer" })}
