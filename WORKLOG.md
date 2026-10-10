@@ -1,5 +1,7 @@
 # Work log
 
+- 2026-10-10 | codex | codex/simplify-media-migration-shell → pending PR | active | Simplify the media migration shell block to avoid GitHub Actions YAML/heredoc parsing failures | validate CI, open PR, merge if green, re-run production deployment
+
 - 2026-10-10 | codex | codex/fix-deploy-workflow-yaml → pending PR | active | Fix GitHub Actions YAML parsing after media heredoc lines were emitted without the required workflow indentation | validate CI, open PR, merge if green, re-run production deployment
 
 - 2026-10-10 | codex | codex/fix-media-migration → pending PR | active | Correct legacy media migration mapping after deployment reached activation but the first draft assumed one asset directory for all files | validate CI, open PR, merge if green, re-run deployment
