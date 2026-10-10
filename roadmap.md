@@ -1,1 +1,1 @@
-- [ ] Compositions d images terrain codées dans les pages intérieures
+- [x] Compositions d images terrain codées dans les pages intérieures
