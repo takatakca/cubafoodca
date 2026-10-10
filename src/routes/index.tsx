@@ -22,13 +22,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "A Canada–Cuba agricultural initiative in Matanzas, Cuba. More than 24 km of project land, farmer partnerships, equipment, training and food sovereignty. Join the project.",
+          "A Canada–Cuba agricultural initiative in Matanzas. Explore a development corridor described as over 24 km in length, prospective farming collaborations and the project's verified status.",
       },
       { property: "og:title", content: "CUBAFOOD.CA — Cultivando Cuba. Juntos." },
       {
         property: "og:description",
         content:
-          "We are not only trying to send food to Cuba. We are trying to help Cuba grow more food. Matanzas, Cuba — 24+ km of agricultural development.",
+          "Working to help Cuba grow more food. Matanzas, Cuba — a development corridor stated as over 24 km in length; plans remain subject to coordination and approvals.",
       },
       { property: "og:url", content: "/" },
       { property: "og:type", content: "website" },
@@ -85,7 +85,7 @@ function Home() {
         <Reveal>
           <Eyebrow>{t({ en: "Chapter 02 — Scale", es: "Capítulo 02 — Escala", fr: "Chapitre 02 — Échelle" })}</Eyebrow>
           <p className="poster mt-6">
-            {t({ en: "More than 24 km of land.", es: "Más de 24 km de tierra.", fr: "Plus de 24 km de terrain." })}
+            {t({ en: "A corridor over 24 km long.", es: "Un corredor de más de 24 km.", fr: "Un corridor de plus de 24 km." })}
           </p>
         </Reveal>
         <div className="mt-12 grid gap-10 lg:grid-cols-2">
@@ -130,7 +130,7 @@ function Home() {
         <Eyebrow>{t({ en: "Chapter 03 — Location", es: "Capítulo 03 — Ubicación", fr: "Chapitre 03 — Emplacement" })}</Eyebrow>
         <Headline>
           Matanzas
-          <span className="block text-secondary">Varadero airport area</span>
+          <span className="block text-secondary">{t({ en: "Varadero airport area", es: "Zona del aeropuerto de Varadero", fr: "Secteur de l’aéroport de Varadero" })}</span>
         </Headline>
         <div className="mt-12">
           <LocationMap />
