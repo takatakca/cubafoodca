@@ -46,13 +46,10 @@ function Page() {
             }}
           />
           <div className="mt-14 grid gap-px overflow-hidden border border-foreground/15 bg-foreground/15 md:grid-cols-2 lg:grid-cols-3">
-            {COMPANY_CONTRIBUTIONS.map((r, i) => (
-              <article key={r.id} className="flex min-h-72 flex-col justify-between bg-card p-7 md:p-9">
+            {COMPANY_CONTRIBUTIONS.map((contribution, i) => (
+              <article key={i} className="flex min-h-48 flex-col justify-between bg-card p-7 md:p-9">
                 <span className="display text-4xl text-clay">{String(i + 1).padStart(2, "0")}</span>
-                <div className="mt-9">
-                  <h3 className="display text-xl leading-tight md:text-2xl">{t(r.label)}</h3>
-                  <p className="mt-5 text-sm leading-relaxed opacity-75">{t(r.note)}</p>
-                </div>
+                <h3 className="display mt-9 text-xl leading-tight md:text-2xl">{t(contribution)}</h3>
               </article>
             ))}
           </div>
