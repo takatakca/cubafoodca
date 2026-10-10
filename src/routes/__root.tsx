@@ -8,65 +8,109 @@ import {
   Scripts,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { I18nProvider } from "@/i18n";
+import { I18nProvider, type Lang, type T } from "@/i18n";
 import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
 import { WhatsAppFloat } from "@/components/site/whatsapp";
 
+/**
+ * The root error boundary can render before the normal I18nProvider is mounted.
+ * Read the same local language preference without depending on route context.
+ * SSR starts in French so hydration remains deterministic.
+ */
+function useFallbackLanguage() {
+  const [lang, setLang] = useState<Lang>("fr");
+
+  useEffect(() => {
+    let preference = document.documentElement.lang.slice(0, 2).toLowerCase();
+    try {
+      preference = window.localStorage.getItem("cubafood-lang") ?? preference;
+    } catch {
+      // Restricted storage must never break public navigation or error recovery.
+    }
+    if (preference === "fr" || preference === "en" || preference === "es") {
+      setLang(preference);
+    }
+  }, []);
+
+  return (message: T) => message[lang] ?? message.en;
+}
+
 function NotFoundComponent() {
+  const t = useFallbackLanguage();
   return (
-    <div className="flex min-h-screen items-center justify-center bg-charcoal px-4 text-cream">
-      <div className="max-w-md text-center">
-        <h1 className="poster">404</h1>
-        <h2 className="mt-6 text-xl font-semibold">Page not found</h2>
-        <p className="mt-2 text-sm opacity-70">
-          The page you're looking for doesn't exist or has been moved.
-        </p>
-        <div className="mt-8">
-          <Link
-            to="/"
-            className="eyebrow inline-flex items-center justify-center rounded-full bg-secondary px-6 py-3.5 text-secondary-foreground"
-          >
-            Go home
+    <section className="relative isolate min-h-[72vh] overflow-hidden bg-charcoal px-4 pb-24 pt-40 text-cream md:pb-32 md:pt-52">
+      <div className="pointer-events-none absolute -right-16 top-16 -z-10 select-none text-[16rem] leading-none font-black tracking-tighter text-cream/[0.035] md:text-[35rem]" aria-hidden="true">404</div>
+      <div className="shell relative">
+        <p className="eyebrow text-secondary">{t({ en: "CUBAFOOD.CA · Lost path", es: "CUBAFOOD.CA · Camino perdido", fr: "CUBAFOOD.CA · Chemin introuvable" })}</p>
+        <h1 className="poster mt-9 max-w-5xl text-balance">{t({
+          en: "This page isn't here.",
+          es: "Esta página no está aquí.",
+          fr: "Cette page est introuvable.",
+        })}</h1>
+        <p className="mt-8 max-w-2xl text-lg leading-relaxed text-cream/75">{t({
+          en: "The address may have changed or this story may not have been published. You can return to the project, explore Matanzas or read the published field journal.",
+          es: "La dirección puede haber cambiado o este contenido todavía no se ha publicado. Vuelve al proyecto, descubre Matanzas o consulta el diario de campo publicado.",
+          fr: "L'adresse a peut-être changé ou le contenu n'est pas encore publié. Retournez au projet, découvrez Matanzas ou consultez le carnet de terrain.",
+        })}</p>
+        <div className="mt-12 flex flex-wrap items-center gap-3">
+          <Link to="/" className="eyebrow inline-flex min-h-12 items-center justify-center rounded-full bg-secondary px-7 py-3.5 text-secondary-foreground transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2">
+            {t({ en: "Back to the project", es: "Volver al proyecto", fr: "Retour au projet" })}
+          </Link>
+          <Link to="/locations/matanzas" className="eyebrow inline-flex min-h-12 items-center justify-center rounded-full border border-cream/40 px-7 py-3.5 text-cream transition-colors hover:bg-cream/10 focus-visible:outline-2 focus-visible:outline-offset-2">
+            {t({ en: "Discover Matanzas", es: "Descubrir Matanzas", fr: "Découvrir Matanzas" })}
+          </Link>
+          <Link to="/journal" className="eyebrow inline-flex min-h-12 items-center justify-center rounded-full border border-cream/40 px-7 py-3.5 text-cream transition-colors hover:bg-cream/10 focus-visible:outline-2 focus-visible:outline-offset-2">
+            {t({ en: "Field journal", es: "Diario de campo", fr: "Carnet de terrain" })}
           </Link>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 
-function ErrorComponent({ error, reset }: ErrorComponentProps) {
-  console.error(error);
+function ErrorComponent({ reset }: ErrorComponentProps) {
   const router = useRouter();
+  const t = useFallbackLanguage();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">This page didn't load</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
-        </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-2">
+    <section role="alert" className="min-h-[72vh] bg-background px-4 pb-24 pt-40 text-foreground md:pb-32 md:pt-52">
+      <div className="shell max-w-4xl">
+        <p className="eyebrow text-clay">{t({
+          en: "CUBAFOOD.CA · Temporary interruption",
+          es: "CUBAFOOD.CA · Interrupción temporal",
+          fr: "CUBAFOOD.CA · Interruption temporaire",
+        })}</p>
+        <h1 className="headline mt-9 max-w-3xl text-balance">{t({
+          en: "We couldn't open this page.",
+          es: "No hemos podido abrir esta página.",
+          fr: "Impossible d'ouvrir cette page.",
+        })}</h1>
+        <p className="mt-8 max-w-2xl text-lg leading-relaxed opacity-75">{t({
+          en: "A technical problem interrupted this page. You can try again without losing the rest of the CUBAFOOD website.",
+          es: "Un problema técnico ha interrumpido esta página. Puedes intentarlo de nuevo; el resto del sitio CUBAFOOD sigue disponible.",
+          fr: "Un problème technique a interrompu le chargement. Vous pouvez réessayer; le reste du site CUBAFOOD demeure accessible.",
+        })}</p>
+        <div className="mt-12 flex flex-wrap gap-3">
           <button
+            type="button"
             onClick={() => {
-              router.invalidate();
+              void router.invalidate();
               reset();
             }}
-            className="eyebrow inline-flex items-center justify-center rounded-full bg-primary px-6 py-3.5 text-primary-foreground"
+            className="eyebrow inline-flex min-h-12 items-center justify-center rounded-full bg-primary px-7 py-3.5 text-primary-foreground focus-visible:outline-2 focus-visible:outline-offset-2"
           >
-            Try again
+            {t({ en: "Try again", es: "Volver a intentar", fr: "Réessayer" })}
           </button>
-          <a
-            href="/"
-            className="eyebrow inline-flex items-center justify-center rounded-full border border-input px-6 py-3.5"
-          >
-            Go home
+          <a href="/" className="eyebrow inline-flex min-h-12 items-center justify-center rounded-full border border-input px-7 py-3.5 focus-visible:outline-2 focus-visible:outline-offset-2">
+            {t({ en: "Back to the homepage", es: "Volver al inicio", fr: "Retour à l'accueil" })}
           </a>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 
