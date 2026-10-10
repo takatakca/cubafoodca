@@ -677,7 +677,33 @@ jobs:
           for route in \
             "/" \
             "/project" \
-            "/videos"
+            "/land" \
+            "/agriculture" \
+            "/cuba" \
+            "/canada" \
+            "/farmers" \
+            "/needs" \
+            "/timeline" \
+            "/videos" \
+            "/watch" \
+            "/participate" \
+            "/energy" \
+            "/people" \
+            "/training" \
+            "/agroecology" \
+            "/transparency" \
+            "/reports" \
+            "/mission" \
+            "/partners" \
+            "/collaboration" \
+            "/volunteer" \
+            "/food-for-families" \
+            "/contact" \
+            "/locations/" \
+            "/locations/matanzas" \
+            "/locations/jaguey-grande" \
+            "/journal/" \
+            "/journal/site-documentation-matanzas"
           do
             echo "Checking $CUBAFOOD_PRODUCTION_URL$route"
 
