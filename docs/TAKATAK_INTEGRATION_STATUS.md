@@ -11,8 +11,8 @@
 | CUBAFOOD master API contract | BLOCKED | TAKATAK V1 issue #161 tracks the required contract. |
 | Live TAKATAK authentication | NOT CONFIGURED | Do not invent or bypass the master contract. |
 | Tenant/entitlement integration | NOT CONFIGURED | Requires the approved CUBAFOOD contract. |
-| Direct production deployment | CONFIGURED | GitHub Actions builds and deploys the tested `main` commit to MochaHost. |
-| Production media migration | IN PROGRESS | The first GitHub-first release copies existing media from the current production release into `/media/cubafood/`. |
+| Direct production deployment | PRODUCTION VERIFIED | Deployment run 38039483045 built, activated and verified main commit `ac6cc836878fe99157594dbc31b68228c519f408` on MochaHost. |
+| Production media migration | PRODUCTION VERIFIED | Deployment run 38039483045 copied/served the migrated media and verified production media after activation. |
 | Automated verification | CONFIGURED | TypeScript, production build, lint, release verification, SSH, health, critical routes and media checks are part of the pipeline. |
 
 ## Non-negotiable boundary
