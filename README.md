@@ -1,6 +1,6 @@
 # Cultivating Cuba Together
 
-This version should give Lovable enough direction to build the actual public face of the project, including recruitment, institutional collaboration, land development, food distribution, field documentation, and Canada–Cuba participation—not another decorative NGO homepage.
+CUBAFOOD.CA is maintained directly from GitHub as the public digital platform for recruitment, institutional collaboration, land development, food distribution, field documentation and Canada–Cuba participation—not a decorative NGO homepage.
 
 
 
@@ -3612,7 +3612,7 @@ Do NOT make this look like:
 
 - an NGO template
 
-- a generic Lovable template
+- a generic AI template
 
 - a SaaS dashboard
 
@@ -4724,21 +4724,39 @@ CULTIVANDO CUBA. JUNTOS.
 
 GROWING MORE THAN FOOD.I also deliberately made the 24+ km scale a central marketing element, because that changes the perception completely: this is not presented as a little garden project anymore. It becomes a major agricultural undertaking that clearly explains why you need Cuban manpower, farmers, Canadian companies, machinery, training, irrigation, energy and partners.
 
-This project was built with [Lovable](https://lovable.dev).
+## GitHub-first development
 
-**Live app**: https://cubafoodca.lovable.app
+GitHub is the source of truth for CUBAFOOD.CA.
 
-## Build with Lovable
+The production website is:
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/41bc0b21-18ac-44b5-b3db-77423be963b4).
+**Live site**: https://cubafood.ca
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+The application uses TanStack Start + Vite + Nitro and is deployed from GitHub Actions to the configured MochaHost Node.js environment.
 
 ## Development
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Use Bun for local development and verification:
+
+```sh
+bun install
+bun run dev
+```
+
+Before opening a pull request:
+
+```sh
+bun run typecheck
+bun run build
+bun run lint
+```
+
+Production deployment is performed by the repository's GitHub Actions workflow after the tested commit reaches the production branch.
+
+See:
+- `docs/TAKATAK_ECOSYSTEM.md`
+- `docs/TAKATAK_INTEGRATION_STATUS.md`
+- `docs/TAKATAK_DEPLOYMENT.md`
 
 ```sh
 git clone <this-repository-url>

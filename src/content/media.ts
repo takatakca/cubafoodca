@@ -1,23 +1,12 @@
 import type { ProjectVideo } from "./types";
 
-import v1 from "@/assets/videos/field-1.mp4.asset.json";
-import p1 from "@/assets/videos/field-1-poster.jpg.asset.json";
-import v2 from "@/assets/videos/field-2.mp4.asset.json";
-import p2 from "@/assets/videos/field-2-poster.jpg.asset.json";
-import v3 from "@/assets/videos/field-3.mp4.asset.json";
-import p3 from "@/assets/videos/field-3-poster.jpg.asset.json";
-import v4 from "@/assets/videos/field-4.mp4.asset.json";
-import p4 from "@/assets/videos/field-4-poster.jpg.asset.json";
-import v5 from "@/assets/videos/field-5.mp4.asset.json";
-import p5 from "@/assets/videos/field-5-poster.jpg.asset.json";
-
 /** Real, unedited field documentation supplied by the project team. No stock, no reconstructions. */
 export const FIELD_MEDIA = {
-  clip1: { src: v1.url, poster: p1.url },
-  clip2: { src: v2.url, poster: p2.url },
-  clip3: { src: v3.url, poster: p3.url },
-  clip4: { src: v4.url, poster: p4.url },
-  clip5: { src: v5.url, poster: p5.url },
+  clip1: { src: "/media/cubafood/field-1.mp4", poster: "/media/cubafood/field-1-poster.jpg" },
+  clip2: { src: "/media/cubafood/field-2.mp4", poster: "/media/cubafood/field-2-poster.jpg" },
+  clip3: { src: "/media/cubafood/field-3.mp4", poster: "/media/cubafood/field-3-poster.jpg" },
+  clip4: { src: "/media/cubafood/field-4.mp4", poster: "/media/cubafood/field-4-poster.jpg" },
+  clip5: { src: "/media/cubafood/field-5.mp4", poster: "/media/cubafood/field-5-poster.jpg" },
 };
 
 const LOC = {
@@ -93,7 +82,7 @@ export const VIDEOS: ProjectVideo[] = [
     description: {
       en: "Project area footage recorded during a site visit.",
       es: "Imágenes del área del proyecto grabadas durante una visita al sitio.",
-      fr: "Images de la zone du projet enregistrées lors d'una visita.",
+      fr: "Images de la zone du projet enregistrées lors d'une visite.",
     },
     category: "PROJECT_UPDATES",
     location: LOC,

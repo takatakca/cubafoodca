@@ -20,9 +20,6 @@ jobs:
 
     env:
       RELEASE_SHA: ${{ github.sha }}
-      NITRO_PRESET: node-server
-      LOVABLE_ASSET_BASE_URL: ${{ vars.CUBAFOOD_LOVABLE_ASSET_BASE_URL || 'https://cubafoodca.lovable.app' }}
-
       CUBAFOOD_HOST: ${{ secrets.CUBAFOOD_PRODUCTION_HOST }}
       CUBAFOOD_PORT: ${{ secrets.CUBAFOOD_PRODUCTION_SSH_PORT }}
       CUBAFOOD_USER: ${{ secrets.CUBAFOOD_PRODUCTION_USER }}
@@ -42,7 +39,7 @@ jobs:
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.4.2
+          bun-version: 1.4.3
 
       - name: Validate deployment configuration
         shell: bash
@@ -84,9 +81,6 @@ jobs:
       - name: Install locked dependencies
         run: bun install --frozen-lockfile
 
-      - name: Materialize Lovable-managed media into public files
-        run: node scripts/materialize-lovable-assets.mjs
-
       - name: TypeScript check
         run: bunx tsc --noEmit
 
@@ -103,9 +97,6 @@ jobs:
 
           test -f .output/server/index.mjs
           test -d .output/public
-
-          test -f \
-            .output/public/__l5e/assets-v1/85a0c69d-cdc5-4170-bb2b-46bd0043745d/field-1-poster.jpg
 
           printf '%s\n' "$RELEASE_SHA" > .output/RELEASE_SHA
 
@@ -194,6 +185,41 @@ jobs:
 
           echo "SSH connection verified successfully."
 
+      - name: Verify existing production media source
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          MEDIA_PATH="current/public/__l5e/assets-v1/85a0c69d-cdc5-4170-bb2b-46bd0043745d/field-1-poster.jpg"
+
+          verified=0
+
+          for attempt in 1 2 3 4 5; do
+            echo "Production media source verification attempt $attempt of 5..."
+
+            if timeout 120 ssh \
+              -p "$CUBAFOOD_PORT" \
+              "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
+              "test -s '$CUBAFOOD_APP_ROOT/$MEDIA_PATH'"; then
+
+              verified=1
+              break
+            fi
+
+            if [ "$attempt" -lt 5 ]; then
+              sleep $((attempt * 5))
+            fi
+          done
+
+          if [ "$verified" != "1" ]; then
+            echo "::error::The current MochaHost release does not contain the legacy field media required for the GitHub-first media migration."
+            echo "::error::No deployment was activated. Restore/seed the existing production media before retrying."
+            exit 1
+          fi
+
+          echo "Existing production media source verified."
+          echo "The next release will copy it into /media/cubafood/."
+        
       - name: Package immutable release
         shell: bash
         run: |
@@ -351,6 +377,45 @@ jobs:
 
             ACTIVE_SHA="$(cat "$STAGING_DIR/RELEASE_SHA")"
             test "$ACTIVE_SHA" = "$RELEASE_SHA"
+
+            # Migrate the existing field media out of the former vendor-managed
+            # path into a CUBAFOOD-owned public path. Only copy when the new
+            # release does not already contain the file, so future releases can
+            # eventually ship media from the repository or approved object storage.
+            LEGACY_MEDIA_ROOT="$APP_ROOT/current/public/__l5e/assets-v1/85a0c69d-cdc5-4170-bb2b-46bd0043745d"
+            NEW_MEDIA_ROOT="$STAGING_DIR/public/media/cubafood"
+
+            if [ -d "$LEGACY_MEDIA_ROOT" ]; then
+              mkdir -p "$NEW_MEDIA_ROOT"
+
+              for media_file in \
+                field-1.mp4 \
+                field-1-poster.jpg \
+                field-2.mp4 \
+                field-2-poster.jpg \
+                field-3.mp4 \
+                field-3-poster.jpg \
+                field-4.mp4 \
+                field-4-poster.jpg \
+                field-5.mp4 \
+                field-5-poster.jpg
+              do
+                if [ -f "$LEGACY_MEDIA_ROOT/$media_file" ] && [ ! -f "$NEW_MEDIA_ROOT/$media_file" ]; then
+                  cp -p "$LEGACY_MEDIA_ROOT/$media_file" "$NEW_MEDIA_ROOT/$media_file"
+                fi
+              done
+            fi
+
+            test -f "$NEW_MEDIA_ROOT/field-1-poster.jpg"
+            test -f "$NEW_MEDIA_ROOT/field-1.mp4"
+            test -f "$NEW_MEDIA_ROOT/field-2-poster.jpg"
+            test -f "$NEW_MEDIA_ROOT/field-2.mp4"
+            test -f "$NEW_MEDIA_ROOT/field-3-poster.jpg"
+            test -f "$NEW_MEDIA_ROOT/field-3.mp4"
+            test -f "$NEW_MEDIA_ROOT/field-4-poster.jpg"
+            test -f "$NEW_MEDIA_ROOT/field-4.mp4"
+            test -f "$NEW_MEDIA_ROOT/field-5-poster.jpg"
+            test -f "$NEW_MEDIA_ROOT/field-5.mp4"
 
             rm -rf "$RELEASE_DIR"
             mv "$STAGING_DIR" "$RELEASE_DIR"
@@ -554,7 +619,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          MEDIA_URL="$CUBAFOOD_PRODUCTION_URL/__l5e/assets-v1/85a0c69d-cdc5-4170-bb2b-46bd0043745d/field-1-poster.jpg"
+          MEDIA_URL="$CUBAFOOD_PRODUCTION_URL/media/cubafood/field-1-poster.jpg"
 
           echo "Checking production media..."
 
