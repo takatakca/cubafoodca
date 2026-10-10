@@ -1,5 +1,7 @@
 # Work log
 
+- 2026-10-10 | codex | codex/fix-deploy-workflow-yaml → pending PR | active | Fix GitHub Actions YAML parsing after media heredoc lines were emitted without the required workflow indentation | validate CI, open PR, merge if green, re-run production deployment
+
 - 2026-10-10 | codex | codex/fix-media-migration → pending PR | active | Correct legacy media migration mapping after deployment reached activation but the first draft assumed one asset directory for all files | validate CI, open PR, merge if green, re-run deployment
 
 - 2026-10-10 | codex | codex/mochahost-ssh-ipv4 → pending PR | active | Force IPv4 for MochaHost SSH/SCP after production deployment retries failed with Broken pipe before any remote change | validate CI, open PR, merge if green, re-run deployment
