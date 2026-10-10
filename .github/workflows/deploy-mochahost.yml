@@ -105,7 +105,9 @@ jobs:
             IFS='|' read -r asset_id media_file <<< "$entry"
 
             echo "Seeding $media_file from current CUBAFOOD production..."
-            curl \
+            # Prefer the already-migrated CUBAFOOD-owned media path.
+            # Keep the legacy vendor path only as a first-release fallback.
+            if curl \
               --fail \
               --silent \
               --show-error \
@@ -114,8 +116,23 @@ jobs:
               --retry-delay 3 \
               --connect-timeout 15 \
               --max-time 180 \
-              "$CUBAFOOD_PRODUCTION_URL/__l5e/assets-v1/$asset_id/$media_file" \
-              -o "public/media/cubafood/$media_file"
+              "$CUBAFOOD_PRODUCTION_URL/media/cubafood/$media_file" \
+              -o "public/media/cubafood/$media_file"; then
+              echo "Loaded $media_file from /media/cubafood/."
+            else
+              echo "Falling back to legacy public media path for $media_file..."
+              curl \
+                --fail \
+                --silent \
+                --show-error \
+                --location \
+                --retry 5 \
+                --retry-delay 3 \
+                --connect-timeout 15 \
+                --max-time 180 \
+                "$CUBAFOOD_PRODUCTION_URL/__l5e/assets-v1/$asset_id/$media_file" \
+                -o "public/media/cubafood/$media_file"
+            fi
 
             test -s "public/media/cubafood/$media_file"
           done
@@ -243,17 +260,18 @@ jobs:
               -p "$CUBAFOOD_PORT" \
               "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
               "set -e
-               base='$CUBAFOOD_APP_ROOT/current/public/__l5e/assets-v1'
-               test -s \"\$base/b7134a36-9e05-478d-b28b-2a87538118e3/field-1.mp4\"
-               test -s \"\$base/85a0c69d-cdc5-4170-bb2b-46bd0043745d/field-1-poster.jpg\"
-               test -s \"\$base/e6c0c30f-a43e-47ed-aba4-54e6b0a2d785/field-2.mp4\"
-               test -s \"\$base/5864feda-e5a2-4fa8-84df-2466bef59c17/field-2-poster.jpg\"
-               test -s \"\$base/70942d5e-2158-40e4-8c03-863b536e81ea/field-3.mp4\"
-               test -s \"\$base/b89bdfc5-a4c3-4892-83ae-26558d2e3959/field-3-poster.jpg\"
-               test -s \"\$base/714a65bf-215e-4a83-8b4c-f8d8e72b69eb/field-4.mp4\"
-               test -s \"\$base/95d232e4-55ec-4b70-b0f9-171715dcf1d2/field-4-poster.jpg\"
-               test -s \"\$base/f64f0b7f-8b66-4aaa-9991-d8118f514063/field-5.mp4\"
-               test -s \"\$base/a27b808e-98d3-41e6-8789-a62564efeae8/field-5-poster.jpg\""; then
+               current='$CUBAFOOD_APP_ROOT/current/public/media/cubafood'
+               legacy='$CUBAFOOD_APP_ROOT/current/public/__l5e/assets-v1'
+               test -s \"\$current/field-1.mp4\" || test -s \"\$legacy/b7134a36-9e05-478d-b28b-2a87538118e3/field-1.mp4\"
+               test -s \"\$current/field-1-poster.jpg\" || test -s \"\$legacy/85a0c69d-cdc5-4170-bb2b-46bd0043745d/field-1-poster.jpg\"
+               test -s \"\$current/field-2.mp4\" || test -s \"\$legacy/e6c0c30f-a43e-47ed-aba4-54e6b0a2d785/field-2.mp4\"
+               test -s \"\$current/field-2-poster.jpg\" || test -s \"\$legacy/5864feda-e5a2-4fa8-84df-2466bef59c17/field-2-poster.jpg\"
+               test -s \"\$current/field-3.mp4\" || test -s \"\$legacy/70942d5e-2158-40e4-8c03-863b536e81ea/field-3.mp4\"
+               test -s \"\$current/field-3-poster.jpg\" || test -s \"\$legacy/b89bdfc5-a4c3-4892-83ae-26558d2e3959/field-3-poster.jpg\"
+               test -s \"\$current/field-4.mp4\" || test -s \"\$legacy/714a65bf-215e-4a83-8b4c-f8d8e72b69eb/field-4.mp4\"
+               test -s \"\$current/field-4-poster.jpg\" || test -s \"\$legacy/95d232e4-55ec-4b70-b0f9-171715dcf1d2/field-4-poster.jpg\"
+               test -s \"\$current/field-5.mp4\" || test -s \"\$legacy/f64f0b7f-8b66-4aaa-9991-d8118f514063/field-5.mp4\"
+               test -s \"\$current/field-5-poster.jpg\" || test -s \"\$legacy/a27b808e-98d3-41e6-8789-a62564efeae8/field-5-poster.jpg\""; then
 
               verified=1
               break
@@ -265,14 +283,14 @@ jobs:
           done
 
           if [ "$verified" != "1" ]; then
-            echo "::error::The current MochaHost release does not contain all legacy field media required for the GitHub-first media migration."
+            echo "::error::The current MochaHost release does not contain all field media required for the GitHub-first migration."
             echo "::error::No deployment was activated. Restore/seed the existing production media before retrying."
             exit 1
           fi
 
           echo "All existing production field media sources verified."
           echo "The next release will copy them into /media/cubafood/."
-        
+
       - name: Package immutable release
         shell: bash
         run: |
