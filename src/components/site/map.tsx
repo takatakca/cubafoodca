@@ -25,7 +25,7 @@ export function LocationMap({ compact = false }: { compact?: boolean }) {
   return (
     <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:items-center">
       <div className="relative overflow-hidden rounded-lg border border-cream/15 bg-charcoal">
-        <svg viewBox="0 0 800 480" className="h-full w-full" role="img" aria-label="Schematic map of the Matanzas project area">
+        <svg viewBox="0 0 800 480" className="h-full w-full" role="img" aria-label={t({ en: "Schematic map of the Matanzas development region", es: "Mapa esquemático de la región de desarrollo en Matanzas", fr: "Carte schématique de la région de développement à Matanzas" })}>
           <defs>
             <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
               <path d="M40 0H0v40" fill="none" stroke="currentColor" strokeOpacity="0.08" strokeWidth="1" />
@@ -57,13 +57,13 @@ export function LocationMap({ compact = false }: { compact?: boolean }) {
           <circle cx="690" cy="250" r="7" fill="oklch(0.79 0.135 78)" />
           <circle cx="470" cy="214" r="6" fill="oklch(0.505 0.196 27)" />
           <text x="486" y="208" fill="oklch(0.955 0.014 92)" fontSize="15" opacity="0.8">
-            Varadero airport area
+            {t({ en: "Varadero airport area", es: "Zona del aeropuerto de Varadero", fr: "Secteur de l’aéroport de Varadero" })}
           </text>
           <text x="120" y="368" fill="oklch(0.955 0.014 92)" fontSize="15" opacity="0.8">
             Matanzas
           </text>
           <text x="330" y="300" fill="oklch(0.79 0.135 78)" fontSize="17" letterSpacing="2">
-            24+ KM PROJECT AREA
+            {t({ en: "24+ KM CORRIDOR (SCHEMATIC)", es: "CORREDOR DE +24 KM (ESQUEMA)", fr: "CORRIDOR DE +24 KM (SCHÉMA)" })}
           </text>
         </svg>
         <p className="border-t border-cream/10 px-5 py-3 text-[11px] text-cream/45">
