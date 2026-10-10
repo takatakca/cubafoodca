@@ -190,8 +190,6 @@ jobs:
         run: |
           set -euo pipefail
 
-          MEDIA_PATH="current/public/__l5e/assets-v1/85a0c69d-cdc5-4170-bb2b-46bd0043745d/field-1-poster.jpg"
-
           verified=0
 
           for attempt in 1 2 3 4 5; do
@@ -200,7 +198,18 @@ jobs:
             if timeout 120 ssh -4 \
               -p "$CUBAFOOD_PORT" \
               "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
-              "test -s '$CUBAFOOD_APP_ROOT/$MEDIA_PATH'"; then
+              "set -e
+               base='$CUBAFOOD_APP_ROOT/current/public/__l5e/assets-v1'
+               test -s \"\$base/b7134a36-9e05-478d-b28b-2a87538118e3/field-1.mp4\"
+               test -s \"\$base/85a0c69d-cdc5-4170-bb2b-46bd0043745d/field-1-poster.jpg\"
+               test -s \"\$base/e6c0c30f-a43e-47ed-aba4-54e6b0a2d785/field-2.mp4\"
+               test -s \"\$base/5864feda-e5a2-4fa8-84df-2466bef59c17/field-2-poster.jpg\"
+               test -s \"\$base/70942d5e-2158-40e4-8c03-863b536e81ea/field-3.mp4\"
+               test -s \"\$base/b89bdfc5-a4c3-4892-83ae-26558d2e3959/field-3-poster.jpg\"
+               test -s \"\$base/714a65bf-215e-4a83-8b4c-f8d8e72b69eb/field-4.mp4\"
+               test -s \"\$base/95d232e4-55ec-4b70-b0f9-171715dcf1d2/field-4-poster.jpg\"
+               test -s \"\$base/f64f0b7f-8b66-4aaa-9991-d8118f514063/field-5.mp4\"
+               test -s \"\$base/a27b808e-98d3-41e6-8789-a62564efeae8/field-5-poster.jpg\""; then
 
               verified=1
               break
@@ -212,13 +221,13 @@ jobs:
           done
 
           if [ "$verified" != "1" ]; then
-            echo "::error::The current MochaHost release does not contain the legacy field media required for the GitHub-first media migration."
+            echo "::error::The current MochaHost release does not contain all legacy field media required for the GitHub-first media migration."
             echo "::error::No deployment was activated. Restore/seed the existing production media before retrying."
             exit 1
           fi
 
-          echo "Existing production media source verified."
-          echo "The next release will copy it into /media/cubafood/."
+          echo "All existing production field media sources verified."
+          echo "The next release will copy them into /media/cubafood/."
         
       - name: Package immutable release
         shell: bash
@@ -382,40 +391,49 @@ jobs:
             # path into a CUBAFOOD-owned public path. Only copy when the new
             # release does not already contain the file, so future releases can
             # eventually ship media from the repository or approved object storage.
-            LEGACY_MEDIA_ROOT="$APP_ROOT/current/public/__l5e/assets-v1/85a0c69d-cdc5-4170-bb2b-46bd0043745d"
+            LEGACY_MEDIA_ROOT="$APP_ROOT/current/public/__l5e/assets-v1"
             NEW_MEDIA_ROOT="$STAGING_DIR/public/media/cubafood"
 
-            if [ -d "$LEGACY_MEDIA_ROOT" ]; then
-              mkdir -p "$NEW_MEDIA_ROOT"
+            mkdir -p "$NEW_MEDIA_ROOT"
 
-              for media_file in \
-                field-1.mp4 \
-                field-1-poster.jpg \
-                field-2.mp4 \
-                field-2-poster.jpg \
-                field-3.mp4 \
-                field-3-poster.jpg \
-                field-4.mp4 \
-                field-4-poster.jpg \
-                field-5.mp4 \
-                field-5-poster.jpg
-              do
-                if [ -f "$LEGACY_MEDIA_ROOT/$media_file" ] && [ ! -f "$NEW_MEDIA_ROOT/$media_file" ]; then
-                  cp -p "$LEGACY_MEDIA_ROOT/$media_file" "$NEW_MEDIA_ROOT/$media_file"
-                fi
-              done
-            fi
+            while IFS='|' read -r asset_id media_file; do
+              [ -n "$asset_id" ] || continue
+              [ -n "$media_file" ] || continue
 
-            test -f "$NEW_MEDIA_ROOT/field-1-poster.jpg"
-            test -f "$NEW_MEDIA_ROOT/field-1.mp4"
-            test -f "$NEW_MEDIA_ROOT/field-2-poster.jpg"
-            test -f "$NEW_MEDIA_ROOT/field-2.mp4"
-            test -f "$NEW_MEDIA_ROOT/field-3-poster.jpg"
-            test -f "$NEW_MEDIA_ROOT/field-3.mp4"
-            test -f "$NEW_MEDIA_ROOT/field-4-poster.jpg"
-            test -f "$NEW_MEDIA_ROOT/field-4.mp4"
-            test -f "$NEW_MEDIA_ROOT/field-5-poster.jpg"
-            test -f "$NEW_MEDIA_ROOT/field-5.mp4"
+              source_file="$LEGACY_MEDIA_ROOT/$asset_id/$media_file"
+              target_file="$NEW_MEDIA_ROOT/$media_file"
+
+              if [ ! -f "$target_file" ]; then
+                test -s "$source_file"
+                cp -p "$source_file" "$target_file"
+              fi
+            done <<'MEDIA_MAP'
+b7134a36-9e05-478d-b28b-2a87538118e3|field-1.mp4
+85a0c69d-cdc5-4170-bb2b-46bd0043745d|field-1-poster.jpg
+e6c0c30f-a43e-47ed-aba4-54e6b0a2d785|field-2.mp4
+5864feda-e5a2-4fa8-84df-2466bef59c17|field-2-poster.jpg
+70942d5e-2158-40e4-8c03-863b536e81ea|field-3.mp4
+b89bdfc5-a4c3-4892-83ae-26558d2e3959|field-3-poster.jpg
+714a65bf-215e-4a83-8b4c-f8d8e72b69eb|field-4.mp4
+95d232e4-55ec-4b70-b0f9-171715dcf1d2|field-4-poster.jpg
+f64f0b7f-8b66-4aaa-9991-d8118f514063|field-5.mp4
+a27b808e-98d3-41e6-8789-a62564efeae8|field-5-poster.jpg
+MEDIA_MAP
+
+            for media_file in \
+              field-1.mp4 \
+              field-1-poster.jpg \
+              field-2.mp4 \
+              field-2-poster.jpg \
+              field-3.mp4 \
+              field-3-poster.jpg \
+              field-4.mp4 \
+              field-4-poster.jpg \
+              field-5.mp4 \
+              field-5-poster.jpg
+            do
+              test -s "$NEW_MEDIA_ROOT/$media_file"
+            done
 
             rm -rf "$RELEASE_DIR"
             mv "$STAGING_DIR" "$RELEASE_DIR"
