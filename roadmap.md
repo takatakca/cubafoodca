@@ -1,0 +1,1 @@
+- [ ] Maquettes visuelles des pages intérieures (sans code)
