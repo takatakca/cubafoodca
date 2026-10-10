@@ -3,7 +3,7 @@ import type { T } from "@/i18n";
 /**
  * CMS-ready content model for CUBAFOOD.CA.
  * Presentational components must never hardcode project data — it lives here
- * and can be swapped for a Lovable Cloud backend without touching the UI.
+ * and can be backed by an approved CUBAFOOD data service without touching the UI.
  */
 
 export type ProjectStatus =
