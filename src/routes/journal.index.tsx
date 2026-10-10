@@ -1,4 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { JOURNAL_POSTS } from "@/content/journal";
 import { useI18n } from "@/i18n";
 import { FIELD_MEDIA, VIDEOS } from "@/content/media";
 import { EditorialHero, SectionIntro, StatusBadge } from "@/components/site/editorial";
@@ -8,7 +9,7 @@ export const Route = createFileRoute("/journal/")({
   head: () => ({
     meta: [
       { title: "Carnet de terrain | CUBAFOOD.CA" },
-      { name: "description", content: "A carefully documented field journal for CUBAFOOD.CA in Matanzas. Currently featuring original field footage, with dated reporting to follow when verified." },
+      { name: "description", content: "A carefully documented field journal for CUBAFOOD.CA in Matanzas. Featuring the published Matanzas field visit record and original project footage, with future reporting to follow when verified." },
       { property: "og:title", content: "A living field journal — CUBAFOOD.CA" },
     ],
   }),
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/journal/")({
 function Page() {
   const { t } = useI18n();
   const footage = VIDEOS.filter((video) => video.src && !video.comingSoon);
+  const published = JOURNAL_POSTS.filter((post) => post.status === "PUBLISHED");
   return (
     <main>
       <EditorialHero
@@ -25,9 +27,9 @@ function Page() {
         title={{ en: "A record worth keeping.", es: "Una historia que merece documentarse.", fr: "Une histoire à documenter." }}
         subtitle={{ en: "The place. The process. The evidence.", es: "El lugar. El proceso. Las pruebas.", fr: "Le territoire. Les démarches. Les preuves." }}
         body={{
-          en: "An honest journal distinguishes filmed field observations from verified project decisions. We publish existing footage now and will add dated written updates only when they can be supported.",
-          es: "Un diario honesto diferencia las imágenes de campo de las decisiones verificadas del proyecto. Publicamos las grabaciones disponibles y añadiremos notas fechadas solo cuando estén respaldadas.",
-          fr: "Un carnet fiable distingue les images de terrain des décisions confirmées. Nous présentons les vidéos disponibles et publierons des articles datés lorsque les faits seront étayés.",
+          en: "A published Matanzas field-visit record and original footage document the place. We distinguish those records from operational results and will add only further verified updates.",
+          es: "Un reportaje publicado de una visita a Matanzas y las grabaciones originales documentan el lugar. Los distinguimos de los resultados operativos y solo añadiremos nuevas actualizaciones verificadas.",
+          fr: "Un compte rendu publié d’une visite à Matanzas et des vidéos originales documentent le territoire. Nous les distinguons des résultats d’exploitation et ne publierons que de nouvelles mises à jour vérifiées.",
         }}
         statuses={["CURRENT", "AWAITING_APPROVAL"]}
         media={{ video: FIELD_MEDIA.clip2.src, poster: FIELD_MEDIA.clip2.poster }}
@@ -66,19 +68,38 @@ function Page() {
       </section>
 
       <section className="bg-soil py-24 text-soil-foreground md:py-32">
-        <div className="shell grid gap-12 lg:grid-cols-2 lg:gap-24">
-          <div>
-            <p className="eyebrow text-clay">{t({ en: "02 · Written entries", es: "02 · Entradas escritas", fr: "02 · Articles à venir" })}</p>
-            <h2 className="poster mt-8 text-balance">{t({ en: "No invented milestones.", es: "Sin avances inventados.", fr: "Aucun jalon inventé." })}</h2>
-          </div>
-          <div className="lg:pt-8">
-            <p className="text-lg leading-relaxed opacity-80">{t({
-              en: "No dated written field reports have been published here yet. Future articles will require attributable sources, a verified project status and a documented publication date.",
-              es: "Todavía no se han publicado informes escritos de campo con fecha. Los artículos futuros deberán contar con fuentes identificables, estado verificado y fecha de publicación documentada.",
-              fr: "Aucun article de terrain daté n'est encore publié. Les futurs textes devront présenter des sources identifiables, un statut vérifié et une date de publication attestée.",
-            })}</p>
-            <div className="mt-9"><StatusBadge status="NOT_YET_ACTIVE" /></div>
-            <div className="mt-10"><ActionLink to="/transparency" variant="cream">{t({ en: "Read our evidence policy", es: "Consultar la transparencia", fr: "Consulter les engagements de transparence" })}</ActionLink></div>
+        <div className="shell">
+          <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:gap-24">
+            <div>
+              <p className="eyebrow text-clay">{t({ en: "02 · Published field entries", es: "02 · Crónicas de campo publicadas", fr: "02 · Articles de terrain publiés" })}</p>
+              <h2 className="poster mt-8 text-balance">{t({ en: "The story starts on the ground.", es: "La historia comienza en el terreno.", fr: "Le récit commence sur le terrain." })}</h2>
+              <p className="mt-8 max-w-xl text-lg leading-relaxed opacity-80">{t({
+                en: "These are existing published documentary records, not a claim of completed field preparation or agricultural production. Additional entries will require verified dates and sources.",
+                es: "Son registros documentales ya publicados, no pruebas de preparación terminada del terreno ni de producción agrícola. Las próximas entradas requerirán fechas y fuentes verificadas.",
+                fr: "Ces publications sont des documents de terrain existants, pas la preuve de travaux de préparation achevés ni de production agricole. Les prochaines publications devront comporter des dates et des sources vérifiées.",
+              })}</p>
+              <div className="mt-9"><StatusBadge status="PROJECT_FACT" /></div>
+            </div>
+            <div className="space-y-4">
+              {published.map((post) => (
+                <Link
+                  key={post.slug}
+                  to="/journal/$slug"
+                  params={{ slug: post.slug }}
+                  className="group block border border-cream/25 p-6 transition-colors hover:bg-cream/10 md:p-8"
+                >
+                  <p className="eyebrow text-clay">{post.date} · {t(post.location)}</p>
+                  <h3 className="display mt-6 text-2xl leading-tight group-hover:underline md:text-4xl">{t(post.title)}</h3>
+                  <p className="mt-5 text-sm leading-relaxed opacity-80">{t(post.subtitle)}</p>
+                  <span className="eyebrow mt-8 inline-block">{t({ en: "Read the record", es: "Leer la crónica", fr: "Lire le reportage" })} →</span>
+                </Link>
+              ))}
+              {!published.length ? (
+                <p className="border-t border-cream/25 pt-8 opacity-75">
+                  {t({ en: "No published written entries yet.", es: "Todavía no hay entradas escritas publicadas.", fr: "Aucun article publié pour le moment." })}
+                </p>
+              ) : null}
+            </div>
           </div>
         </div>
       </section>
