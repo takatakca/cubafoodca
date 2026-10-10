@@ -39,13 +39,13 @@ Each deployment:
 
 The former build downloaded media from a vendor-managed asset path. The GitHub-first build no longer performs that download.
 
-For the first GitHub-first deployment, the activation step copies the existing field media from the currently active MochaHost release into:
+During the migration, the deployment pipeline fetches the existing public CUBAFOOD media from the current production domain into `public/media/cubafood/` **before** the Nitro build. This is required because Nitro records the production public-asset manifest at build time. The release artifact therefore contains and registers the migrated files before activation.
 
-`/media/cubafood/`
+The activation step also has a fail-safe copy from the currently active MochaHost release into `/media/cubafood/` if a future release does not already contain a file.
 
-The application now references those CUBAFOOD-owned paths.
+The application references the CUBAFOOD-owned `/media/cubafood/` paths, so no Lovable host or build service remains in the runtime/deployment chain.
 
-This keeps the current production media without keeping a vendor build service in the application pipeline. Future media can be moved to repository-managed Git LFS or an approved object-storage/CDN solution when the asset strategy is finalized.
+Future media can be moved to an approved object-storage/CDN solution when the asset strategy is finalized.
 
 ## Secrets
 

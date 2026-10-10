@@ -81,6 +81,48 @@ jobs:
       - name: Install locked dependencies
         run: bun install --frozen-lockfile
 
+      - name: Seed CUBAFOOD media before Nitro build
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p public/media/cubafood
+
+          MEDIA_MAP=(
+            "b7134a36-9e05-478d-b28b-2a87538118e3|field-1.mp4"
+            "85a0c69d-cdc5-4170-bb2b-46bd0043745d|field-1-poster.jpg"
+            "e6c0c30f-a43e-47ed-aba4-54e6b0a2d785|field-2.mp4"
+            "5864feda-e5a2-4fa8-84df-2466bef59c17|field-2-poster.jpg"
+            "70942d5e-2158-40e4-8c03-863b536e81ea|field-3.mp4"
+            "b89bdfc5-a4c3-4892-83ae-26558d2e3959|field-3-poster.jpg"
+            "714a65bf-215e-4a83-8b4c-f8d8e72b69eb|field-4.mp4"
+            "95d232e4-55ec-4b70-b0f9-171715dcf1d2|field-4-poster.jpg"
+            "f64f0b7f-8b66-4aaa-9991-d8118f514063|field-5.mp4"
+            "a27b808e-98d3-41e6-8789-a62564efeae8|field-5-poster.jpg"
+          )
+
+          for entry in "${MEDIA_MAP[@]}"; do
+            IFS='|' read -r asset_id media_file <<< "$entry"
+
+            echo "Seeding $media_file from current CUBAFOOD production..."
+            curl \
+              --fail \
+              --silent \
+              --show-error \
+              --location \
+              --retry 5 \
+              --retry-delay 3 \
+              --connect-timeout 15 \
+              --max-time 180 \
+              "$CUBAFOOD_PRODUCTION_URL/__l5e/assets-v1/$asset_id/$media_file" \
+              -o "public/media/cubafood/$media_file"
+
+            test -s "public/media/cubafood/$media_file"
+          done
+
+          echo "All CUBAFOOD media seeded before Nitro build."
+          du -sh public/media/cubafood
+
       - name: TypeScript check
         run: bunx tsc --noEmit
 
@@ -97,6 +139,8 @@ jobs:
 
           test -f .output/server/index.mjs
           test -d .output/public
+          test -s .output/public/media/cubafood/field-1.mp4
+          test -s .output/public/media/cubafood/field-1-poster.jpg
 
           printf '%s\n' "$RELEASE_SHA" > .output/RELEASE_SHA
 
