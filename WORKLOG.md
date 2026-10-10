@@ -1,5 +1,7 @@
 # Work log
 
+- 2026-10-10 | codex | codex/github-direct-takatak-ecosystem → pending PR | active | Remove Lovable coupling, restore direct GitHub/TanStack deployment, document TAKATAK integration boundary and validate production pipeline | finish migration QA, open PR, owner review/merge
+
 - 2026-10-09 | Lovable | managed branch → no PR | done | 16 CUBAFOOD visual proposals delivered as 4 inspected boards; no app code changes | review PDF; application unchanged; PR lookup unavailable (gh missing); Git handled by platform
 
 Newest first, one line per piece of work. Rule: `AGENTS.md` › Work log rule.
