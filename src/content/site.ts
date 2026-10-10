@@ -15,9 +15,9 @@ export const SITE = {
     fr: "Matanzas, Cuba — secteur de l'aéroport de Varadero",
   } as T,
   landScale: {
-    en: "More than 24 kilometres of project land and agricultural development area.",
-    es: "Más de 24 kilómetros de terreno y área de desarrollo agrícola del proyecto.",
-    fr: "Plus de 24 kilomètres de terrain et de zone de développement agricole du projet.",
+    en: "The stated development corridor spans more than 24 kilometres in length. This is not a measured land area.",
+    es: "El corredor de desarrollo indicado supera los 24 kilómetros de longitud. No es una superficie de terreno medida.",
+    fr: "Le corridor de développement annoncé s’étend sur plus de 24 kilomètres de longueur. Il ne s’agit pas d’une superficie foncière mesurée.",
   } as T,
   mission: {
     en: "Produce legumes, vegetables and other agricultural crops to increase agricultural production and contribute to Cuba's objectives related to Food Sovereignty and Nutritional Security, providing high-quality agricultural products and added value for the population and tourism sector.",

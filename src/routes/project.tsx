@@ -80,15 +80,15 @@ function Page() {
         body={{
           en: "Food delivery answers a day. Food capacity answers a decade. CUBAFOOD.CA is an agricultural development project in Matanzas built around land, water, energy, machinery, storage, transport — and the people who already work this ground.",
           es: "Entregar alimentos resuelve un día. Producir alimentos resuelve una década. CUBAFOOD.CA es un proyecto de desarrollo agrícola en Matanzas construido sobre tierra, agua, energía, maquinaria, almacenamiento, transporte — y las personas que ya trabajan este suelo.",
-          fr: "Livrer de la nourriture règle une journée. Produire de la nourriture règle une décennie. CUBAFOOD.CA est un projet de développement agricole à Matanzas.",
+          fr: "Une livraison répond à un besoin immédiat. Une capacité agricole durable peut répondre aux besoins pendant des années. À Matanzas, CUBAFOOD.CA travaille à réunir les conditions nécessaires : terre, eau, énergie, machinerie, stockage, transport et savoir-faire des personnes qui connaissent le territoire.",
         }}
         statuses={["PROJECT_FACT", "AWAITING_APPROVAL"]}
         media={{ video: FIELD_MEDIA.clip1.src, poster: FIELD_MEDIA.clip1.poster }}
         metrics={[
           { label: { en: "Project started", es: "Inicio del proyecto", fr: "Début du projet" }, value: "2024" },
           { label: { en: "Primary development area", es: "Área principal", fr: "Zone principale" }, value: "MATANZAS" },
-          { label: { en: "Project development area", es: "Área de desarrollo", fr: "Zone de développement" }, value: "24+ KM" },
-          { label: { en: "Current status", es: "Estado actual", fr: "Statut actuel" }, value: "COORDINATION" },
+          { label: { en: "Development corridor length", es: "Longitud del corredor", fr: "Longueur du corridor" }, value: "24+ KM" },
+          { label: { en: "Project phase", es: "Etapa del proyecto", fr: "Phase du projet" }, value: "COORDINATION" },
         ]}
       >
         <ActionLink to="/participate" variant="cream">

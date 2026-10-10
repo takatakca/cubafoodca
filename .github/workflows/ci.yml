@@ -31,11 +31,13 @@ jobs:
         run: bun install --frozen-lockfile
 
       # Build first so functional/build failures are visible even if existing style-only lint findings remain.
-      - name: TypeScript check
-        run: bun run typecheck
-
+      # The TanStack file-route plugin regenerates routeTree.gen.ts during build.
+      # Build before TypeScript validation whenever routes are added or removed.
       - name: Production build
         run: bun run build
+
+      - name: TypeScript check
+        run: bun run typecheck
 
       - name: Lint
         run: bun run lint

@@ -140,14 +140,15 @@ jobs:
           echo "All CUBAFOOD media seeded before Nitro build."
           du -sh public/media/cubafood
 
+      # Build regenerates the TanStack route tree before TypeScript checks.
+      - name: Build Node.js Nitro release
+        run: bun run build
+
       - name: TypeScript check
         run: bunx tsc --noEmit
 
       - name: Lint
         run: bun run lint
-
-      - name: Build Node.js Nitro release
-        run: bun run build
 
       - name: Verify release artifact
         shell: bash
@@ -676,7 +677,33 @@ jobs:
           for route in \
             "/" \
             "/project" \
-            "/videos"
+            "/land" \
+            "/agriculture" \
+            "/cuba" \
+            "/canada" \
+            "/farmers" \
+            "/needs" \
+            "/timeline" \
+            "/videos" \
+            "/watch" \
+            "/participate" \
+            "/energy" \
+            "/people" \
+            "/training" \
+            "/agroecology" \
+            "/transparency" \
+            "/reports" \
+            "/mission" \
+            "/partners" \
+            "/collaboration" \
+            "/volunteer" \
+            "/food-for-families" \
+            "/contact" \
+            "/locations/" \
+            "/locations/matanzas" \
+            "/locations/jaguey-grande" \
+            "/journal/" \
+            "/journal/site-documentation-matanzas"
           do
             echo "Checking $CUBAFOOD_PRODUCTION_URL$route"
 

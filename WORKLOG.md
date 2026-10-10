@@ -1,5 +1,7 @@
 # Work log
 
+- 2026-10-10 | ChatGPT | codex/editorial-pages-phase2 → PR #10 | done | Built all previously empty editorial routes plus /watch, published existing Matanzas article, polished FR/ES/EN copy and 24+ km accuracy, expanded production route smoke tests; CI run 38041905055 passed build, typecheck and lint | merge after review and verify MochaHost deploy
+
 - 2026-10-10 | codex | codex/fix-media-source-after-github-migration → PR #8 | done | Production media migration now prefers /media/cubafood/ and keeps the legacy asset path as fallback; PR #8 passed CI and production deployment verified health, critical routes and media | completed
 
 - 2026-10-10 | codex | codex/seed-media-before-nitro-build → pending PR | active | Seed the existing CUBAFOOD production media into public/media before the Nitro build so Nitro's production asset manifest serves the migrated files | validate CI, open PR, merge if green, re-run production deployment
