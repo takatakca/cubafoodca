@@ -1,1 +1,1 @@
-- [ ] Maquettes visuelles des pages intérieures (sans code)
+- [ ] Compositions d images terrain codées dans les pages intérieures
