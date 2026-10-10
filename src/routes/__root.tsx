@@ -25,15 +25,27 @@ function useFallbackLanguage() {
   const [lang, setLang] = useState<Lang>("fr");
 
   useEffect(() => {
-    let preference = document.documentElement.lang.slice(0, 2).toLowerCase();
-    try {
-      preference = window.localStorage.getItem("cubafood-lang") ?? preference;
-    } catch {
-      // Restricted storage must never break public navigation or error recovery.
-    }
-    if (preference === "fr" || preference === "en" || preference === "es") {
-      setLang(preference);
-    }
+    const synchronize = () => {
+      let preference = document.documentElement.lang.slice(0, 2).toLowerCase();
+      try {
+        preference = window.localStorage.getItem("cubafood-lang") ?? preference;
+      } catch {
+        // Restricted storage must never break public navigation or error recovery.
+      }
+      if (preference === "fr" || preference === "en" || preference === "es") {
+        setLang(preference);
+      }
+    };
+
+    synchronize();
+    // Keep the fallback texts in sync with the existing header language
+    // selector; error routes can render without the normal I18nProvider.
+    const languageObserver = new MutationObserver(synchronize);
+    languageObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["lang"],
+    });
+    return () => languageObserver.disconnect();
   }, []);
 
   return (message: T) => message[lang] ?? message.en;
