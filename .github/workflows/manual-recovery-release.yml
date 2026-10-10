@@ -47,7 +47,7 @@ jobs:
           test -n "$VITE_SUPABASE_URL"
           test -n "$VITE_SUPABASE_PUBLISHABLE_KEY"
           case "$VITE_SUPABASE_PUBLISHABLE_KEY" in
-            sb_secret_*|sb_secret_*)
+            sb_secret_*)
               echo "::error::Never place an elevated secret in the public VITE_ key variable."
               exit 1
               ;;
@@ -74,7 +74,7 @@ jobs:
             "f64f0b7f-8b66-4aaa-9991-d8118f514063|field-5.mp4"
             "a27b808e-98d3-41e6-8789-a62564efeae8|field-5-poster.jpg"
           )
-          for entry in "$${MEDIA_MAP[@]}"; do
+          for entry in "${MEDIA_MAP[@]}"; do
             IFS='|' read -r asset_id media_file <<< "$entry"
             target="public/media/cubafood/$media_file"
             if ! curl --fail --silent --show-error --location \
