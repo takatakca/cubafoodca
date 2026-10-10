@@ -1,3 +1,4 @@
+import { FieldMosaic } from "@/components/site/field-mosaic";
 import { createFileRoute } from "@tanstack/react-router";
 import { useI18n } from "@/i18n";
 import { EditorialHero, SectionIntro, StatusBadge } from "@/components/site/editorial";
@@ -130,6 +131,7 @@ function Page() {
           {t({ es: "Soy agricultor", en: "I am a farmer", fr: "Je suis agriculteur" })}
         </ActionLink>
       </EditorialHero>
+      <FieldMosaic layout="stack" offset={3} />
 
       <section className="bg-background py-16 md:py-24">
         <div className="shell">

@@ -1,3 +1,4 @@
+import { FieldMosaic } from "@/components/site/field-mosaic";
 import { createFileRoute } from "@tanstack/react-router";
 import { useI18n } from "@/i18n";
 import { EditorialHero, SectionIntro, StatusBadge } from "@/components/site/editorial";
@@ -58,6 +59,7 @@ function Page() {
           {t({ en: "Offer a contribution", es: "Ofrecer una contribución", fr: "Offrir une contribution" })}
         </ActionLink>
       </EditorialHero>
+      <FieldMosaic layout="triptych" offset={4} />
 
       <section className="bg-background py-16 md:py-24">
         <div className="shell">

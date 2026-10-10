@@ -1,3 +1,4 @@
+import { FieldMosaic } from "@/components/site/field-mosaic";
 import { createFileRoute } from "@tanstack/react-router";
 import { useI18n } from "@/i18n";
 import {
@@ -97,6 +98,7 @@ function Page() {
           {t({ en: "See Matanzas", es: "Ver Matanzas", fr: "Voir Matanzas" })}
         </ActionLink>
       </EditorialHero>
+      <FieldMosaic layout="cinema" offset={1} />
 
       {/* Status */}
       <section className="bg-card py-14 text-card-foreground md:py-20">
