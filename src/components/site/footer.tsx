@@ -24,7 +24,7 @@ export function Footer() {
 
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
             <div>
-              <p className="eyebrow text-secondary">Main</p>
+              <p className="eyebrow text-secondary">{t({ en: "Explore", es: "Explorar", fr: "Explorer" })}</p>
               <ul className="mt-4 space-y-2.5">
                 {PRIMARY_NAV.map((i) => (
                   <li key={i.to}>
@@ -74,7 +74,7 @@ export function Footer() {
         </div>
 
         <div className="mt-16 flex flex-col gap-3 border-t border-cream/15 pt-8 text-xs opacity-50 md:flex-row md:items-center md:justify-between">
-          <p>© {new Date().getFullYear()} CUBAFOOD.CA — Canada &amp; Cuba agricultural development initiative.</p>
+          <p>© {new Date().getFullYear()} CUBAFOOD.CA — {t({ en: "Canada–Cuba agricultural development initiative.", es: "Iniciativa de desarrollo agrícola Canadá–Cuba.", fr: "Initiative de développement agricole Canada–Cuba." })}</p>
           <p>
             {t({
               en: "Project status: institutional coordination and approval process. No approval is claimed as final.",
