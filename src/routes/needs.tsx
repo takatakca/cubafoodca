@@ -46,15 +46,13 @@ function Page() {
         body={{
           en: "Everything below is listed as NEEDED. No quantities, prices, sponsors, deliveries or owners are published, because none have been verified.",
           es: "Todo lo siguiente aparece como NECESARIO. No se publican cantidades, precios, patrocinadores, entregas ni propietarios, porque nada ha sido verificado.",
-          fr: "Tout est listé comme REQUIS. Aucune quantité, prix, commanditaire ou livraison n'est publié.",
+          fr: "Tous les articles sont présentés comme des besoins. Aucune quantité, aucun prix, commanditaire, propriétaire ou livraison n’est confirmé sans vérification.",
         }}
         statuses={["PLANNED"]}
         media={{ video: FIELD_MEDIA.clip4.src, poster: FIELD_MEDIA.clip4.poster }}
         metrics={[
           { label: { en: "Categories", es: "Categorías", fr: "Catégories" }, value: String(EQUIPMENT_CATEGORIES.length) },
           { label: { en: "Items listed", es: "Elementos listados", fr: "Éléments listés" }, value: String(total) },
-          { label: { en: "Confirmed sponsors", es: "Patrocinadores confirmados", fr: "Commanditaires confirmés" }, value: "0" },
-          { label: { en: "Status", es: "Estado", fr: "Statut" }, value: "NEEDED" },
         ]}
       >
         <ActionLink to="/canada" variant="cream">
