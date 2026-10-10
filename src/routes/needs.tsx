@@ -1,3 +1,4 @@
+import { FieldMosaic } from "@/components/site/field-mosaic";
 import { createFileRoute } from "@tanstack/react-router";
 import { useI18n } from "@/i18n";
 import { EditorialHero, SectionIntro, StatusBadge } from "@/components/site/editorial";
@@ -60,6 +61,7 @@ function Page() {
           {t({ en: "I can help with equipment", es: "Puedo ayudar con equipos", fr: "Je peux aider avec de l'équipement" })}
         </ActionLink>
       </EditorialHero>
+      <FieldMosaic layout="cinema" offset={3} />
 
       {EQUIPMENT_CATEGORIES.map((cat, idx) => (
         <section key={cat.id} className={idx % 2 === 0 ? "bg-background py-14 md:py-20" : "bg-card py-14 text-card-foreground md:py-20"}>

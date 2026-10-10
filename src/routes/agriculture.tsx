@@ -1,3 +1,4 @@
+import { FieldMosaic } from "@/components/site/field-mosaic";
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useI18n } from "@/i18n";
@@ -80,6 +81,7 @@ function Page() {
         media={{ video: FIELD_MEDIA.clip4.src, poster: FIELD_MEDIA.clip4.poster }}
         tone="green"
       />
+      <FieldMosaic layout="band" offset={0} />
 
       <section className="bg-background py-16 md:py-24">
         <div className="shell">
