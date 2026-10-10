@@ -51,7 +51,7 @@ function Home() {
           <BackgroundVideo
             src={FIELD_MEDIA.clip2.src}
             poster={FIELD_MEDIA.clip2.poster}
-            label="Field documentation from the Matanzas project area"
+            label={t({ en: "Field documentation from the Matanzas development region", es: "Imágenes de campo de la región de Matanzas", fr: "Images de terrain de la région de Matanzas" })}
             className="opacity-55"
           />
           <div className="absolute inset-0 field-fade" />
@@ -200,18 +200,18 @@ function Home() {
             className="group relative overflow-hidden border-t border-cream/15 p-8 transition-colors hover:bg-cream/5 md:p-14"
           >
             <p className="eyebrow text-secondary">Cuba</p>
-            <p className="display mt-5 text-3xl md:text-5xl">Cuba necesita manos para cultivar su futuro.</p>
+            <p className="display mt-5 text-3xl md:text-5xl">{t({ en: "Cuba needs people to grow its future.", es: "Cuba necesita manos para cultivar su futuro.", fr: "Cuba a besoin de ses talents pour cultiver son avenir." })}</p>
             <p className="mt-5 max-w-md text-sm opacity-70">
               {CUBA_ROLES.slice(0, 8).map((r) => t(r.label)).join(" · ")} …
             </p>
-            <span className="eyebrow mt-8 inline-block text-secondary group-hover:underline">Quiero participar →</span>
+            <span className="eyebrow mt-8 inline-block text-secondary group-hover:underline">{t({ en: "I want to participate", es: "Quiero participar", fr: "Je veux participer" })} →</span>
           </Link>
           <Link
             to="/canada"
             className="group relative overflow-hidden border-t border-cream/15 p-8 transition-colors hover:bg-cream/5 md:border-l md:p-14"
           >
             <p className="eyebrow text-secondary">Canada</p>
-            <p className="display mt-5 text-3xl md:text-5xl">Canada can help Cuba grow.</p>
+            <p className="display mt-5 text-3xl md:text-5xl">{t({ en: "Canada can help Cuba grow.", es: "Canadá puede ayudar a Cuba a cultivar.", fr: "Le Canada peut aider Cuba à produire davantage." })}</p>
             <p className="mt-5 max-w-md text-sm opacity-70">
               {CANADA_CATEGORIES.slice(0, 6).map((r) => t(r.label)).join(" · ")} …
             </p>
@@ -305,9 +305,9 @@ function Home() {
         <Eyebrow>{t({ en: "Chapter 10 — Technology", es: "Capítulo 10 — Tecnología", fr: "Chapitre 10 — Technologie" })}</Eyebrow>
         <Headline>
           {t({
-            en: "24+ km of land needs more than good intentions.",
-            es: "Más de 24 km de tierra necesitan más que buenas intenciones.",
-            fr: "Plus de 24 km de terrain exigent plus que de bonnes intentions.",
+            en: "A development corridor over 24 km long demands more than good intentions.",
+            es: "Un corredor de desarrollo de más de 24 km exige más que buenas intenciones.",
+            fr: "Un corridor de développement de plus de 24 km exige plus que de bonnes intentions.",
           })}
         </Headline>
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -334,7 +334,7 @@ function Home() {
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
             <Eyebrow>{t({ en: "Chapter 11 — Field journal", es: "Capítulo 11 — Diario del campo", fr: "Chapitre 11 — Journal de terrain" })}</Eyebrow>
-            <Headline>Desde el campo</Headline>
+            <Headline>{t({ en: "From the field", es: "Desde el campo", fr: "Depuis le terrain" })}</Headline>
           </div>
           <ActionLink to="/journal" variant="ghost">
             {t({ en: "All field updates", es: "Todas las actualizaciones", fr: "Toutes les mises à jour" })}
