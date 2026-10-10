@@ -140,14 +140,15 @@ jobs:
           echo "All CUBAFOOD media seeded before Nitro build."
           du -sh public/media/cubafood
 
+      # Build regenerates the TanStack route tree before TypeScript checks.
+      - name: Build Node.js Nitro release
+        run: bun run build
+
       - name: TypeScript check
         run: bunx tsc --noEmit
 
       - name: Lint
         run: bun run lint
-
-      - name: Build Node.js Nitro release
-        run: bun run build
 
       - name: Verify release artifact
         shell: bash
