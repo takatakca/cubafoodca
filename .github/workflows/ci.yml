@@ -41,3 +41,11 @@ jobs:
 
       - name: Lint
         run: bun run lint
+
+      - name: Verify manual cPanel recovery without production access
+        shell: bash
+        run: |
+          bash -n deploy/mochahost/manual-activate.sh
+          bash -n deploy/mochahost/manual-rollback.sh
+          bash -n scripts/test-manual-release.sh
+          bash scripts/test-manual-release.sh

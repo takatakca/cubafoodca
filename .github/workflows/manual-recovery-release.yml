@@ -1,0 +1,139 @@
+name: Prepare CUBAFOOD Manual Recovery Release
+
+# Emergency fallback when hosted-runner SSH connections are closed by MochaHost.
+# Never uploads, activates or modifies production: human cPanel promotion is separate.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 30
+    env:
+      PRODUCTION_URL: https://cubafood.ca
+      VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+      VITE_PROJECT_WHATSAPP: ${{ secrets.VITE_PROJECT_WHATSAPP }}
+      VITE_PROJECT_EMAIL: ${{ secrets.VITE_PROJECT_EMAIL }}
+    steps:
+      - name: Refuse non-main release
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF" = "refs/heads/main" || {
+            echo "::error::Select the main branch when running manual recovery."
+            exit 1
+          }
+
+      - name: Checkout exact release source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.3
+
+      - name: Validate release configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$VITE_SUPABASE_URL"
+          test -n "$VITE_SUPABASE_PUBLISHABLE_KEY"
+          case "$VITE_SUPABASE_PUBLISHABLE_KEY" in
+            sb_secret_*)
+              echo "::error::Never place an elevated secret in the public VITE_ key variable."
+              exit 1
+              ;;
+          esac
+          echo "Public build-time configuration is present; no SSH access is required."
+
+      - name: Install locked dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Seed original project media before build
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p public/media/cubafood
+          MEDIA_MAP=(
+            "b7134a36-9e05-478d-b28b-2a87538118e3|field-1.mp4"
+            "85a0c69d-cdc5-4170-bb2b-46bd0043745d|field-1-poster.jpg"
+            "e6c0c30f-a43e-47ed-aba4-54e6b0a2d785|field-2.mp4"
+            "5864feda-e5a2-4fa8-84df-2466bef59c17|field-2-poster.jpg"
+            "70942d5e-2158-40e4-8c03-863b536e81ea|field-3.mp4"
+            "b89bdfc5-a4c3-4892-83ae-26558d2e3959|field-3-poster.jpg"
+            "714a65bf-215e-4a83-8b4c-f8d8e72b69eb|field-4.mp4"
+            "95d232e4-55ec-4b70-b0f9-171715dcf1d2|field-4-poster.jpg"
+            "f64f0b7f-8b66-4aaa-9991-d8118f514063|field-5.mp4"
+            "a27b808e-98d3-41e6-8789-a62564efeae8|field-5-poster.jpg"
+          )
+          for entry in "${MEDIA_MAP[@]}"; do
+            IFS='|' read -r asset_id media_file <<< "$entry"
+            target="public/media/cubafood/$media_file"
+            if ! curl --fail --silent --show-error --location \
+              --retry 5 --retry-delay 3 --connect-timeout 15 --max-time 180 \
+              "$PRODUCTION_URL/media/cubafood/$media_file" -o "$target"; then
+              echo "Trying legacy project media URL for $media_file..."
+              curl --fail --silent --show-error --location \
+                --retry 5 --retry-delay 3 --connect-timeout 15 --max-time 180 \
+                "$PRODUCTION_URL/__l5e/assets-v1/$asset_id/$media_file" -o "$target"
+            fi
+            test -s "$target"
+          done
+          echo "All ten real project media assets available for Nitro build."
+
+      - name: Production build
+        run: bun run build
+
+      - name: TypeScript check
+        run: bun run typecheck
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Validate recovery scripts
+        shell: bash
+        run: |
+          bash -n deploy/mochahost/manual-activate.sh
+          bash -n deploy/mochahost/manual-rollback.sh
+          test -f .output/server/index.mjs
+          test -s .output/public/media/cubafood/field-1.mp4
+          test -s .output/public/media/cubafood/field-5-poster.jpg
+
+      - name: Package verified immutable release
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release-package
+          cp -a .output/server .output/public release-package/
+          printf '%s\n' "$GITHUB_SHA" > release-package/RELEASE_SHA
+          archive="cubafood-$GITHUB_SHA.tar.gz"
+          tar -czf "$archive" -C release-package server public RELEASE_SHA
+          tar -tzf "$archive" | grep -Fxq "RELEASE_SHA"
+          sha256sum "$archive" > "$archive.sha256"
+          cp deploy/mochahost/manual-activate.sh ./manual-activate.sh
+          cp deploy/mochahost/manual-rollback.sh ./manual-rollback.sh
+          echo "RELEASE_SHA=$GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
+          echo "Manual cPanel upload is REQUIRED. This job does not deploy." >> "$GITHUB_STEP_SUMMARY"
+          echo "SHA256:" >> "$GITHUB_STEP_SUMMARY"
+          cat "$archive.sha256" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload time-limited recovery artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cubafood-manual-release-${{ github.sha }}
+          path: |
+            cubafood-*.tar.gz
+            cubafood-*.tar.gz.sha256
+            manual-activate.sh
+            manual-rollback.sh
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
