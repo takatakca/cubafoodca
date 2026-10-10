@@ -32,4 +32,3 @@ dist-ssr
 *.sw?
 .env
 *.tar.gz
-public/__l5e/
