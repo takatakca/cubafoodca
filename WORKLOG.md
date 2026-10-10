@@ -10,7 +10,7 @@
 
 - 2026-10-10 | codex | codex/mochahost-ssh-ipv4 → pending PR | active | Force IPv4 for MochaHost SSH/SCP after production deployment retries failed with Broken pipe before any remote change | validate CI, open PR, merge if green, re-run deployment
 
-- 2026-10-10 | codex | codex/github-direct-takatak-ecosystem → PR #1 | tested | Removed Lovable coupling, restored direct GitHub/TanStack/Nitro deployment, documented TAKATAK boundary and passed typecheck/build/lint in GitHub CI | merge PR #1, then verify MochaHost production deployment
+- 2026-10-10 | codex | codex/github-direct-takatak-ecosystem → PR #1 | done | Removed Lovable coupling, restored direct GitHub/TanStack/Nitro deployment, documented TAKATAK boundary and passed typecheck/build/lint | completed
 
 - 2026-10-09 | Lovable | managed branch → no PR | done | 16 CUBAFOOD visual proposals delivered as 4 inspected boards; no app code changes | review PDF; application unchanged; PR lookup unavailable (gh missing); Git handled by platform
 
