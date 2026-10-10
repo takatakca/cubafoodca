@@ -12,3 +12,6 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+# The public index contains only existing site routes and published articles.
+Sitemap: https://cubafood.ca/sitemap.xml
