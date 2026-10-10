@@ -162,7 +162,7 @@ jobs:
           for attempt in 1 2 3 4 5; do
             echo "SSH verification attempt $attempt of 5..."
 
-            if timeout 90 ssh \
+            if timeout 90 ssh -4 \
               -p "$CUBAFOOD_PORT" \
               "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
               "echo CUBAFOOD_SSH_OK && whoami && hostname"; then
@@ -197,7 +197,7 @@ jobs:
           for attempt in 1 2 3 4 5; do
             echo "Production media source verification attempt $attempt of 5..."
 
-            if timeout 120 ssh \
+            if timeout 120 ssh -4 \
               -p "$CUBAFOOD_PORT" \
               "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
               "test -s '$CUBAFOOD_APP_ROOT/$MEDIA_PATH'"; then
@@ -248,7 +248,7 @@ jobs:
           for attempt in 1 2 3 4 5; do
             echo "Remote folder preparation attempt $attempt of 5..."
 
-            if timeout 120 ssh \
+            if timeout 120 ssh -4 \
               -p "$CUBAFOOD_PORT" \
               "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
               "mkdir -p \
@@ -288,7 +288,7 @@ jobs:
           for attempt in 1 2 3 4 5; do
             echo "Release upload attempt $attempt of 5..."
 
-            if timeout 600 scp \
+            if timeout 600 scp -4 \
               -P "$CUBAFOOD_PORT" \
               "$LOCAL_ARCHIVE" \
               "$CUBAFOOD_USER@$CUBAFOOD_HOST:$REMOTE_ARCHIVE"; then
@@ -321,7 +321,7 @@ jobs:
           for attempt in 1 2 3 4 5; do
             echo "Remote archive verification attempt $attempt of 5..."
 
-            if timeout 120 ssh \
+            if timeout 120 ssh -4 \
               -p "$CUBAFOOD_PORT" \
               "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
               "test -s '$CUBAFOOD_APP_ROOT/incoming/cubafood-${RELEASE_ID}.tar.gz' &&
@@ -472,7 +472,7 @@ jobs:
           for attempt in 1 2 3 4 5; do
             echo "Activation attempt $attempt of 5..."
 
-            if timeout 300 ssh \
+            if timeout 300 ssh -4 \
               -p "$CUBAFOOD_PORT" \
               "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
               "APP_ROOT='$CUBAFOOD_APP_ROOT' \
@@ -510,7 +510,7 @@ jobs:
           for attempt in 1 2 3 4 5; do
             echo "Active release verification attempt $attempt of 5..."
 
-            if timeout 120 ssh \
+            if timeout 120 ssh -4 \
               -p "$CUBAFOOD_PORT" \
               "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
               "set -e;
@@ -683,7 +683,7 @@ jobs:
           for attempt in 1 2 3 4 5; do
             echo "Rollback SSH attempt $attempt of 5..."
 
-            if timeout 300 ssh \
+            if timeout 300 ssh -4 \
               -p "$CUBAFOOD_PORT" \
               "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
               "APP_ROOT='$CUBAFOOD_APP_ROOT' bash -s" \
@@ -790,7 +790,7 @@ jobs:
           for attempt in 1 2 3; do
             echo "Cleanup SSH attempt $attempt of 3..."
 
-            if timeout 180 ssh \
+            if timeout 180 ssh -4 \
               -p "$CUBAFOOD_PORT" \
               "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
               "APP_ROOT='$CUBAFOOD_APP_ROOT' bash -s" \
