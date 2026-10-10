@@ -1,6 +1,6 @@
 # Work log
 
-- 2026-10-10 | ChatGPT | codex/seo-route-index-and-localized-errors → pending PR | active | Audit public route discovery, add verified sitemap with CI check and FR/ES/EN error UX, without conflicting with open PR #9/#12/#13 | CI, PR, and review
+- 2026-10-10 | ChatGPT | codex/seo-route-index-and-localized-errors → PR #15 | tested | Added 29-route public sitemap (including only published journal), robots discovery, independent sitemap CI and premium FR/ES/EN 404/error recovery; CI #38076463932 and sitemap integrity #38076463962 succeeded | Owner review/merge; live URL and viewport verification after MochaHost deployment
 
 - 2026-10-10 | ChatGPT | codex/editorial-pages-phase2 → PR #10 | done | Built all previously empty editorial routes plus /watch, published existing Matanzas article, polished FR/ES/EN copy and 24+ km accuracy, expanded production route smoke tests; CI run 38041905055 passed build, typecheck and lint | merge after review and verify MochaHost deploy
 
