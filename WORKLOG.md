@@ -1,6 +1,6 @@
 # Work log
 
-- 2026-10-10 | codex | codex/fix-media-source-after-github-migration → pending PR | active | Make production media migration prefer the already-migrated /media/cubafood/ path and retain the legacy asset path only as fallback after the GitHub-first release changed the public source | validate CI, open PR, merge if green, re-run production deployment
+- 2026-10-10 | codex | codex/fix-media-source-after-github-migration → PR #8 | done | Production media migration now prefers /media/cubafood/ and keeps the legacy asset path as fallback; PR #8 passed CI and production deployment verified health, critical routes and media | completed
 
 - 2026-10-10 | codex | codex/seed-media-before-nitro-build → pending PR | active | Seed the existing CUBAFOOD production media into public/media before the Nitro build so Nitro's production asset manifest serves the migrated files | validate CI, open PR, merge if green, re-run production deployment
 
