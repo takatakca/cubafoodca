@@ -1,5 +1,7 @@
 # Work log
 
+- 2026-10-14 | ChatGPT | main | integrated | Prevented duplicate in-flight form submissions, restricted newsletter duplicate handling to PostgreSQL unique violations, blocked secret Supabase browser keys and gated releases on current sitemap | verify Actions/deploy; legal consent and server-side anti-abuse still blocked by #14
+
 - 2026-10-14 | ChatGPT | main ← PR #12 + PR #15 | integrated | Combined SSH-independent manual recovery and 29-route sitemap/trilingual error handling, preserved PR #13 and secure integration docs | verify Actions and publish through approved production method; #11 and #14 still open
 
 - 2026-10-10 | ChatGPT | codex/seo-route-index-and-localized-errors → PR #15 | merged | 29 route-verified sitemap URLs and trilingual recovery pages, published article 404 fixes | verify production after deploy

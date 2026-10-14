@@ -123,8 +123,8 @@ export async function submitVolunteerInterest(row: VolunteerSubmission) {
   if (error) throw new Error(error.message);
 }
 
-/** Duplicate emails are rejected by a unique index — treated as success. */
+/** Only PostgreSQL unique violations count as an existing subscription. */
 export async function subscribeToNewsletter(row: NewsletterSubmission) {
   const { error } = await supabase.from("newsletter_subscribers").insert(clean(row));
-  if (error && !error.message.toLowerCase().includes("duplicate")) throw new Error(error.message);
+  if (error && error.code !== "23505") throw new Error(error.message);
 }

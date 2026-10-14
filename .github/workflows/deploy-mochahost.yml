@@ -76,6 +76,14 @@ jobs:
             exit 1
           }
 
+          # VITE_ values enter the public JS bundle; reject privileged keys.
+          case "$VITE_SUPABASE_PUBLISHABLE_KEY" in
+            sb_secret_*)
+              echo "::error::A Supabase secret key must never be exposed as a VITE_ key."
+              exit 1
+              ;;
+          esac
+
           echo "Deployment configuration validated."
 
       - name: Install locked dependencies
@@ -149,6 +157,14 @@ jobs:
 
       - name: Lint
         run: bun run lint
+
+      - name: Verify published sitemap source
+        shell: bash
+        run: |
+          set -euo pipefail
+          bun run sitemap:check
+          test -s public/robots.txt
+          grep -Fq 'Sitemap: https://cubafood.ca/sitemap.xml' public/robots.txt
 
       - name: Verify release artifact
         shell: bash

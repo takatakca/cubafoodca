@@ -151,8 +151,12 @@ function useSubmitter<TRow>(save: (row: TRow) => Promise<void>) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+  const inFlight = useRef(false);
 
   const run = async (row: TRow) => {
+    // State updates can batch: guard rapid Enter/click duplicate inserts.
+    if (inFlight.current) return;
+    inFlight.current = true;
     setPending(true);
     setError(null);
     try {
@@ -161,6 +165,7 @@ function useSubmitter<TRow>(save: (row: TRow) => Promise<void>) {
     } catch (e) {
       setError(e instanceof Error ? e.message : "error");
     } finally {
+      inFlight.current = false;
       setPending(false);
     }
   };
