@@ -1,5 +1,7 @@
 # Work log
 
+- 2026-10-14 | ChatGPT | main | offline test correction; deploy pending | CI run 38622923936 identified that 5-page unit fixture violated 25-page production minimum; parameterized minimum while retaining 25-page production gate and using minPages=5 in fixtures | require new CI green, public read-only smoke and deployment on same SHA
+
 - 2026-10-14 | ChatGPT | main | syntax correction published; deploy pending | Fixed double-escaped regular expressions in public smoke script and fixtures before production validation | require new same-SHA CI, sitemap and deploy proof; no unsafe synthetic form posts
 
 - 2026-10-14 | ChatGPT | main | implemented, CI/deploy pending | Implemented read-only production smoke from actual sitemap: 29 public routes, robots, per-page SSR titles, 4 participation forms and unpublished article HTTP 404; added offline fixture regression tests; maintained handoff | verify latest same-SHA CI+MochaHost release, repair any failed HTTP smoke; next browser interactivity tests and #14/#161 gates

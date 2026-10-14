@@ -26,6 +26,7 @@ export async function checkPublishedSite({
   fetchImpl = fetch,
   formRoutes = FORM_ROUTES,
   unpublishedPath = UNPUBLISHED,
+  minPages = 25,
 }) {
   const origin = new URL(baseUrl).origin;
   assert.equal(origin, "https://cubafood.ca", "Production audit must target CUBAFOOD.CA only");
@@ -53,7 +54,7 @@ export async function checkPublishedSite({
   const expectedUrls = sitemapUrls(expectedSitemapXml, origin);
   const servedUrls = sitemapUrls(await response.text(), origin);
   assert.deepEqual(servedUrls, expectedUrls, "Public sitemap differs from this release");
-  assert.ok(servedUrls.length >= 25, "Unexpectedly small sitemap");
+  assert.ok(servedUrls.length >= minPages, "Unexpectedly small sitemap");
 
   const formSet = new Set(formRoutes);
   const pages = [];

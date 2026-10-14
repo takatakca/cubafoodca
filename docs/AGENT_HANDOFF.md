@@ -20,6 +20,10 @@
 
 - Public smoke patterns were normalized to valid JavaScript regular-expression escapes in the follow-up commit. Run the actual Node fixture tests on the current main SHA; do not rely on the previous script commit.
 
+## CI fixture correction
+
+- Offline unit tests intentionally use a 5-URL fixture. The smoke runner keeps a production minimum of 25 URLs, while fixture tests inject `minPages: 5`; this avoids unrelated failures before testing 404 and form validation. CI result on the newest SHA must be checked.
+
 ## Commands and acceptance
 
 - CI runs `bun install --frozen-lockfile`, `bun run build`, `node --test scripts/verify-release-health.test.mjs`, `node --test scripts/smoke-public-site.test.mjs`, `bun run typecheck`, `bun run lint` and cPanel recovery test.

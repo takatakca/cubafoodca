@@ -18,7 +18,7 @@ const fakeFetch = (overrides = {}) => async (url) => {
   return new Response(page, { status: 200, headers: { "content-type": "text/html; charset=utf-8" } });
 };
 
-const opts = { baseUrl: home, expectedSitemapXml: fixtureXml };
+const opts = { baseUrl: home, expectedSitemapXml: fixtureXml, minPages: 5 };
 test("audits published routes/forms without ever sending POST", async () => {
   const result = await checkPublishedSite({ ...opts, fetchImpl: fakeFetch() });
   assert.equal(result.verifiedPages, 5);
