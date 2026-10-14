@@ -24,6 +24,11 @@
 
 - Offline unit tests intentionally use a 5-URL fixture. The smoke runner keeps a production minimum of 25 URLs, while fixture tests inject `minPages: 5`; this avoids unrelated failures before testing 404 and form validation. CI result on the newest SHA must be checked.
 
+## Production 404/form audit correction
+
+- Production run [38622923665](https://github.com/takatakca/cubafoodca/actions/runs/38622923665) reached correct `release_sha` then read-only audit failed with `Missing SSR form at /volunteer`. The existing `/volunteer` route intentionally links to the real Cuba/Canada intake forms; it does not render `VolunteerForm`.
+- Smoke audit now verifies three active registration forms (`/cuba`, `/canada`, `/farmers`) and the volunteer orientation links separately. The existing rollback was triggered; a new deployment run must prove success.
+
 ## Commands and acceptance
 
 - CI runs `bun install --frozen-lockfile`, `bun run build`, `node --test scripts/verify-release-health.test.mjs`, `node --test scripts/smoke-public-site.test.mjs`, `bun run typecheck`, `bun run lint` and cPanel recovery test.

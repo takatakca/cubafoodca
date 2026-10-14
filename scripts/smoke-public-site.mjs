@@ -2,7 +2,8 @@ import { readFile } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 import assert from "node:assert/strict";
 
-const FORM_ROUTES = ["/cuba", "/canada", "/farmers", "/volunteer"];
+const FORM_ROUTES = ["/cuba", "/canada", "/farmers"];
+const VOLUNTEER_INFO_ROUTE = "/volunteer";
 const UNPUBLISHED = "/journal/cubafood-nonexistent-article-smoke-check";
 
 /** This sitemap is generated from verified published routes during CI. */
@@ -72,6 +73,11 @@ export async function checkPublishedSite({
       if (formSet.has(path)) {
         assert.match(html, /<form(?:\s|>)/i, `Missing SSR form at ${path}`);
         assert.match(html, /\brequired(?:=|\s|>)/i, `No required field at ${path}`);
+      }
+      if (path === VOLUNTEER_INFO_ROUTE) {
+        // This editorial orientation page routes visitors to Cuba/Canada;
+        // it has no dedicated form pending approved intake safeguards.
+        assert.ok(html.includes("/cuba") && html.includes("/canada"), "Volunteer orientation must link to Cuba and Canada");
       }
       return path;
     }));

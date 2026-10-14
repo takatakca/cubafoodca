@@ -8,7 +8,7 @@ const xml = (items) =>
   '<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +
   items.map((item) => `<url><loc>${home}${item}</loc></url>`).join("") + "</urlset>";
 const fixtureXml = xml(paths);
-const page = '<!doctype html><html lang="fr"><head><title>CUBAFOOD.CA</title></head><body><form><input required></form></body></html>';
+const page = '<!doctype html><html lang="fr"><head><title>CUBAFOOD.CA</title></head><body><form><input required></form><a href="/cuba">Cuba</a><a href="/canada">Canada</a></body></html>';
 const fakeFetch = (overrides = {}) => async (url) => {
   const pathname = new URL(url).pathname;
   if (pathname in overrides) return overrides[pathname];
@@ -23,7 +23,7 @@ test("audits published routes/forms without ever sending POST", async () => {
   const result = await checkPublishedSite({ ...opts, fetchImpl: fakeFetch() });
   assert.equal(result.verifiedPages, 5);
   assert.equal(result.unpublishedStatus, 404);
-  assert.equal(result.forms.length, 4);
+  assert.equal(result.forms.length, 3);
 });
 test("reject duplicate and foreign sitemap URLs", () => {
   assert.throws(() => sitemapUrls(xml(["/", "/"]), home), /duplicate/i);

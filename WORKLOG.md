@@ -1,5 +1,7 @@
 # Work log
 
+- 2026-10-14 | ChatGPT | main | smoke route correction pushed; deploy pending | Production smoke exposed that /volunteer is an editorial Cuba/Canada orientation page, not a form; now checks actual 3 form routes and volunteer links separately, preserving the existing privacy gate #14 | verify CI and deployed SHA, ensure rollback/recovery not bypassed
+
 - 2026-10-14 | ChatGPT | main | offline test correction; deploy pending | CI run 38622923936 identified that 5-page unit fixture violated 25-page production minimum; parameterized minimum while retaining 25-page production gate and using minPages=5 in fixtures | require new CI green, public read-only smoke and deployment on same SHA
 
 - 2026-10-14 | ChatGPT | main | syntax correction published; deploy pending | Fixed double-escaped regular expressions in public smoke script and fixtures before production validation | require new same-SHA CI, sitemap and deploy proof; no unsafe synthetic form posts
