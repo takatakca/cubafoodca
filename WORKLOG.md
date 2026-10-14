@@ -1,5 +1,7 @@
 # Work log
 
+- 2026-10-10 | ChatGPT | codex/validate-cubafood-participation-steps → PR #13 | tested | Fixed required-field bypass and Enter-key early submission, name trimming and step-heading focus in CubaFood interest form; CI run 38072923699 passed | owner review/merge, browser acceptance checks; backend anonymous intake gate remains #14
+
 - 2026-10-10 | ChatGPT | codex/editorial-pages-phase2 → PR #10 | done | Built all previously empty editorial routes plus /watch, published existing Matanzas article, polished FR/ES/EN copy and 24+ km accuracy, expanded production route smoke tests; CI run 38041905055 passed build, typecheck and lint | merge after review and verify MochaHost deploy
 
 - 2026-10-10 | codex | codex/fix-media-source-after-github-migration → PR #8 | done | Production media migration now prefers /media/cubafood/ and keeps the legacy asset path as fallback; PR #8 passed CI and production deployment verified health, critical routes and media | completed
