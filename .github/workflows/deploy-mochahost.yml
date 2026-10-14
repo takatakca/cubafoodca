@@ -20,6 +20,7 @@ jobs:
 
     env:
       RELEASE_SHA: ${{ github.sha }}
+      VITE_CUBAFOOD_RELEASE_SHA: ${{ github.sha }}
       CUBAFOOD_HOST: ${{ secrets.CUBAFOOD_PRODUCTION_HOST }}
       CUBAFOOD_PORT: ${{ secrets.CUBAFOOD_PRODUCTION_SSH_PORT }}
       CUBAFOOD_USER: ${{ secrets.CUBAFOOD_PRODUCTION_USER }}
@@ -664,7 +665,8 @@ jobs:
 
               cat "$RESPONSE_FILE"
 
-              if grep -q '"ok":true' "$RESPONSE_FILE"; then
+              # A healthy but stale public build must not be accepted.
+              if node scripts/verify-release-health.mjs "$RESPONSE_FILE" "$RELEASE_SHA"; then
                 healthy=1
                 rm -f "$RESPONSE_FILE"
                 break

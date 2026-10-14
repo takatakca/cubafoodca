@@ -36,6 +36,9 @@ jobs:
       - name: Production build
         run: bun run build
 
+      - name: Verify exact-release health contract (offline)
+        run: node --test scripts/verify-release-health.test.mjs
+
       - name: TypeScript check
         run: bun run typecheck
 

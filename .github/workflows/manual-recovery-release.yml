@@ -15,6 +15,7 @@ jobs:
     timeout-minutes: 30
     env:
       PRODUCTION_URL: https://cubafood.ca
+      VITE_CUBAFOOD_RELEASE_SHA: ${{ github.sha }}
       VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
       VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
       VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
