@@ -1,10 +1,17 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useI18n } from "@/i18n";
 import { JOURNAL_POSTS } from "@/content/journal";
 import { ActionLink } from "@/components/site/primitives";
 import { StatusBadge } from "@/components/site/editorial";
 
 export const Route = createFileRoute("/journal/$slug")({
+  // Unknown or unpublished articles must be genuine HTTP 404 responses,
+  // not 200-status placeholder pages that search engines can index.
+  beforeLoad: ({ params }) => {
+    if (!JOURNAL_POSTS.some((entry) => entry.slug === params.slug && entry.status === "PUBLISHED")) {
+      throw notFound();
+    }
+  },
   head: () => ({
     meta: [
       { title: "Carnet de terrain | CUBAFOOD.CA" },

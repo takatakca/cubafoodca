@@ -59,3 +59,7 @@ Never commit:
 - tokens
 
 GitHub Actions production secrets remain the source for deployment-time credentials.
+
+## Emergency cPanel promotion when SSH is blocked
+
+If MochaHost closes GitHub-hosted-runner SSH connections, the standard deployment must remain blocked rather than disable SSH verification. An owner-approved fallback is documented in [MOCHAHOST_MANUAL_RECOVERY.md](MOCHAHOST_MANUAL_RECOVERY.md). GitHub Actions builds a SHA-256-verifiable release artifact; the operator uploads and activates it through existing cPanel File Manager and Terminal, with an explicit rollback script. This fallback does **not** bypass production approval and is **not** proof of deployment until public health, routes and media have been checked.

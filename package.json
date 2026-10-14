@@ -11,7 +11,9 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "start": "node .output/server/index.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "sitemap:generate": "bun scripts/generate-sitemap.ts",
+    "sitemap:check": "bun scripts/generate-sitemap.ts --check"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

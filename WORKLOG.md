@@ -1,5 +1,11 @@
 # Work log
 
+- 2026-10-14 | ChatGPT | main ← PR #12 + PR #15 | integrated | Combined SSH-independent manual recovery and 29-route sitemap/trilingual error handling, preserved PR #13 and secure integration docs | verify Actions and publish through approved production method; #11 and #14 still open
+
+- 2026-10-10 | ChatGPT | codex/seo-route-index-and-localized-errors → PR #15 | merged | 29 route-verified sitemap URLs and trilingual recovery pages, published article 404 fixes | verify production after deploy
+
+- 2026-10-10 | ChatGPT | codex/mochahost-manual-release-recovery → PR #12 | merged | cPanel release archive and SHA-256-validated activation/rollback workflow | run manual recovery if SSH remains unavailable
+
 - 2026-10-10 | ChatGPT | codex/validate-cubafood-participation-steps → PR #13 | tested | Fixed required-field bypass and Enter-key early submission, name trimming and step-heading focus in CubaFood interest form; CI run 38072923699 passed | owner review/merge, browser acceptance checks; backend anonymous intake gate remains #14
 
 - 2026-10-10 | ChatGPT | codex/editorial-pages-phase2 → PR #10 | done | Built all previously empty editorial routes plus /watch, published existing Matanzas article, polished FR/ES/EN copy and 24+ km accuracy, expanded production route smoke tests; CI run 38041905055 passed build, typecheck and lint | merge after review and verify MochaHost deploy
