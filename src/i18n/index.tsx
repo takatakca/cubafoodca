@@ -1,7 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { LANGS, readStoredLanguage, persistLanguage, type Lang } from "./preferences";
 
-export const LANGS = ["en", "es", "fr"] as const;
-export type Lang = (typeof LANGS)[number];
+export { LANGS };
+export type { Lang };
 
 export const LANG_LABELS: Record<Lang, string> = {
   en: "English",
@@ -11,8 +12,6 @@ export const LANG_LABELS: Record<Lang, string> = {
 
 /** A piece of content in the three project languages. `es` and `fr` fall back to `en`. */
 export type T = { en: string; es?: string; fr?: string };
-
-const STORAGE_KEY = "cubafood-lang";
 
 type Ctx = {
   lang: Lang;
@@ -26,8 +25,8 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>("fr");
 
   useEffect(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY) as Lang | null;
-    if (stored && LANGS.includes(stored)) {
+    const stored = readStoredLanguage(() => window.localStorage);
+    if (stored) {
       setLangState(stored);
       return;
     }
@@ -41,7 +40,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   const setLang = useCallback((l: Lang) => {
     setLangState(l);
-    window.localStorage.setItem(STORAGE_KEY, l);
+    persistLanguage(l, () => window.localStorage);
   }, []);
 
   const t = useCallback(

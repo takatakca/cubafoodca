@@ -159,6 +159,9 @@ jobs:
       - name: Lint
         run: bun run lint
 
+      - name: Verify language preferences under blocked storage
+        run: bun test scripts/i18n-preferences.test.mjs
+
       - name: Verify published sitemap source
         shell: bash
         run: |

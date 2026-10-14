@@ -42,6 +42,9 @@ jobs:
       - name: Verify public read-only smoke rules (offline)
         run: node --test scripts/smoke-public-site.test.mjs
 
+      - name: Verify language preferences under blocked storage
+        run: bun test scripts/i18n-preferences.test.mjs
+
       - name: TypeScript check
         run: bun run typecheck
 
