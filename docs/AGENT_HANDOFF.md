@@ -13,6 +13,11 @@
 - GitHub automatic deployment [38613715778](https://github.com/takatakca/cubafoodca/actions/runs/38613715778) for `0c6565b95a9b0cfd1a1fd21904f89a72ecf5396b` **FAILED before activation** at `Verify existing production media source`, after all five SSH calls ended in `client_loop: send disconnect: Broken pipe`. This is a transport failure, **not proof media were missing**.
 - The next commit removes that redundant remote media inspection, validates **all ten** field media files inside the already-built Nitro release, and retains SSH verification for actual remote activation plus exact public SHA and rollback. A new same-SHA deployment is required to verify the correction.
 
+## Latest UI correctness patch
+
+- When `VITE_PROJECT_WHATSAPP` and `VITE_PROJECT_EMAIL` are unset, buttons now use truthful participation/contact paths rather than falsely promising functioning WhatsApp/email transport. Malformed WhatsApp numbers no longer create invalid `wa.me` links.
+- The unavailable TAKATAK adapter immediately reports `not_configured`; no fake delay, user, credential or entitlement is created. Real auth still requires TAKATAK master #161.
+
 ## Current task and actual checks
 
 - Verify the **newest main SHA**, matching GitHub Actions runs (CI, sitemap, deployment), HTTP `/healthz` JSON `release_sha`, production critical routes and field media. No future deployment is claimed here.

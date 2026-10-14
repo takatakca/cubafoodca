@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { ArrowUpRight, Mail } from "lucide-react";
 import { useI18n } from "@/i18n";
 import { UI } from "@/content/site";
 import { whatsappLink, emailLink, type WhatsAppContext } from "@/lib/contact";
@@ -35,10 +36,12 @@ export function WhatsAppButton({
   );
 
   if (!href) {
+    // Do not advertise a working WhatsApp transport when no verified
+    // project phone number has been configured.
     return (
-      <Link to="/contact" className={cls}>
-        <WhatsAppGlyph />
-        {text}
+      <Link to="/participate" className={cls}>
+        <ArrowUpRight className="h-5 w-5" aria-hidden />
+        {t({ en: "Explore participation options", es: "Explorar formas de participar", fr: "Voir les possibilités de participation" })}
       </Link>
     );
   }
@@ -60,7 +63,8 @@ export function EmailButton({ subject, className }: { subject?: string; classNam
   if (!href) {
     return (
       <Link to="/contact" className={cls}>
-        {t(UI.email)}
+        <Mail className="h-5 w-5" aria-hidden />
+        {t({ en: "View contact options", es: "Ver opciones de contacto", fr: "Voir les options de contact" })}
       </Link>
     );
   }
@@ -74,13 +78,15 @@ export function EmailButton({ subject, className }: { subject?: string; classNam
 export function WhatsAppFloat() {
   const { t } = useI18n();
   const href = whatsappLink("general");
-  const label = t(UI.whatsapp);
+  const label = href
+    ? t(UI.whatsapp)
+    : t({ en: "Explore participation options", es: "Explorar formas de participar", fr: "Voir les possibilités de participation" });
   const cls =
     "fixed bottom-5 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-secondary text-secondary-foreground shadow-[var(--shadow-plate)] transition-transform hover:scale-105 md:h-14 md:w-14";
   if (!href) {
     return (
-      <Link to="/contact" className={cls} aria-label={label} title={label}>
-        <WhatsAppGlyph className="h-7 w-7" />
+      <Link to="/participate" className={cls} aria-label={label} title={label}>
+        <ArrowUpRight className="h-7 w-7" aria-hidden />
       </Link>
     );
   }

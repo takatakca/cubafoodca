@@ -19,11 +19,10 @@ export interface TakatakAuthAdapter {
   start(method: AuthMethod): Promise<AuthState>;
 }
 
-/** Demo adapter: production TAKATAK AUTH is not connected yet. */
+/** Honest unavailable adapter: no fake network delay and no simulated user. */
 export const takatakAuth: TakatakAuthAdapter = {
   configured: false,
   async start(method) {
-    await new Promise((r) => setTimeout(r, 700));
     return { status: "not_configured", method };
   },
 };

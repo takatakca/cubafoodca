@@ -24,7 +24,8 @@ export const WHATSAPP_MESSAGES: Record<WhatsAppContext, string> = {
 export function whatsappLink(context: WhatsAppContext = "general"): string | null {
   if (!PROJECT_WHATSAPP) return null;
   const digits = PROJECT_WHATSAPP.replace(/\D/g, "");
-  if (!digits) return null;
+  // wa.me requires a real international number; reject malformed settings.
+  if (!/^[0-9]{8,15}$/.test(digits)) return null;
   return `https://wa.me/${digits}?text=${encodeURIComponent(WHATSAPP_MESSAGES[context])}`;
 }
 
