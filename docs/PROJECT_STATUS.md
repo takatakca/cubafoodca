@@ -23,4 +23,6 @@
 - [TAKATAK master #161](https://github.com/takatakca/takatak-v1/issues/161): no live supported `cubafood` identity/entitlement/service event contract, so sign-in remains unavailable rather than fake.
 - Browser/mobile/a11y and full end-to-end form tests still need verified staging coverage; Search Console account verification is external.
 
+**Update 2026-10-14:** Last previously verified live SHA `69ea96f85ea8f55a0c84620d9bf9911509b605ae` ([CI](https://github.com/takatakca/cubafoodca/actions/runs/38614407296), [sitemap](https://github.com/takatakca/cubafoodca/actions/runs/38614407242), [deploy](https://github.com/takatakca/cubafoodca/actions/runs/38614407289)). A new read-only public smoke is being added to the release workflow; the new commit requires its own verification.
+
 **Not 100% complete.** See `TASK_QUEUE.md` and `AGENT_HANDOFF.md`.

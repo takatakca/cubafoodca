@@ -1,5 +1,7 @@
 # Work log
 
+- 2026-10-14 | ChatGPT | main | implemented, CI/deploy pending | Implemented read-only production smoke from actual sitemap: 29 public routes, robots, per-page SSR titles, 4 participation forms and unpublished article HTTP 404; added offline fixture regression tests; maintained handoff | verify latest same-SHA CI+MochaHost release, repair any failed HTTP smoke; next browser interactivity tests and #14/#161 gates
+
 - 2026-10-14 | ChatGPT | main | UI correctness delivered; verify deploy | Unconfigured WhatsApp/Email buttons now navigate with truthful FR/EN/ES labels to real participation/contact routes; reject malformed WhatsApp phone settings; removed fake TAKATAK AUTH delay while master contract #161 is blocked | confirm latest SHA CI/live deployment, browser acceptance and #14 consent/anti-abuse remain
 
 - 2026-10-14 | ChatGPT | main | fix pushed; recheck deploy | Diagnosed run 38613715778 SSH Broken pipe during redundant remote-media inspection, with successful pre-build project media acquisition; removed that redundant remote preflight, now validates all ten media files inside immutable Nitro artifact | verify new same-SHA Actions and active public /healthz, keep SSH/rollback checks; no claim that failed run deployed

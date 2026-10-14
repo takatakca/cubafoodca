@@ -655,58 +655,11 @@ jobs:
 
           echo "Health endpoint passed."
 
-      - name: Verify critical production routes
+      - name: Verify public routes, forms, sitemap and 404 without submitting data
         shell: bash
         run: |
           set -euo pipefail
-
-          for route in \
-            "/" \
-            "/project" \
-            "/land" \
-            "/agriculture" \
-            "/cuba" \
-            "/canada" \
-            "/farmers" \
-            "/needs" \
-            "/timeline" \
-            "/videos" \
-            "/watch" \
-            "/participate" \
-            "/energy" \
-            "/people" \
-            "/training" \
-            "/agroecology" \
-            "/transparency" \
-            "/reports" \
-            "/mission" \
-            "/partners" \
-            "/collaboration" \
-            "/volunteer" \
-            "/food-for-families" \
-            "/contact" \
-            "/locations/" \
-            "/locations/matanzas" \
-            "/locations/jaguey-grande" \
-            "/journal/" \
-            "/journal/site-documentation-matanzas"
-          do
-            echo "Checking $CUBAFOOD_PRODUCTION_URL$route"
-
-            curl \
-              --fail \
-              --silent \
-              --show-error \
-              --location \
-              --retry 5 \
-              --retry-delay 3 \
-              --connect-timeout 15 \
-              --max-time 30 \
-              -o /dev/null \
-              "$CUBAFOOD_PRODUCTION_URL$route"
-          done
-
-          echo "Critical routes passed."
+          node scripts/smoke-public-site.mjs "$CUBAFOOD_PRODUCTION_URL"
 
       - name: Verify production media
         shell: bash

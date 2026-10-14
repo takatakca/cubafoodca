@@ -1,39 +1,35 @@
-# CUBAFOOD.CA — developer agent handoff
+# CUBAFOOD.CA — agent handoff
 
-**Recorded:** 2026-10-14 · **Repo:** `takatakca/cubafoodca` · **Branch:** `main`.
+**Session:** 2026-10-14 · **Repo:** `takatakca/cubafoodca` · **Branch:** `main`.
 
-## Last task completed / files changed
+## Last independently completed production release
 
-- The previous verified production task finished at `300997823d3fcd169543fee52244036f792f93f6` with [CI](https://github.com/takatakca/cubafoodca/actions/runs/38610125815), [sitemap](https://github.com/takatakca/cubafoodca/actions/runs/38610125840), [deploy](https://github.com/takatakca/cubafoodca/actions/runs/38610125772): all success.
-- Latest **application-code commit already pushed**: `0c6565b95a9b0cfd1a1fd21904f89a72ecf5396b`. It modifies `src/routes/healthz.ts`, `.github/workflows/deploy-mochahost.yml`, `.github/workflows/manual-recovery-release.yml`, `.github/workflows/ci.yml` and adds `scripts/verify-release-health.mjs`, `scripts/verify-release-health.test.mjs`.
-- Current documentation task changes `AGENTS.md`, `WORKLOG.md`, `docs/PROJECT_STATUS.md`, `docs/TASK_QUEUE.md`, `docs/AGENT_HANDOFF.md`, `docs/DEPLOYMENT.md`, `docs/DECISIONS.md`, `docs/SEARCH_DISCOVERY.md` and `docs/TAKATAK_INTEGRATION_STATUS.md`. This documentation commit's SHA is resolved **after** the commit is created by reading GitHub `main`; it cannot be embedded recursively in itself.
+- SHA: `69ea96f85ea8f55a0c84620d9bf9911509b605ae`.
+- [CUBAFOOD CI run 38614407296](https://github.com/takatakca/cubafoodca/actions/runs/38614407296): success.
+- [Sitemap run 38614407242](https://github.com/takatakca/cubafoodca/actions/runs/38614407242): success.
+- [MochaHost deploy run 38614407289](https://github.com/takatakca/cubafoodca/actions/runs/38614407289): success, including active SHA, public /healthz SHA, critical routes and media.
 
-## New incident and exact recovery
+## Current task and changed files
 
-- GitHub automatic deployment [38613715778](https://github.com/takatakca/cubafoodca/actions/runs/38613715778) for `0c6565b95a9b0cfd1a1fd21904f89a72ecf5396b` **FAILED before activation** at `Verify existing production media source`, after all five SSH calls ended in `client_loop: send disconnect: Broken pipe`. This is a transport failure, **not proof media were missing**.
-- The next commit removes that redundant remote media inspection, validates **all ten** field media files inside the already-built Nitro release, and retains SSH verification for actual remote activation plus exact public SHA and rollback. A new same-SHA deployment is required to verify the correction.
+- Current change: add `scripts/smoke-public-site.mjs` and `scripts/smoke-public-site.test.mjs`; include fixture-only tests in `.github/workflows/ci.yml` and a read-only live smoke gate in `.github/workflows/deploy-mochahost.yml`.
+- It reads the real published sitemap and robots.txt, verifies every listed HTML route, confirms the four participation forms have required fields, and checks an unpublished journal slug has HTTP 404. No POST, no test participant data, no Supabase mutations.
+- Updated `docs/TASK_QUEUE.md`, `docs/PROJECT_STATUS.md`, `WORKLOG.md` and this handoff.
+- **Latest pushed SHA for this change:** inspect GitHub main after commit creation (self-reference cannot be included in same Git commit). Its CI and deployment are **not yet confirmed when this document is written**.
 
-## Latest UI correctness patch
+## Commands and acceptance
 
-- When `VITE_PROJECT_WHATSAPP` and `VITE_PROJECT_EMAIL` are unset, buttons now use truthful participation/contact paths rather than falsely promising functioning WhatsApp/email transport. Malformed WhatsApp numbers no longer create invalid `wa.me` links.
-- The unavailable TAKATAK adapter immediately reports `not_configured`; no fake delay, user, credential or entitlement is created. Real auth still requires TAKATAK master #161.
+- CI runs `bun install --frozen-lockfile`, `bun run build`, `node --test scripts/verify-release-health.test.mjs`, `node --test scripts/smoke-public-site.test.mjs`, `bun run typecheck`, `bun run lint` and cPanel recovery test.
+- Deployment checks immutable artifact and SSH pointer, `node scripts/verify-release-health.mjs RESPONSE_FILE EXPECTED_SHA`, then `node scripts/smoke-public-site.mjs https://cubafood.ca` before declaring success, followed by media check. An error after activation invokes existing rollback.
+- Green statuses must match current HEAD; do not infer success from previous SHA or docs alone.
 
-## Current task and actual checks
+## Open blockers / required access
 
-- Verify the **newest main SHA**, matching GitHub Actions runs (CI, sitemap, deployment), HTTP `/healthz` JSON `release_sha`, production critical routes and field media. No future deployment is claimed here.
-- Pre-session runs on previous SHA were green, including an SSH-verified active release. The new application-code and documentation SHA(s) need fresh green run evidence.
-- Required reproducible checks: `bun install --frozen-lockfile`; `bun run build`; `node --test scripts/verify-release-health.test.mjs`; `bun run typecheck`; `bun run lint`; `bun run sitemap:check`; `bash scripts/test-manual-release.sh`. These execute in GitHub Actions; only count actual successful results.
-- `/healthz` deliberately returns null `release_sha` when no build-time SHA exists. The GitHub deploy refuses health responses from another/older SHA.
+- [CUBAFOOD #14](https://github.com/takatakca/cubafoodca/issues/14): approved FR/EN/ES privacy/consent text and authorized staging edge anti-bot/rate limit/RLS migration. Anonymous Supabase direct browser INSERT remains insecure against automation. Do not simulate legal approval or change production grants without a rollout plan.
+- [TAKATAK #161](https://github.com/takatakca/takatak-v1/issues/161): independent CUBAFOOD master identity/entitlement contract not available. No reuse of other vertical keys.
+- Browser/mobile/a11y interactive tests, real contact information, and Google Search Console owner validation remain separate tasks. Authenticated staging/test credentials may be needed; never place secrets in GitHub commits or this document.
 
-## Known blockers and permissions (no credentials here)
+## Exact next action
 
-- [CUBAFOOD #14](https://github.com/takatakca/cubafoodca/issues/14): approved privacy and consent terms; authorized staging edge/RLS migration and security tests. Browser anonymous INSERT remains a bypass until server-side controls are implemented.
-- [TAKATAK #161](https://github.com/takatakca/takatak-v1/issues/161): no live source app contract/entitlements; no invented authentication.
-- Site/media deployment uses protected GitHub Actions production environment and SSH key/host verification. No secrets or participant PII belong in this file.
-- Browser/manual mobile accessibility review and production Search Console ownership have not been independently verified.
-
-## Deployment truth and next exact action
-
-1. Read actual `main` HEAD, check CI/sitemap/deploy run `head_sha` equals it; if any failure, inspect failed job logs and repair on non-destructive new commit.
-2. Confirm deploy checks **active SSH release SHA = public /healthz SHA = new main SHA**, plus 29 routes and media, before marking release successful.
-3. Update this handoff with observed run IDs and verified SHA on the *next* code/doc update, and pursue first unclaimed executable P1 browser/form acceptance tests. Leave #14 and #161 blocked until authorized prerequisites.
+1. Read newest `main` SHA, examine its CI / sitemap / MochaHost deploy runs. If public smoke fails, inspect failure and correct code or site without disabling the gate; rerun with a new commit.
+2. Update handoff with exact successful SHA and run IDs on the next commit.
+3. Build next isolated headless browser tests for FR/EN/ES and forms with intercepted submission endpoints; never send synthetic registrations to production.

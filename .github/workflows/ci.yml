@@ -39,6 +39,9 @@ jobs:
       - name: Verify exact-release health contract (offline)
         run: node --test scripts/verify-release-health.test.mjs
 
+      - name: Verify public read-only smoke rules (offline)
+        run: node --test scripts/smoke-public-site.test.mjs
+
       - name: TypeScript check
         run: bun run typecheck
 
