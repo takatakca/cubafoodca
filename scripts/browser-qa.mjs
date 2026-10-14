@@ -121,7 +121,7 @@ async function runQA(baseUrl) {
     await click('(() => { const b = [...document.querySelectorAll("form button")].find(b => b.textContent.trim() === "Continue"); if (!b) return false; b.click(); return true; })()', "valid Continue");
     await until(() => evaluate('document.querySelector("form")?.textContent.includes("2 / 3")'), "validated second step");
     // Never advance to the final submit step and never send a POST.
-    await click('(() => { const a = document.querySelector("a[href=\"/project\"]"); if (!a) return false; a.click(); return true; })()', "project navigation");
+    await click(`(() => { const a = [...document.querySelectorAll('a')].find(a => a.getAttribute('href') === '/project'); if (!a) return false; a.click(); return true; })()`, "project navigation");
     await until(() => evaluate('location.pathname === "/project"'), "project route");
     assert.equal(await evaluate("document.documentElement.lang"), "en", "Language lost after navigation");
 
