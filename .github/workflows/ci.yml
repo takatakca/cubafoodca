@@ -45,6 +45,9 @@ jobs:
       - name: Verify language preferences under blocked storage
         run: bun test scripts/i18n-preferences.test.mjs
 
+      - name: Check headless browser smoke script syntax
+        run: node --check scripts/browser-qa.mjs
+
       - name: TypeScript check
         run: bun run typecheck
 

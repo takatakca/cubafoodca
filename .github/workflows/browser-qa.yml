@@ -1,0 +1,48 @@
+name: CUBAFOOD Browser QA
+
+# Post-deployment, read-only interactive smoke. Independent from the existing
+# atomic deployment/rollback gates, so QA never submits fake participant data.
+on:
+  workflow_run:
+    workflows: ["Deploy CUBAFOOD to MochaHost"]
+    types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cubafood-browser-qa
+  cancel-in-progress: true
+
+jobs:
+  browser:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.repository.full_name == 'takatakca/cubafoodca' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout exact deployed source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Verify Chrome browser availability
+        run: |
+          if command -v google-chrome >/dev/null; then
+            google-chrome --version
+          elif command -v chromium >/dev/null; then
+            chromium --version
+          else
+            echo "::error::Headless Chrome/Chromium was not found on the runner."
+            exit 1
+          fi
+
+      - name: Run no-submission interactive browser QA
+        env:
+          CUBAFOOD_EXPECTED_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: node scripts/browser-qa.mjs https://cubafood.ca
