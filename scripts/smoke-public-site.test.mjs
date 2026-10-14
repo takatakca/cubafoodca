@@ -50,5 +50,5 @@ test("detects a missing required registration field", async () => {
 test("rejects accidental nonproduction target", async () => {
   await assert.rejects(checkPublishedSite({
     ...opts, baseUrl: "http://localhost:3000", fetchImpl: fakeFetch(),
-  }), /CUBAFOOD\\.CA/i);
+  }), /CUBAFOOD\.CA/i);
 });

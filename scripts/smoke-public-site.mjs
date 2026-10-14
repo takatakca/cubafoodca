@@ -7,8 +7,8 @@ const UNPUBLISHED = "/journal/cubafood-nonexistent-article-smoke-check";
 
 /** This sitemap is generated from verified published routes during CI. */
 export function sitemapUrls(xml, origin) {
-  assert.match(xml, /<urlset\\b/i, "Sitemap is not an XML urlset");
-  const found = [...xml.matchAll(/<loc>([^<]+)<\\/loc>/gi)].map((match) => match[1].replaceAll("&amp;", "&"));
+  assert.match(xml, /<urlset\b/i, "Sitemap is not an XML urlset");
+  const found = [...xml.matchAll(/<loc>([^<]+)<\/loc>/gi)].map((match) => match[1].replaceAll("&amp;", "&"));
   assert.ok(found.length > 0, "Sitemap has no public URLs");
   assert.equal(new Set(found).size, found.length, "Sitemap has duplicate URLs");
   for (const raw of found) {
@@ -46,7 +46,7 @@ export async function checkPublishedSite({
 
   const robots = await request("/robots.txt");
   assert.equal(robots.status, 200, "Public robots.txt failed");
-  assert.match(await robots.text(), /Sitemap:\\s*https:\/\/cubafood\\.ca\/sitemap\\.xml/i);
+  assert.match(await robots.text(), /Sitemap:\s*https:\/\/cubafood\.ca\/sitemap\.xml/i);
 
   const response = await request("/sitemap.xml");
   assert.equal(response.status, 200, "Public sitemap.xml failed");
@@ -66,11 +66,11 @@ export async function checkPublishedSite({
       assert.equal(res.status, 200, `Public page ${path} returned ${res.status}`);
       assert.match(res.headers.get("content-type") ?? "", /text\/html/i, `Expected HTML at ${path}`);
       const html = await res.text();
-      assert.match(html, /<html\\b/i, `Missing document shell at ${path}`);
-      assert.match(html, /<title\\b/i, `Missing page title at ${path}`);
+      assert.match(html, /<html\b/i, `Missing document shell at ${path}`);
+      assert.match(html, /<title\b/i, `Missing page title at ${path}`);
       if (formSet.has(path)) {
-        assert.match(html, /<form(?:\\s|>)/i, `Missing SSR form at ${path}`);
-        assert.match(html, /\\brequired(?:=|\\s|>)/i, `No required field at ${path}`);
+        assert.match(html, /<form(?:\s|>)/i, `Missing SSR form at ${path}`);
+        assert.match(html, /\brequired(?:=|\s|>)/i, `No required field at ${path}`);
       }
       return path;
     }));

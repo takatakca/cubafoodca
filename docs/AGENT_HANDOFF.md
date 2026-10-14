@@ -16,6 +16,10 @@
 - Updated `docs/TASK_QUEUE.md`, `docs/PROJECT_STATUS.md`, `WORKLOG.md` and this handoff.
 - **Latest pushed SHA for this change:** inspect GitHub main after commit creation (self-reference cannot be included in same Git commit). Its CI and deployment are **not yet confirmed when this document is written**.
 
+## Regex correction
+
+- Public smoke patterns were normalized to valid JavaScript regular-expression escapes in the follow-up commit. Run the actual Node fixture tests on the current main SHA; do not rely on the previous script commit.
+
 ## Commands and acceptance
 
 - CI runs `bun install --frozen-lockfile`, `bun run build`, `node --test scripts/verify-release-health.test.mjs`, `node --test scripts/smoke-public-site.test.mjs`, `bun run typecheck`, `bun run lint` and cPanel recovery test.

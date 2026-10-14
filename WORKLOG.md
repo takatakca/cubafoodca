@@ -1,5 +1,7 @@
 # Work log
 
+- 2026-10-14 | ChatGPT | main | syntax correction published; deploy pending | Fixed double-escaped regular expressions in public smoke script and fixtures before production validation | require new same-SHA CI, sitemap and deploy proof; no unsafe synthetic form posts
+
 - 2026-10-14 | ChatGPT | main | implemented, CI/deploy pending | Implemented read-only production smoke from actual sitemap: 29 public routes, robots, per-page SSR titles, 4 participation forms and unpublished article HTTP 404; added offline fixture regression tests; maintained handoff | verify latest same-SHA CI+MochaHost release, repair any failed HTTP smoke; next browser interactivity tests and #14/#161 gates
 
 - 2026-10-14 | ChatGPT | main | UI correctness delivered; verify deploy | Unconfigured WhatsApp/Email buttons now navigate with truthful FR/EN/ES labels to real participation/contact routes; reject malformed WhatsApp phone settings; removed fake TAKATAK AUTH delay while master contract #161 is blocked | confirm latest SHA CI/live deployment, browser acceptance and #14 consent/anti-abuse remain
