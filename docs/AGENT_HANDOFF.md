@@ -8,6 +8,11 @@
 - Latest **application-code commit already pushed**: `0c6565b95a9b0cfd1a1fd21904f89a72ecf5396b`. It modifies `src/routes/healthz.ts`, `.github/workflows/deploy-mochahost.yml`, `.github/workflows/manual-recovery-release.yml`, `.github/workflows/ci.yml` and adds `scripts/verify-release-health.mjs`, `scripts/verify-release-health.test.mjs`.
 - Current documentation task changes `AGENTS.md`, `WORKLOG.md`, `docs/PROJECT_STATUS.md`, `docs/TASK_QUEUE.md`, `docs/AGENT_HANDOFF.md`, `docs/DEPLOYMENT.md`, `docs/DECISIONS.md`, `docs/SEARCH_DISCOVERY.md` and `docs/TAKATAK_INTEGRATION_STATUS.md`. This documentation commit's SHA is resolved **after** the commit is created by reading GitHub `main`; it cannot be embedded recursively in itself.
 
+## New incident and exact recovery
+
+- GitHub automatic deployment [38613715778](https://github.com/takatakca/cubafoodca/actions/runs/38613715778) for `0c6565b95a9b0cfd1a1fd21904f89a72ecf5396b` **FAILED before activation** at `Verify existing production media source`, after all five SSH calls ended in `client_loop: send disconnect: Broken pipe`. This is a transport failure, **not proof media were missing**.
+- The next commit removes that redundant remote media inspection, validates **all ten** field media files inside the already-built Nitro release, and retains SSH verification for actual remote activation plus exact public SHA and rollback. A new same-SHA deployment is required to verify the correction.
+
 ## Current task and actual checks
 
 - Verify the **newest main SHA**, matching GitHub Actions runs (CI, sitemap, deployment), HTTP `/healthz` JSON `release_sha`, production critical routes and field media. No future deployment is claimed here.

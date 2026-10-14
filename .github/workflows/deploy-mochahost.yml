@@ -174,8 +174,21 @@ jobs:
 
           test -f .output/server/index.mjs
           test -d .output/public
-          test -s .output/public/media/cubafood/field-1.mp4
-          test -s .output/public/media/cubafood/field-1-poster.jpg
+          # Every authentic asset has already been downloaded and checked
+          # before Nitro build. Verify all ten in the final archive instead of
+          # opening a redundant remote SSH session vulnerable to Broken pipe.
+          for media in \
+            field-1.mp4 field-1-poster.jpg \
+            field-2.mp4 field-2-poster.jpg \
+            field-3.mp4 field-3-poster.jpg \
+            field-4.mp4 field-4-poster.jpg \
+            field-5.mp4 field-5-poster.jpg
+          do
+            test -s ".output/public/media/cubafood/$media" || {
+              echo "::error::Release artifact missing media: $media"
+              exit 1
+            }
+          done
 
           printf '%s\n' "$RELEASE_SHA" > .output/RELEASE_SHA
 
@@ -263,51 +276,6 @@ jobs:
           fi
 
           echo "SSH connection verified successfully."
-
-      - name: Verify existing production media source
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          verified=0
-
-          for attempt in 1 2 3 4 5; do
-            echo "Production media source verification attempt $attempt of 5..."
-
-            if timeout 120 ssh -4 \
-              -p "$CUBAFOOD_PORT" \
-              "$CUBAFOOD_USER@$CUBAFOOD_HOST" \
-              "set -e
-               current='$CUBAFOOD_APP_ROOT/current/public/media/cubafood'
-               legacy='$CUBAFOOD_APP_ROOT/current/public/__l5e/assets-v1'
-               test -s \"\$current/field-1.mp4\" || test -s \"\$legacy/b7134a36-9e05-478d-b28b-2a87538118e3/field-1.mp4\"
-               test -s \"\$current/field-1-poster.jpg\" || test -s \"\$legacy/85a0c69d-cdc5-4170-bb2b-46bd0043745d/field-1-poster.jpg\"
-               test -s \"\$current/field-2.mp4\" || test -s \"\$legacy/e6c0c30f-a43e-47ed-aba4-54e6b0a2d785/field-2.mp4\"
-               test -s \"\$current/field-2-poster.jpg\" || test -s \"\$legacy/5864feda-e5a2-4fa8-84df-2466bef59c17/field-2-poster.jpg\"
-               test -s \"\$current/field-3.mp4\" || test -s \"\$legacy/70942d5e-2158-40e4-8c03-863b536e81ea/field-3.mp4\"
-               test -s \"\$current/field-3-poster.jpg\" || test -s \"\$legacy/b89bdfc5-a4c3-4892-83ae-26558d2e3959/field-3-poster.jpg\"
-               test -s \"\$current/field-4.mp4\" || test -s \"\$legacy/714a65bf-215e-4a83-8b4c-f8d8e72b69eb/field-4.mp4\"
-               test -s \"\$current/field-4-poster.jpg\" || test -s \"\$legacy/95d232e4-55ec-4b70-b0f9-171715dcf1d2/field-4-poster.jpg\"
-               test -s \"\$current/field-5.mp4\" || test -s \"\$legacy/f64f0b7f-8b66-4aaa-9991-d8118f514063/field-5.mp4\"
-               test -s \"\$current/field-5-poster.jpg\" || test -s \"\$legacy/a27b808e-98d3-41e6-8789-a62564efeae8/field-5-poster.jpg\""; then
-
-              verified=1
-              break
-            fi
-
-            if [ "$attempt" -lt 5 ]; then
-              sleep $((attempt * 5))
-            fi
-          done
-
-          if [ "$verified" != "1" ]; then
-            echo "::error::The current MochaHost release does not contain all field media required for the GitHub-first migration."
-            echo "::error::No deployment was activated. Restore/seed the existing production media before retrying."
-            exit 1
-          fi
-
-          echo "All existing production field media sources verified."
-          echo "The next release will copy them into /media/cubafood/."
 
       - name: Package immutable release
         shell: bash

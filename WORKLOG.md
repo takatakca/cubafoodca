@@ -1,5 +1,7 @@
 # Work log
 
+- 2026-10-14 | ChatGPT | main | fix pushed; recheck deploy | Diagnosed run 38613715778 SSH Broken pipe during redundant remote-media inspection, with successful pre-build project media acquisition; removed that redundant remote preflight, now validates all ten media files inside immutable Nitro artifact | verify new same-SHA Actions and active public /healthz, keep SSH/rollback checks; no claim that failed run deployed
+
 - 2026-10-14 | ChatGPT | main | done: handoff authored | Added five continuity/maintenance docs and AGENTS recovery protocol; code SHA 0c6565b95a9b0cfd1a1fd21904f89a72ecf5396b embeds /healthz SHA and exact-match release verification; current deploy results must be checked on newly pushed docs commit | observe CI, sitemap and MochaHost deployment; continue independent browser tests; #14 and TAKATAK #161 require gate approvals
 
 - 2026-10-14 | ChatGPT | main | integrated | Prevented duplicate in-flight form submissions, restricted newsletter duplicate handling to PostgreSQL unique violations, blocked secret Supabase browser keys and gated releases on current sitemap | verify Actions/deploy; legal consent and server-side anti-abuse still blocked by #14
