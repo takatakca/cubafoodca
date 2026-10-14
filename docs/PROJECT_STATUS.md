@@ -25,4 +25,6 @@
 
 **Update 2026-10-14:** Last previously verified live SHA `69ea96f85ea8f55a0c84620d9bf9911509b605ae` ([CI](https://github.com/takatakca/cubafoodca/actions/runs/38614407296), [sitemap](https://github.com/takatakca/cubafoodca/actions/runs/38614407242), [deploy](https://github.com/takatakca/cubafoodca/actions/runs/38614407289)). A new read-only public smoke is being added to the release workflow; the new commit requires its own verification.
 
+**New production baseline (2026-10-14):** `398cb40f04a846aa096409e4b243667f3f8a2c8b` passed [CI](https://github.com/takatakca/cubafoodca/actions/runs/38623971204), [sitemap](https://github.com/takatakca/cubafoodca/actions/runs/38623971435) and [MochaHost deployment](https://github.com/takatakca/cubafoodca/actions/runs/38623971248), including read-only public route acceptance. Storage-denied language switching protection is live. Any subsequent docs/code commit requires independent verification.
+
 **Not 100% complete.** See `TASK_QUEUE.md` and `AGENT_HANDOFF.md`.

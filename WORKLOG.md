@@ -1,5 +1,7 @@
 # Work log
 
+- 2026-10-14 | ChatGPT | main | handoff updated, deploy pending for docs commit | Confirmed code SHA 398cb40f04a846aa096409e4b243667f3f8a2c8b: CI 38623971204, sitemap 38623971435, MochaHost 38623971248 green; updated docs with exact evidence; no staging or live synthetic contacts | next headless browser QA; #14 and TAKATAK #161 still blocked
+
 - 2026-10-14 | ChatGPT | main | smoke route correction pushed; deploy pending | Production smoke exposed that /volunteer is an editorial Cuba/Canada orientation page, not a form; now checks actual 3 form routes and volunteer links separately, preserving the existing privacy gate #14 | verify CI and deployed SHA, ensure rollback/recovery not bypassed
 
 - 2026-10-14 | ChatGPT | main | offline test correction; deploy pending | CI run 38622923936 identified that 5-page unit fixture violated 25-page production minimum; parameterized minimum while retaining 25-page production gate and using minPages=5 in fixtures | require new CI green, public read-only smoke and deployment on same SHA

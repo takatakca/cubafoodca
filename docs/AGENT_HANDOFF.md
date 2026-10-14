@@ -1,48 +1,36 @@
 # CUBAFOOD.CA — agent handoff
 
-**Session:** 2026-10-14 · **Repo:** `takatakca/cubafoodca` · **Branch:** `main`.
+**Updated:** 2026-10-14 · **Repository:** `takatakca/cubafoodca` · **Release branch:** `main`.
 
-## Last independently completed production release
+## Last confirmed successful deployed code
 
-- SHA: `69ea96f85ea8f55a0c84620d9bf9911509b605ae`.
-- [CUBAFOOD CI run 38614407296](https://github.com/takatakca/cubafoodca/actions/runs/38614407296): success.
-- [Sitemap run 38614407242](https://github.com/takatakca/cubafoodca/actions/runs/38614407242): success.
-- [MochaHost deploy run 38614407289](https://github.com/takatakca/cubafoodca/actions/runs/38614407289): success, including active SHA, public /healthz SHA, critical routes and media.
+- **Commit:** `398cb40f04a846aa096409e4b243667f3f8a2c8b`.
+- **Same-SHA results:** [CI 38623971204](https://github.com/takatakca/cubafoodca/actions/runs/38623971204), [sitemap 38623971435](https://github.com/takatakca/cubafoodca/actions/runs/38623971435), [MochaHost deployment 38623971248](https://github.com/takatakca/cubafoodca/actions/runs/38623971248) — all **success**.
+- Release verified the active SHA via SSH and public /healthz, 29 published URLs, the three existing form shells (/cuba, /canada, /farmers), volunteer navigation, unpublished journal HTTP 404, robots/sitemap and project media.
+- No participant test submissions were made to production.
 
-## Current task and changed files
+## Last task finished
 
-- Current change: add `scripts/smoke-public-site.mjs` and `scripts/smoke-public-site.test.mjs`; include fixture-only tests in `.github/workflows/ci.yml` and a read-only live smoke gate in `.github/workflows/deploy-mochahost.yml`.
-- It reads the real published sitemap and robots.txt, verifies every listed HTML route, confirms the four participation forms have required fields, and checks an unpublished journal slug has HTTP 404. No POST, no test participant data, no Supabase mutations.
-- Updated `docs/TASK_QUEUE.md`, `docs/PROJECT_STATUS.md`, `WORKLOG.md` and this handoff.
-- **Latest pushed SHA for this change:** inspect GitHub main after commit creation (self-reference cannot be included in same Git commit). Its CI and deployment are **not yet confirmed when this document is written**.
+- Made the FR/EN/ES language switch resilient to denied browser storage in `src/i18n/index.tsx` + `src/i18n/preferences.ts`.
+- Added five positive/negative Bun regression cases in `scripts/i18n-preferences.test.mjs`, wired into `.github/workflows/ci.yml` and `.github/workflows/deploy-mochahost.yml`.
+- Fixed and tested public read-only route/site acceptance in earlier commits; `scripts/smoke-public-site.mjs` and `scripts/smoke-public-site.test.mjs` remain green.
+- This update modifies only `docs/AGENT_HANDOFF.md`, `docs/TASK_QUEUE.md`, `docs/PROJECT_STATUS.md`, `WORKLOG.md`. Its own new commit SHA must be looked up **after push** (cannot self-reference it). A previous green run does not prove a new docs commit deployed.
 
-## Regex correction
+## Current task
 
-- Public smoke patterns were normalized to valid JavaScript regular-expression escapes in the follow-up commit. Run the actual Node fixture tests on the current main SHA; do not rely on the previous script commit.
+- Confirm same-SHA CI/sitemap/production for the documentation commit, then implement staging-safe headless browser interaction tests for FR/EN/ES switching, tab navigation, viewport and multi-step validation. Use mocked/staging API; never submit test data to production.
+- Test commands already run **via GitHub Actions on code SHA above:** `bun install --frozen-lockfile`, `bun run build`, `bun run typecheck`, `bun run lint`, `node --test scripts/smoke-public-site.test.mjs`, `node --test scripts/verify-release-health.test.mjs`, `bun test scripts/i18n-preferences.test.mjs`, manual release-script checks, sitemap verification and the live read-only route smoke.
+- No browser screenshot/mobile manual audit has been performed by this session; do not conflate server-rendered route tests with interactive browser testing.
 
-## CI fixture correction
+## Known blockers and necessary access (never store secrets here)
 
-- Offline unit tests intentionally use a 5-URL fixture. The smoke runner keeps a production minimum of 25 URLs, while fixture tests inject `minPages: 5`; this avoids unrelated failures before testing 404 and form validation. CI result on the newest SHA must be checked.
+- [CUBAFOOD #14](https://github.com/takatakca/cubafoodca/issues/14): authorized FR/EN/ES privacy terms, data controller, retention/deletion and distinct consent; approved trusted-edge abuse protection, rate limiting and Supabase anonymous INSERT/RLS migration, with a nonproduction environment and staging tests. Existing public forms remain active but vulnerable to anonymous abuse until migrated.
+- [TAKATAK master #161](https://github.com/takatakca/takatak-v1/issues/161): no verified CUBAFOOD tenant registration, service identity or entitlement/API contract; do not activate fake auth or reuse other vertical credentials.
+- Site-owner Search Console access and verified organizational/partner/project information must come from authorized stakeholders.
+- GitHub Actions `production` environment contains deployment credentials. Never expose them or personal records.
 
-## Production 404/form audit correction
+## Next exact action
 
-- Production run [38622923665](https://github.com/takatakca/cubafoodca/actions/runs/38622923665) reached correct `release_sha` then read-only audit failed with `Missing SSR form at /volunteer`. The existing `/volunteer` route intentionally links to the real Cuba/Canada intake forms; it does not render `VolunteerForm`.
-- Smoke audit now verifies three active registration forms (`/cuba`, `/canada`, `/farmers`) and the volunteer orientation links separately. The existing rollback was triggered; a new deployment run must prove success.
-
-## Commands and acceptance
-
-- CI runs `bun install --frozen-lockfile`, `bun run build`, `node --test scripts/verify-release-health.test.mjs`, `node --test scripts/smoke-public-site.test.mjs`, `bun run typecheck`, `bun run lint` and cPanel recovery test.
-- Deployment checks immutable artifact and SSH pointer, `node scripts/verify-release-health.mjs RESPONSE_FILE EXPECTED_SHA`, then `node scripts/smoke-public-site.mjs https://cubafood.ca` before declaring success, followed by media check. An error after activation invokes existing rollback.
-- Green statuses must match current HEAD; do not infer success from previous SHA or docs alone.
-
-## Open blockers / required access
-
-- [CUBAFOOD #14](https://github.com/takatakca/cubafoodca/issues/14): approved FR/EN/ES privacy/consent text and authorized staging edge anti-bot/rate limit/RLS migration. Anonymous Supabase direct browser INSERT remains insecure against automation. Do not simulate legal approval or change production grants without a rollout plan.
-- [TAKATAK #161](https://github.com/takatakca/takatak-v1/issues/161): independent CUBAFOOD master identity/entitlement contract not available. No reuse of other vertical keys.
-- Browser/mobile/a11y interactive tests, real contact information, and Google Search Console owner validation remain separate tasks. Authenticated staging/test credentials may be needed; never place secrets in GitHub commits or this document.
-
-## Exact next action
-
-1. Read newest `main` SHA, examine its CI / sitemap / MochaHost deploy runs. If public smoke fails, inspect failure and correct code or site without disabling the gate; rerun with a new commit.
-2. Update handoff with exact successful SHA and run IDs on the next commit.
-3. Build next isolated headless browser tests for FR/EN/ES and forms with intercepted submission endpoints; never send synthetic registrations to production.
+1. Fetch GitHub `main` SHA, list same-SHA CI/sitemap/deploy results and inspect any failing step; never assume the documented code SHA is still HEAD.
+2. If the docs release succeeded, proceed with the next unclaimed, **non-mutating** P1 headless browser tests; if failed, fix and push cleanly.
+3. Keep handoff, decisions, status and worklog current with evidence; revisit #14 and #161 only after legitimate authorization, without altering customer data.
