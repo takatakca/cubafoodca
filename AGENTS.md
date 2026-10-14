@@ -2,6 +2,13 @@
 
 This repository is maintained directly from GitHub. Lovable is not a development, preview, authentication or deployment dependency.
 
+## Session recovery — mandatory handoff
+
+1. Read `docs/AGENT_HANDOFF.md`, `docs/PROJECT_STATUS.md`, `docs/TASK_QUEUE.md`, the latest `WORKLOG.md`, and the titles of open PRs before coding.
+2. Compare the last documented production SHA with the current `main` SHA and the **same-SHA** GitHub Actions results; do not treat an earlier successful deployment as a current one.
+3. Continue the earliest unclaimed, executable task. Keep `docs/AGENT_HANDOFF.md` current, including real verification and remaining blockers. Never invent a build, credentials, tests, approvals or deployment.
+4. References: `docs/DEPLOYMENT.md` (current release/runbook) and `docs/DECISIONS.md` (architectural boundary).
+
 ## Work log rule (every agent: Claude, Codex, Cursor, people)
 
 Cheap to follow: read only what is listed here.

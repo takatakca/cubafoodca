@@ -1,6 +1,6 @@
 # CUBAFOOD.CA — TAKATAK integration status
 
-**Status date:** 2026-10-10
+**Status date:** 2026-10-14. Latest verified pre-session release is `300997823d3fcd169543fee52244036f792f93f6` ([CI](https://github.com/takatakca/cubafoodca/actions/runs/38610125815), [deployment](https://github.com/takatakca/cubafoodca/actions/runs/38610125772)). Verify any subsequent SHA independently.
 
 | Area | Status | Evidence / next step |
 |---|---|---|
@@ -11,8 +11,8 @@
 | CUBAFOOD master API contract | BLOCKED | TAKATAK V1 issue #161 tracks the required contract. |
 | Live TAKATAK authentication | NOT CONFIGURED | Do not invent or bypass the master contract. |
 | Tenant/entitlement integration | NOT CONFIGURED | Requires the approved CUBAFOOD contract. |
-| Direct production deployment | PRODUCTION VERIFIED | Deployment run 38039483045 built, activated and verified main commit `ac6cc836878fe99157594dbc31b68228c519f408` on MochaHost. |
-| Production media migration | PRODUCTION VERIFIED | Deployment run 38039483045 copied/served the migrated media and verified production media after activation. |
+| Direct production deployment | PRODUCTION VERIFIED | Run 38610125772 built, activated and verified commit `300997823d3fcd169543fee52244036f792f93f6`; newer SHA requires separate proof. |
+| Production media migration | PRODUCTION VERIFIED | Run 38610125772 verified CUBAFOOD-owned public media after activation. |
 | Automated verification | CONFIGURED | TypeScript, production build, lint, release verification, SSH, health, critical routes and media checks are part of the pipeline. |
 
 ## Non-negotiable boundary

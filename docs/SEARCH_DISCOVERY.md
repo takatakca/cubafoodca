@@ -1,6 +1,6 @@
 # CUBAFOOD.CA — Public search discovery
 
-**Status:** Code only until the branch is merged, deployed, and the public URLs are verified.
+**Status verified through 2026-10-14:** 29 critical public routes passed in [production run 38610125772](https://github.com/takatakca/cubafoodca/actions/runs/38610125772), SHA `300997823d3fcd169543fee52244036f792f93f6`. Manual crawler/Google Search Console review and newer releases require separate evidence.
 
 ## Source of truth
 
@@ -47,4 +47,4 @@ because root errors may occur before the normal language provider mounts.
   get included in the sitemap.
 - Search Console submission requires an authorized site-owner account and is
   **not** implied by adding the sitemap.
-- MochaHost GitHub-hosted SSH issue #11 remains a separate deployment blocker.
+- The prior MochaHost SSH connectivity issue #11 was closed after verified deployments; recheck the exact public release SHA for every new deployment.
