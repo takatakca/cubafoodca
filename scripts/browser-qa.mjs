@@ -83,10 +83,11 @@ async function runQA(baseUrl) {
   const sha = process.env.CUBAFOOD_EXPECTED_SHA;
   if (sha) {
     const health = await (await fetch(`${origin}/healthz`, { cache: "no-store" })).json();
-    if (health.release_sha !== sha) {
-      console.log("Skipping browser QA for superseded release; active SHA differs.");
-      return;
-    }
+    assert.equal(
+      health.release_sha,
+      sha,
+      "Browser QA requires its exact deployed SHA; a superseded release is not a pass",
+    );
   }
   await withChrome(async ({ send, evaluate }) => {
     const navigate = async (path) => {

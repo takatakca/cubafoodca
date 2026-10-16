@@ -28,3 +28,5 @@
 **New production baseline (2026-10-14):** `398cb40f04a846aa096409e4b243667f3f8a2c8b` passed [CI](https://github.com/takatakca/cubafoodca/actions/runs/38623971204), [sitemap](https://github.com/takatakca/cubafoodca/actions/runs/38623971435) and [MochaHost deployment](https://github.com/takatakca/cubafoodca/actions/runs/38623971248), including read-only public route acceptance. Storage-denied language switching protection is live. Any subsequent docs/code commit requires independent verification.
 
 **Not 100% complete.** See `TASK_QUEUE.md` and `AGENT_HANDOFF.md`.
+
+**Verification update — 2026-10-16:** `e3f766012d1184b7945539001d750acebe741ccb` has same-SHA successful CI [38625132202](https://github.com/takatakca/cubafoodca/actions/runs/38625132202), sitemap [38625132229](https://github.com/takatakca/cubafoodca/actions/runs/38625132229), MochaHost deploy [38625132193](https://github.com/takatakca/cubafoodca/actions/runs/38625132193), and headless Browser QA rerun [38625309171](https://github.com/takatakca/cubafoodca/actions/runs/38625309171). This update is a historical baseline, not proof of any subsequent commit.

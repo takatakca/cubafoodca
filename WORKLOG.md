@@ -1,5 +1,7 @@
 # Work log
 
+- 2026-10-16 | ChatGPT | main | code/docs pushed; CI/deploy pending | Confirmed e3f7660 same-SHA successful CI/sitemap/MochaHost and rerun Chrome QA; changed browser QA to reject stale SHA rather than mark skipped runs successful; refreshed handoff/status/queue | check new SHA CI/sitemap/deploy/browser QA and continue SEO/canonical checks; #14/#161 remain gated
+
 - 2026-10-14 | ChatGPT | main | browser QA selector corrected, deploy pending | Normalized CDP project-link selection so the evaluated browser expression is valid JavaScript; browser QA remains isolated from production rollback and never submits real participant records | confirm CI, new deploy and browser workflow result; repair based on browser logs
 
 - 2026-10-14 | ChatGPT | main | handoff updated, deploy pending for docs commit | Confirmed code SHA 398cb40f04a846aa096409e4b243667f3f8a2c8b: CI 38623971204, sitemap 38623971435, MochaHost 38623971248 green; updated docs with exact evidence; no staging or live synthetic contacts | next headless browser QA; #14 and TAKATAK #161 still blocked
